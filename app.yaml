@@ -1,0 +1,12 @@
+runtime: python39
+
+env_variables:
+  DB_HOST: "34.42.138.123"
+  DB_USER: "root"
+  DB_PASSWORD: "1234"
+  DB_NAME: "interactions"
+
+handlers:
+- url: /.*
+  script: auto
+
