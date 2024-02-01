@@ -1,6 +1,8 @@
 .
 ├── AI-EduPlatform_DefaultOrganization_20240201004529.log
 ├── AI-EduPlatform.prompt
+├── app.log
+├── app.yaml
 ├── ChatChainConfig.json
 ├── database.py
 ├── evaluator.py
@@ -12,10 +14,16 @@
 ├── meta.txt
 ├── output.txt
 ├── PhaseConfig.json
+├── __pycache__
+│   ├── database.cpython-311.pyc
+│   ├── evaluator.cpython-311.pyc
+│   └── exercise.cpython-311.pyc
 ├── requirements.txt
-└── RoleConfig.json
+├── RoleConfig.json
+└── secrets
+    └── OPENAI_API_KEY
 
-0 directories, 15 files
+3 directories, 20 files
 ./output.txt
 ./ChatChainConfig.json
 {
@@ -120,6 +128,18 @@
 '''
 This is the main file of the educational platform.
 '''
+
+
+import logging
+from logging.handlers import RotatingFileHandler
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
+logger.addHandler(handler)
+
+
 from flask import Flask, render_template, request, redirect, url_for
 from exercise import Exercise
 from database import Database
@@ -128,57 +148,97 @@ app = Flask(__name__)
 exercise = Exercise()
 database = Database()
 evaluator = Evaluator()
-@app.route('/')
-def index():
-    evaluated_response = request.args.get('evaluated_response')
-    return render_template('index.html', prompt=exercise.get_prompt(), evaluated_response=evaluated_response)
+
+
 @app.route('/submit', methods=['POST'])
 def submit():
     response = request.form['response']
+    # Log the submission event
+    logger.info(f"Exercise submitted by user: {response}")
     database.save_interaction(response)
     evaluated_response = evaluator.evaluate(response)
     return redirect(url_for('index', evaluated_response=evaluated_response))
 if __name__ == '__main__':
-    app.run()./evaluator.py
-'''
-This file defines the Evaluator class.
-'''
+    app.run()
+
+@app.route('/submit', methods=['POST'])
+def index():
+    evaluated_response = request.args.get('evaluated_response')
+    # Log the access event
+    logger.info("Exercise accessed")
+    return render_template('index.html', prompt=exercise.get_prompt(), evaluated_response=evaluated_response)
+./evaluator.py
+import os
+import openai
+from dotenv import load_dotenv
 from exercise import Exercise
+
+# Load environment variables from .env file
+load_dotenv()
+
 class Evaluator:
     def __init__(self):
         # Initialize evaluator properties
         self.exercise = Exercise()
+        # Load your OpenAI API key from an environment variable
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+
     def evaluate(self, response):
         # Evaluate the response using AI-based machine evaluator
-        # Implement the evaluation logic here
-        evaluated_response = self.machine_evaluate(response)
-        return evaluated_response
+        return self.machine_evaluate(response)
+
     def machine_evaluate(self, response):
-        # Implement the AI-based machine evaluator logic here
-        # This is a placeholder implementation, replace it with your actual AI evaluation logic
-        # Example implementation: check if the response matches the expected solution
-        expected_solution = self.exercise.get_solution()
-        if response.strip() == expected_solution.strip():
-            return "Correct"
-        else:
-            return "Incorrect"./database.py
-'''
-This file defines the Database class.
-'''
-import sqlite3
+        # Replace placeholder implementation with a call to OpenAI's API
+        try:
+            # Construct the prompt to send to the API
+            prompt = self.construct_prompt(response)
+            # Make the API call
+            completion = openai.Completion.create(
+                engine="text-davinci-003",  # or "gpt-4" based on your preference
+                prompt=prompt,
+                temperature=0.7,
+                max_tokens=150,
+                n=1,
+                stop=None
+            )
+            # Extract the text from the response
+            evaluated_response = completion.choices[0].text.strip()
+            return evaluated_response
+        except Exception as e:
+            print(f"Error calling OpenAI API: {e}")
+            return "Error evaluating response."./database.py
+import pymysql
+import os
+
+
+
 class Database:
     def __init__(self):
-        self.connection = sqlite3.connect("interactions.db")
+        # Example environment variables for database connection details
+        db_host = os.environ.get('DB_HOST') # 34.42.138.123
+        db_user = os.environ.get('DB_USER') # root
+        db_password = os.environ.get('DB_PASSWORD') # 1234
+        db_name = os.environ.get('DB_NAME') # interactions - chatbot
+
+        self.connection = pymysql.connect(host=db_host,
+                                          user=db_user,
+                                          password=db_password,
+                                          database=db_name,
+                                          cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.connection.cursor()
         self.create_table()
-    def create_table(self):
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS interactions (response TEXT)")
+
+    # def create_table(self):
+    #     self.cursor.execute("CREATE TABLE IF NOT EXISTS interactions (response TEXT)")
+
     def save_interaction(self, response):
-        self.cursor.execute("INSERT INTO interactions VALUES (?)", (response,))
+        self.cursor.execute("INSERT INTO interactions (response) VALUES (%s)", (response,))
         self.connection.commit()
+
     def close(self):
         self.cursor.close()
-        self.connection.close()./PhaseConfig.json
+        self.connection.close()
+./PhaseConfig.json
 {
   "DemandAnalysis": {
     "assistant_role_name": "Chief Product Officer",
@@ -545,7 +605,8 @@ class Exercise:
   ]
 }./requirements.txt
 Flask==1.1.2
-sqlite3==2.6.0
+openai>=0.10.2
+
 ./manual.md
 # Educational Platform User Manual
 
