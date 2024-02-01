@@ -72,10 +72,6 @@ To complete an exercise on the Educational Platform, follow these steps:
 
 5. The platform will process your response and provide immediate feedback based on the AI-based machine evaluator.
 
-6. Review the feedback provided and make any necessary adjustments to your solution.
-
-7. Repeat the exercise completion process until you are satisfied with your solution.
-
 ## 4. Viewing Feedback
 
 After submitting your response to an exercise, the Educational Platform will provide immediate feedback. To view the feedback, follow these steps:
