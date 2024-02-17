@@ -1,0 +1,34 @@
+\item Dada una matriz simétrica $M$ de $n \times n$ números naturales y un número $k$, queremos encontrar un subconjunto $I$ de $\{1, \ldots, n\}$ con $|I| = k$ que maximice $\sum_{i,j \in I} M_{ij}$.  Por ejemplo, si $k = 3$ y:
+\begin{displaymath}
+    M = \begin{pmatrix}
+          0 & 10 & 10 & 1 \\
+          - &  0 &  5 & 2 \\
+          - &  - &  0 & 1 \\
+          - &  - &  - & 0
+        \end{pmatrix},
+\end{displaymath}
+entonces $I = \{1,2,3\}$ es una solución óptima.
+
+
+\begin{enumerate}
+ \item Diseñar un algoritmo de \emph{backtracking} para resolver el problema, indicando claramente cómo se codifica una solución candidata, cuáles soluciones son válidas y qué valor tienen, qué es una solución parcial y cómo se extiende cada solución parcial.
+ \item Calcular la complejidad temporal y espacial del mismo.
+ \item Proponer una poda por optimalidad y mostrar que es correcta.
+\end{enumerate}
+
+\item Dada una matriz $D$ de $n \times n$ números naturales, queremos encontrar una permutación $\pi$\footnote{Una permutacion de un conjunto finito $X$ es simplemente una función biyectiva de $X$ en $X$.} de $\{1, \ldots, n\}$ que minimice $D_{\pi(n)\pi(1)} + \sum_{i=1}^{n-1} D_{\pi(i)\pi(i+1)}$.  Por ejemplo, si
+\begin{displaymath}
+    D = \begin{pmatrix}
+          0  &  1 & 10 & 10 \\
+          10 &  0 &  3 & 15 \\
+          21 &  17 &  0 & 2 \\
+           3 &  22 & 30 & 0
+        \end{pmatrix},
+\end{displaymath}
+entonces $\pi(i) = i$ es una solución optima.
+
+\begin{enumerate}
+ \item Diseñar un algoritmo de \emph{backtracking} para resolver el problema, indicando claramente cómo se codifica una solución candidata, cuáles soluciones son válidas y qué valor tienen, qué es una solución parcial y cómo se extiende cada solución parcial.
+ \item Calcular la complejidad temporal y espacial del mismo.
+ \item Proponer una poda por optimalidad y mostrar que es correcta.
+\end{enumerate}

@@ -1,0 +1,10 @@
+\item Tomás quiere viajar de Buenos Aires a Mar del Plata en su flamante Renault 12. Como está preocupado por la autonomía de su vehículo, se tomó el tiempo de anotar las distintas estaciones de servicio que se encuentran en el camino. Modeló el mismo como un segmento de $0$ a $M$, donde Buenos aires está en el kilómetro 0, Mar del Plata en el $M$, y las distintas estaciones de servicio están ubicadas en los kilómetros $0 = x_1 \leq x_2 \leq \ldots x_n \leq M$.
+
+Razonablemente, Tomás quiere minimizar la cantidad de paradas para cargar nafta. Él sabe que su auto es capaz de hacer hasta $C$ kilómetros con el tanque lleno, y que al comenzar el viaje este está vacío.
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+    
+    \item Proponer un algoritmo \textit{greedy} que indique cuál es la cantidad mínima de paradas para cargar nafta que debe hacer Tomás, y que aparte devuelva el conjunto de estaciones en las que hay que detenerse. Probar su correctitud.\label{tomasIdea}
+
+    \item Dar una implementación de complejidad temporal $O(n)$ del algoritmo del inciso \ref{tomasIdea}.
+\end{enumerate}

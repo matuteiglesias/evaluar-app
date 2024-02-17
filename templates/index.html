@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Educational Platform</title>
+    <!-- Include Google Sign-In JavaScript API -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- Optional: Include a CSS framework like Bootstrap for styling -->
+</head>
+<body>
+    <h1>Welcome to the Educational Platform</h1>
+    <!-- Google Sign-In button -->
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <h2>Available Exercises:</h2>
+
+    <!-- Sections for each unit -->
+    <section id="DivideAndConquer">
+        <h3>Divide and Conquer</h3>
+        <table class="exerciseTable">
+            <tr>
+                <th>Exercise</th>
+                <th>Action</th>
+            </tr>
+            <!-- Exercise rows for Divide and Conquer will be dynamically inserted here -->
+        </table>
+    </section>
+
+    <section id="Backtracking">
+        <h3>Backtracking</h3>
+        <table class="exerciseTable">
+            <!-- Similar structure for Backtracking -->
+        </table>
+    </section>
+
+    <section id="ProgramacionDinamica">
+        <h3>Programación Dinámica</h3>
+        <table class="exerciseTable">
+            <!-- Similar structure for Programacion Dinamica -->
+        </table>
+    </section>
+
+    <section id="Greedy">
+        <h3>Greedy</h3>
+        <table class="exerciseTable">
+            <!-- Similar structure for Greedy -->
+        </table>
+    </section>
+
+    <section id="Extras">
+        <h3>Extras</h3>
+        <table class="exerciseTable">
+            <!-- Similar structure for Extras -->
+        </table>
+    </section>
+
+    <script>
+        // Example structure for exercises, you would replace this with your actual dynamic loading logic
+        const exercises = [
+            {id: 1, unit: "Divide and Conquer", name: "QuickSort"},
+            // Add more exercises as per your CSV file
+        ];
+
+        // Dynamically populate exercises table
+        exercises.forEach(exercise => {
+            let table = document.querySelector(`#${exercise.unit.replace(/\s+/g, '')} .exerciseTable`);
+            let row = table.insertRow();
+            let cell1 = row.insertCell(0);
+            let cell2 = row.insertCell(1);
+            cell1.innerHTML = exercise.name;
+            cell2.innerHTML = `<a href="/exercise/${exercise.id}">Solve</a>`;
+        });
+
+        // Handle Google Sign-In
+        function onSignIn(googleUser) {
+            // Get the user's ID token
+            const id_token = googleUser.getAuthResponse().id_token;
+            console.log("User signed in with token:", id_token);
+            // Optionally, send the token to your server for authentication
+        }
+    </script>
+</body>
+</html>

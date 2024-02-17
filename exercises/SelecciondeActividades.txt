@@ -1,0 +1,14 @@
+\item  Dado un conjunto de actividades $\mathcal{A} = \{A_1, \ldots, A_n\}$, el problema de selección de actividades consiste en encontrar un subconjunto de actividades $\mathcal{S}$ de cardinalidad máxima, tal que ningún par de actividades de $\mathcal{S}$ se solapen en el tiempo.  Cada actividad $A_i$ se realiza en algún intervalo de tiempo $(s_i, t_i)$, siendo $s_i \in \mathbb{N}$ su momento inicial y $t_i \in \mathbb{N}$ su momento final.  Suponemos que $1 \leq s_i < t_i \leq 2n$ para todo $1 \leq i \leq n$.
+
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Considerar la siguiente analogía con el problema de la fiesta: cada posible actividad es un invitado y dos actividades pueden ``invitarse'' a la fiesta cuando no se solapan en el tiempo.  A partir de esta analogía, proponga un algoritmo de \textit{backtracking} para resolver el problema de selección de actividades.  ¿Cuál es la complejidad del algoritmo?
+
+  \item Supongamos que $\mathcal{A}$ está ordenado por orden de comienzo de la actividad, i.e., $s_i \leq s_{i+1}$ para todo $1 \leq i < n$.  Escribir una función recursiva $\ActividadesPD(\mathcal{A}, \mathcal{S}, i)$ que encuentre el conjunto máximo de actividades seleccionables que contenga a $\mathcal{S} \subseteq \{A_1, \ldots, A_{i-1}\}$ y que se obtenga agregando únicamente actividades de $\{A_i, \ldots, A_{n}\}$.  \textbf{Para reflexionar:} ¿por qué se puede definir $\ActividadesPD$ en este caso y no en el inciso~\ref{ej:ind set:dp} del Ejercicio~\ref{ej:ind set}?
+  \label{actividadesFormRec}
+
+  \item Implementar un algoritmo de programación dinámica para el problema de selección de actividades que se base en la función del inciso \ref{actividadesFormRec}. ¿Cuál es su complejidad temporal y cuál es el espacio extra requerido?
+
+ \item Considerar la siguiente estrategia golosa para resolver el problema de selección de actividades: elegir la actividad cuyo momento final sea lo más temprano posible, de entre todas las actividades que no se solapen con las actividades ya elegidas.  Demostrar que un algoritmo goloso que implementa la estrategia anterior es correcto. \textbf{Ayuda:} demostrar por inducción que la solución parcial $B_1, \ldots, B_i$ que brinda el algoritmo goloso en el paso $i$ se puede extender a una solución óptima.  Para ello, suponga en el paso inductivo que $B_1, \ldots, B_i, B_{i+1}$ es la solución golosa y que $B_1, \ldots, B_i, C_{i+1}, \ldots, C_{j}$ es la extensión óptima que existe por inducción y muestre que $B_1, \ldots, B_{i+1}, C_{i+2}, \ldots, C_j$ es una extensión óptima de $B_1, \ldots, B_{i+1}$.
+
+  \item Mostrar una implementación del algoritmo cuya complejidad temporal sea $\mathcal{O}(n)$.
+ \end{enumerate}

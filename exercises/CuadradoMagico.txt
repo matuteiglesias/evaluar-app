@@ -1,0 +1,31 @@
+
+
+\item Un \emph{cuadrado mágico de orden $n$}, es un cuadrado con los números $\{1, \ldots, n^2\}$, tal que todas sus filas, columnas y las dos diagonales suman lo mismo (ver figura).  El número que suma cada fila es llamado \emph{número mágico}.
+
+ \begin{center}
+  \begin{tabular}{|c|c|c|}
+   \hline
+   2 & 7 & 6 \\ \hline
+   9 & 5 & 1 \\ \hline
+   4 & 3 & 8 \\ \hline
+  \end{tabular}
+ \end{center}
+
+ Existen muchos métodos para generar cuadrados mágicos.  El objetivo de este ejercicio es contar cuántos cuadrados mágicos de orden $n$ existen.
+
+ \begin{enumerate}
+  \item ¿Cuántos cuadrados habría que generar para encontrar todos los cuadrados mágicos si se utiliza una solución de fuerza bruta?
+  \item Enunciar un algoritmo que use \textit{backtracking} para resolver este problema que se base en la siguientes ideas:
+
+  \begin{itemize}
+   \item La solución parcial tiene los valores de las primeras $i-1$ filas establecidos, al igual que los valores de las primeras $j$ columnas de la fila $i$.
+   \item Para establecer el valor de la posición $(i,j+1)$ (o $(i+1,1)$ si $j = n$ e $i \neq n$) se consideran todos los valores que aún no se encuentran en el cuadrado.  Para cada valor posible, se establece dicho valor en la posición y se cuentan todos los cuadrados mágicos con esta nueva solución parcial.
+  \end{itemize}
+
+  Mostrar los primeros dos niveles del árbol de \textit{backtracking} para $n = 3$.
+
+  \item Demostrar que el árbol de \textit{backtracking} tiene $\mathcal{O}((n^2)!)$ nodos en peor caso.
+  \item\label{ej:magico:it:back} Considere la siguiente poda al árbol de \textit{backtracking}: al momento de elegir el valor de una nueva posición, verificar que la suma parcial de la fila no supere el número mágico.  Verificar también que la suma parcial de los valores de las columnas no supere el número mágico. Introducir estas podas al algoritmo e implementarlo en la computadora.  ¿Puede mejorar estas podas?
+  \item\label{ej:magico:it:back2} Demostrar que el número mágico de un cuadrado mágico de orden $n$ es siempre $(n^3 + n)/2$. Adaptar la poda del algoritmo del ítem anterior para que tenga en cuenta esta nueva información.  Modificar la implementación y comparar los tiempos obtenidos para calcular la cantidad de cuadrados mágicos.
+ \end{enumerate}
+
