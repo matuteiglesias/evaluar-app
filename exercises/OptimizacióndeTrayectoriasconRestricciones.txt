@@ -1,0 +1,42 @@
+
+\begin{enumerate}[$1)$]
+ \item La cantidad de combustible consumida por un avión en un viaje dado depende en gran parte de la resistencia que ofrece el aire a la aeronave durante el trayecto. Por ello, es de interés calcular la ruta que incurra en la menor resistencia posible. En este ejemplo simplificado, un avión debe realizar un viaje de $N$ minutos entre dos ciudades. Si bien el curso está prefijado, el avión puede variar la altitud a la que viaja dentro de $H$ bandas posibles numeradas de $0$ a $H-1$. Se tiene un estimativo de la resistencia que provocará viajar durante el minuto $n$ en la banda de altitud $h$, que por simplicidad podemos suponer que tenemos en forma de una tabla $R$ donde $R[i,j]$ es un valor natural que representa la resistencia al aire esperada en el minuto $i$ de vuelo si se está en la banda de altitud $j$. Para moverse entre dos bandas de altitud, el avión debe pasar por todas las bandas intermedias. Pasar de una banda de altitud a una adyacente (da igual si es subiendo o bajando) requiere realizar una maniobra que dura 3 minutos, cuya resistencia se estima como la del minuto de salida en la banda de salida más el máximo entre las resistencias en ambas bandas durante los dos minutos siguientes, es decir, si se realiza la maniobra entre la banda $X$ y la banda $X+1$  desde el minuto 1 al minuto 4, la resistencia al aire será la del minuto 1 en la banda $X$ más el máximo entre la resistencia en la banda $X$ y en la banda $X+1$ en el minuto 2 más el máximo de la resistencia entre la banda $X$ y la banda $X+1$ en el minuto 3. Por ejemplo, para un viaje de 10 minutos con la siguiente tabla de resistencias $R$,
+
+ \begin{center}
+     \centering
+     \newcommand{\myline}{\cline{3-12}}
+     \newcommand{\noline}[1]{\multicolumn{1}{c}{#1}}
+     \begin{tabular}{c c|c|c|c|c|c|c|c|c|c|c|}
+         \noline{} & \noline{} & \multicolumn{10}{c}{minuto} \\
+         \noline{} & \noline{} & \noline{0} & \noline{1} & \noline{2} & \noline{3} & \noline{4} & \noline{5} & \noline{6} & \noline{7} & \noline{8} & \noline{9}\\
+         \myline
+               & $2$ & $7$ & $7$ & $7$ & $6$ & $6$ & $7$ & $6$ & $6$ & $7$ & $6$\\
+         \myline
+         banda & $1$ & $6$ & $5$ & $4$ & $3$ & $4$ & $3$ & $4$ & $4$ & $4$ & $4$ \\
+         \myline
+               & $0$ & $3$ & $5$ & $5$ & $5$ & $5$ & $5$ & $5$ & $3$ & $2$ & $2$ \\
+         \myline
+     \end{tabular}
+ \end{center}
+
+ podemos considerar la resistencia del camino que se encuentra saliendo de la banda $0$ y subiendo en el minuto $0$, luego pasando los minutos $3$ y $4$ en la banda $1$, volviendo a bajar a la banda $0$ en el minuto $5$ y permaneciendo allí. En ese caso, la resistencia total es
+ \begin{equation*}
+ 13 + 3 + 4 + 12 + 2 + 2 = 36
+ \end{equation*}
+
+ Donde el término de valor $13$ se calcula como $R[0,0]+\max\{R[1,0],R[1,1]\}+\max\{R[2,0],R[2,1]\}$ y el $12$ como $R[5,1]+\max\{R[6,0],R[6,1]\}+\max\{R[7,0],R[7,1]\}$.
+
+ Se desea conocer cuál es la mínima resistencia total posible para el vuelo programado, conociendo que al inicio del viaje y al final se debe estar en la banda de altura $0$. En el ejemplo mostrado, el camino presentado es óptimo.
+
+ \begin{enumerate}[$a)$]
+  \item Definir en forma recursiva la función $f_R \colon \nat \times \nat \to \nat$ tal que $f_R(n,h)$ representa la mínima resistencia de aire total estimada que puede afrontar un avión desde el minuto $0$ hasta el minuto $n$ del vuelo proyectado, si al minuto $0$ estaba en la banda de altitud $0$ y en el momento $n$ se encuentra en la banda $h$. Indicar qué llamado(s) hay que hacer a esta función para resolver el problema. \textbf{Importante:} acompañen a la definición recursiva con una explicación en castellano.
+
+  \item Argumentar en qué casos $f_R$ posee la propiedad de superposición de subproblemas.
+
+  \item Definir un algoritmo \textit{top-down} para calcular $f_R(n,h)$ indicando claramente las estructuras de datos utilizadas y la complejidad resultante. Escribir el (pseudo-)código del algoritmo. ¿Es la complejidad obtenida polinomial?
+
+  \item Sin modificar el algoritmo anterior, pero suponiendo que ya fue ejecutado, explicar cómo determinar las bandas de alturas en las que debe viajar el avión para alcanzar la resistencia mínima calculada.
+ \end{enumerate}
+
+ \textbf{Criterio de aprobación:} La función descripta en el inciso a) debe ser correcta y estar adecuadamente justificada, y la complejidad temporal del algoritmo resultante para computar $f_R(n,h)$ en el inciso c) debe ser $O(N H)$ (y también estar justificada).
+

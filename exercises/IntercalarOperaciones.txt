@@ -1,0 +1,10 @@
+\item Sea $v=(v_1, v_2, \ldots v_n)$ un vector de n\'umeros naturales, y sea $w \in \mathbb{N}$.
+Se desea intercalar entre los elementos de $v$ las operaciones $+$ (suma), $\times$ (multiplicaci\'on) y $\uparrow$ (potenciaci\'on) de tal manera que al evaluar la expresi\'on obtenida el resultado sea $w$.
+Para evaluar la expresi\'on se opera de izquierda a derecha ignorando la precedencia de los operadores.
+Por ejemplo, si $v=(3, 1, 5, 2, 1)$, y las operaciones elegidas son $+$, $\times$, $\uparrow$ y $\times$ (en ese orden), la expresi\'on obtenida es $3 + 1 \times 5 \uparrow 2 \times 1$, que se evalúa como $(((3 + 1) \times 5) \uparrow 2) \times 1 = 400$.
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Escribir una formulación recursiva que sea la base de un algoritmo de PD que, dados $v$ y $w$, encuentre una secuencia de operaciones como la deseada, en caso de que tal secuencia exista. Explicar su semántica e indicar cuáles serían los parámetros para resolver el problema.
+\label{operacionesFormRec}
+\item Dise\~nar un algoritmo basado en PD con la formulación de \ref{operacionesFormRec} y dar su complejidad temporal y espacial auxiliar. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\item (Opcional) Formalizar el problema y demostrar que la función recursiva es correcta.
+\end{enumerate}

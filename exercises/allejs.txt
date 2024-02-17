@@ -1,0 +1,526 @@
+
+\subsection*{\textit{Backtracking}}
+
+\begin{enumerate}[label=$\arabic*$.,ref=$\arabic*$]
+% \newcommand{\thechapter}{1}
+% \renewcommand{\theenumi}{\thechapter.\arabic{enumi}}
+
+
+
+
+\item Un \emph{cuadrado mágico de orden $n$}, es un cuadrado con los números $\{1, \ldots, n^2\}$, tal que todas sus filas, columnas y las dos diagonales suman lo mismo (ver figura).  El número que suma cada fila es llamado \emph{número mágico}.
+
+ \begin{center}
+  \begin{tabular}{|c|c|c|}
+   \hline
+   2 & 7 & 6 \\ \hline
+   9 & 5 & 1 \\ \hline
+   4 & 3 & 8 \\ \hline
+  \end{tabular}
+ \end{center}
+
+ Existen muchos métodos para generar cuadrados mágicos.  El objetivo de este ejercicio es contar cuántos cuadrados mágicos de orden $n$ existen.
+
+ \begin{enumerate}
+  \item ¿Cuántos cuadrados habría que generar para encontrar todos los cuadrados mágicos si se utiliza una solución de fuerza bruta?
+  \item Enunciar un algoritmo que use \textit{backtracking} para resolver este problema que se base en la siguientes ideas:
+
+  \begin{itemize}
+   \item La solución parcial tiene los valores de las primeras $i-1$ filas establecidos, al igual que los valores de las primeras $j$ columnas de la fila $i$.
+   \item Para establecer el valor de la posición $(i,j+1)$ (o $(i+1,1)$ si $j = n$ e $i \neq n$) se consideran todos los valores que aún no se encuentran en el cuadrado.  Para cada valor posible, se establece dicho valor en la posición y se cuentan todos los cuadrados mágicos con esta nueva solución parcial.
+  \end{itemize}
+
+  Mostrar los primeros dos niveles del árbol de \textit{backtracking} para $n = 3$.
+
+  \item Demostrar que el árbol de \textit{backtracking} tiene $\mathcal{O}((n^2)!)$ nodos en peor caso.
+  \item\label{ej:magico:it:back} Considere la siguiente poda al árbol de \textit{backtracking}: al momento de elegir el valor de una nueva posición, verificar que la suma parcial de la fila no supere el número mágico.  Verificar también que la suma parcial de los valores de las columnas no supere el número mágico. Introducir estas podas al algoritmo e implementarlo en la computadora.  ¿Puede mejorar estas podas?
+  \item\label{ej:magico:it:back2} Demostrar que el número mágico de un cuadrado mágico de orden $n$ es siempre $(n^3 + n)/2$. Adaptar la poda del algoritmo del ítem anterior para que tenga en cuenta esta nueva información.  Modificar la implementación y comparar los tiempos obtenidos para calcular la cantidad de cuadrados mágicos.
+ \end{enumerate}
+
+\item Dada una matriz simétrica $M$ de $n \times n$ números naturales y un número $k$, queremos encontrar un subconjunto $I$ de $\{1, \ldots, n\}$ con $|I| = k$ que maximice $\sum_{i,j \in I} M_{ij}$.  Por ejemplo, si $k = 3$ y:
+\begin{displaymath}
+    M = \begin{pmatrix}
+          0 & 10 & 10 & 1 \\
+          - &  0 &  5 & 2 \\
+          - &  - &  0 & 1 \\
+          - &  - &  - & 0
+        \end{pmatrix},
+\end{displaymath}
+entonces $I = \{1,2,3\}$ es una solución óptima.
+
+
+\begin{enumerate}
+ \item Diseñar un algoritmo de \emph{backtracking} para resolver el problema, indicando claramente cómo se codifica una solución candidata, cuáles soluciones son válidas y qué valor tienen, qué es una solución parcial y cómo se extiende cada solución parcial.
+ \item Calcular la complejidad temporal y espacial del mismo.
+ \item Proponer una poda por optimalidad y mostrar que es correcta.
+\end{enumerate}
+
+\item Dada una matriz $D$ de $n \times n$ números naturales, queremos encontrar una permutación $\pi$\footnote{Una permutacion de un conjunto finito $X$ es simplemente una función biyectiva de $X$ en $X$.} de $\{1, \ldots, n\}$ que minimice $D_{\pi(n)\pi(1)} + \sum_{i=1}^{n-1} D_{\pi(i)\pi(i+1)}$.  Por ejemplo, si
+\begin{displaymath}
+    D = \begin{pmatrix}
+          0  &  1 & 10 & 10 \\
+          10 &  0 &  3 & 15 \\
+          21 &  17 &  0 & 2 \\
+           3 &  22 & 30 & 0
+        \end{pmatrix},
+\end{displaymath}
+entonces $\pi(i) = i$ es una solución optima.
+
+\begin{enumerate}
+ \item Diseñar un algoritmo de \emph{backtracking} para resolver el problema, indicando claramente cómo se codifica una solución candidata, cuáles soluciones son válidas y qué valor tienen, qué es una solución parcial y cómo se extiende cada solución parcial.
+ \item Calcular la complejidad temporal y espacial del mismo.
+ \item Proponer una poda por optimalidad y mostrar que es correcta.
+\end{enumerate}
+
+\end{enumerate}
+
+\subsection*{Programación dinámica (y su relación con \textit{backtracking})}
+
+\begin{enumerate}[resume*]
+
+\item\label{ej:subset sum dp} En este ejercicio vamos a resolver el problema de suma de subconjuntos usando la técnica de programación dinámica.
+
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item\label{ej:subset sum dp:recursion} Sea $n = |C|$ la cantidad de elementos de $C$.  Considerar la siguiente función recursiva $\SubsetSumPD_C \colon \{0,\ldots, n\} \times \{0, \ldots, k\} \to \{V,F\}$ (donde $V$ indica verdadero y $F$ falso) tal que:
+  \begin{displaymath}
+   \SubsetSumPD_C(i, j) = \begin{cases}
+    j = 0 & \text{si $i = 0$} \\
+    \SubsetSumPD_C(i-1,j) & \text{si $i \neq 0 \land C[i] > j$} \\
+    \SubsetSumPD_C(i-1, j) \lor \SubsetSumPD_C(i-1, j- C[i]) & \text{si no}
+   \end{cases}
+  \end{displaymath}
+  Convencerse de que esta es una definición equivalente de la función $\SubsetSum$ del inciso~\ref{sumaDeSubconjuntosFormRecBT} del Ejercicio~\ref{ejercicioSumaDeSubconjuntos}, observando que $\SubsetSum(C, k) = \SubsetSumPD_C(n, k)$.  En otras palabras, convencerse de que el algoritmo del inciso \ref{sumaDeSubconjuntosAlgoBT} es una implementación por \textit{backtracking} de la función $\SubsetSumPD_C$.  Concluir, pues, que $\mathcal{O}(2^n)$ llamadas recursivas de $\SubsetSumPD_C$ son suficientes para resolver el problema.
+  \item Observar que, como $C$ no cambia entre llamadas recursivas, existen $\mathcal{O}(nk)$ posibles entradas para $\SubsetSumPD_C$. Concluir que, si $k \ll 2^n/n$, entonces necesariamente algunas instancias de $\SubsetSumPD_C$ son calculadas muchas veces por el algoritmo del inciso \ref{sumaDeSubconjuntosAlgoBT}. Mostrar un ejemplo donde se calcule varias veces la misma instancia.
+  \item Considerar la estructura de memoización (i.e., el diccionario) $M$ implementada como una matriz de $(n+1) \times (k+1)$ tal que $M[i,j]$ o bien tiene un valor indefinido $\bot$ o bien tiene el valor $\SubsetSumPD_C(i, j)$, para todo $0 \leq i \leq n$ y $0 \leq j \leq k$.  Convencerse de que el siguiente algoritmo \emph{top-down} mantiene un estado válido para $M$ y computa $M[i, j] = \SubsetSumPD_C(i, j)$ cuando se invoca $\SubsetSumPD_C(i, j)$.
+
+  \begin{enumerate}
+   \item Inicializar $M[i,j] = \bot$ para todo $0 \leq i \leq n$ y $0 \leq j \leq k$.
+   \item $\SubsetSumAlg(C, i, j)$: // implementa $\SubsetSum(\{c_1, \ldots, c_i\}, j) = \SubsetSumPD_C(i,  j)$ usando memoización
+   \item ~~~~Si $j < 0$, retornar \textbf{falso}
+   \item ~~~~Si $i = 0$, retornar $(j = 0)$
+   \item ~~~~Si $M[i, j] = \bot$:
+   \item ~~~~~~~~Poner $M[i, j] = \SubsetSumAlg(C, i-1, j) \lor \SubsetSumAlg(C, i-1, j - C[i])$
+   \item ~~~~Retornar $M[i, j]$
+  \end{enumerate}
+
+  \item Concluir que $\SubsetSumAlg(C, n, k)$ resuelve el problema.  Calcular la complejidad y compararla con el algoritmo $\SubsetSumAlg$ del inciso \ref{sumaDeSubconjuntosAlgoBT} del Ejercicio \ref{ejercicioSumaDeSubconjuntos}. ¿Cuál algoritmo es mejor cuando $k \ll 2^n$?  ¿Y cuándo $k \gg 2^n$?
+
+  \item Supongamos que queremos computar todos los valores de $M$.  Una vez computados, por definición, obtenemos que
+  \begin{displaymath}
+   M[i,j] \stackrel{\rm def}{=} \SubsetSumPD_C(i, j) \stackrel{\SubsetSumPD}{=} \SubsetSumPD_C(i-1, j) \lor \SubsetSumPD_C(i-1, j-C[i]) \stackrel{\rm def}{=} M[i-1, j] \lor M[i-1, j-C[i]]
+  \end{displaymath}
+  cuando $i > 0$, asumiendo que $M[i-1, j-C[i]]$ es falso cuando $j-C[i] < 0$.  Por otra parte, $M[0, 0]$ es verdadero, mientras que $M[0, j]$ es falso para $j > 0$.  A partir de esta observación, concluir que el siguiente algoritmo \emph{bottom-up} computa $M$ correctamente y, por lo tanto, $M[i, j]$ contiene la respuesta al problema de la suma para todo $\{c_1, \ldots, c_i\}$ y $j$.
+
+  \begin{enumerate}
+   \item $\SubsetSumAlg(C, k)$: // computa $M[i,j]$ para todo $0 \leq i \leq n$ y $0 \leq j \leq k$.
+   \item ~~~~Inicializar $M[0,j] := (j = 0)$ para todo $0 \leq j \leq k$.
+   \item ~~~~Para $i = 1, \ldots, n$ y para $j = 0, \ldots, k$:
+   \item ~~~~~~~~Poner $M[i, j] := M[i-1, j] \lor (j-C[i] \geq 0 \land M[i-1, j-C[i]])$
+  \end{enumerate}
+  \item (Opcional) Modificar el algoritmo \textit{bottom-up} anterior para mejorar su complejidad espacial a $O(k)$.
+  \item (Opcional) Demostrar que la función recursiva del inciso~\ref{ej:subset sum dp:recursion} es correcta.  \textbf{Ayuda:} demostrar por inducción en $i$ que existe algún subconjunto de $\{c_1, \ldots, c_i\}$ que suma $j$ si y solo si $\SubsetSumPD_C(i, j) = V$.
+ \end{enumerate}
+
+
+\item Tenemos un multiconjunto $B$ de valores de billetes y queremos comprar un producto de costo $c$ de una máquina que no da vuelto.  Para poder adquirir el producto debemos cubrir su costo usando un subconjunto de nuestros billetes. El objetivo es pagar con el mínimo exceso posible a fin de minimizar nuestra pérdida.  Más aún, queremos gastar el menor tiempo posible poniendo billetes en la máquina. Por lo tanto, entre las opciones de mínimo exceso posible, queremos una con la menor cantidad de billetes. Por ejemplo, si $c = 14$ y $B = \{2, 3, 5, 10, 20, 20\}$, la solución es pagar 15, con exceso $1$, insertando sólo dos billetes: uno de 10 y otro de 5.
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+ \item Considerar la siguiente estrategia por \textit{backtracking} para el problema, donde $B = \{b_1, \ldots, b_n\}$. Tenemos dos posibilidades: o agregamos el billete $b_n$, gastando un billete y quedando por pagar $c-b_n$, o no agregamos el billete $b_n$, gastando $0$ billetes y quedando por pagar $c$.  Escribir una función recursiva $\Vuelto(B, c)$ para resolver el problema, donde $\Vuelto(B, c) = (c', q)$ cuando el mínimo costo mayor o igual a $c$ que es posible pagar con los billetes de $B$ es $c'$ y la cantidad de billetes mínima es $q$.
+\label{billetesFormRec}
+
+ \item Implementar la función de \ref{billetesFormRec} en un lenguaje de programación imperativo utilizando una función recursiva con parámetros $B$, $i$, $j$ que compute $\Vuelto(\{b_1, \ldots, b_i\}, j)$.  ¿Cuál es la complejidad del algoritmo?
+ \label{billetesAlgoBT}
+
+ \item Reescribir $\Vuelto$ como una función recursiva $\VueltoPD_B(i, j) = \Vuelto(\{b_1, \ldots, b_i\}, j)$ que implemente la idea anterior \textbf{dejando fijo el parámetro $B$}.  A partir de esta función, determinar cuándo $\VueltoPD_B$ tiene la propiedad de \emph{superposición de subproblemas}.
+
+ \item Definir una estructura de memoización para $\VueltoPD_B$ que permita acceder a $\VueltoPD_B(i, j)$ en $\mathcal{O}(1)$ tiempo para todo $0 \leq i \leq n$ y $0 \leq j \leq k$.
+
+ \item Adaptar el algoritmo de \ref{billetesAlgoBT} para incluir la estructura de memoización.
+
+ \item Indicar cuál es la llamada recursiva que resuelve nuestro problema y cuál es la complejidad del nuevo algoritmo.
+
+ \item (Opcional) Escribir un algoritmo \emph{bottom-up} para calcular todos los valores de la estructura de memoización y discutir cómo se puede reducir la memoria extra consumida por el algoritmo.
+
+ \item (Opcional) Formalmente, en este problema de vuelto hay que computar el mínimo $(\sum V, |V|)$, en orden lexicográfico, de entre los conjuntos $V \subseteq B$ tales que $\sum V \geq c$.  Demostrar que la función $\VueltoPD$ es correcta.  \textbf{Ayuda:} demostrar por inducción que $\VueltoPD(i,j) = (v,k)$ para el mínimo $(v,k)$ tal que existe un subconjunto $V$ de $\{b_1, \ldots, b_i\}$ con $\sum_V \geq j$.
+
+\end{enumerate}
+
+
+\item Astro Void se dedica a la compra de asteroides. Sea $p \in \mathbb{N}^n$ tal que $p_i$ es el precio de un asteroide el $i$-ésimo día en una secuencia de $n$ días. Astro Void quiere comprar y vender asteroides durante esos $n$ días de manera tal de obtener la mayor ganancia neta posible. Debido a las dificultades que existen en el transporte y almacenamiento de asteroides, Astro Void puede comprar a lo sumo un asteroide cada día, puede vender a lo sumo un asteroide cada día y comienza sin asteroides. Además, el Ente Regulador Asteroidal impide que Astro Void venda un asteroide que no haya comprado. Queremos encontrar la máxima ganancia neta que puede obtener Astro Void respetando las restricciones indicadas. Por ejemplo, si $p = (3, 2, 5, 6)$ el resultado es $6$ y si $p = (3,6,10)$ el resultado es $7$.  Notar que en una solución óptima, Astro Void debe terminar sin asteroides.
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Convencerse de que la máxima ganancia neta (m.g.n.), si Astro Void tiene $c$ asteroides al fin del día $j$, es:
+\begin{itemize}
+ \item indefinido (i.e., $-\infty$) si $c < 0$ o $c > j$, o
+ \item el máximo entre:
+ \begin{itemize}
+  \item la m.g.n. de finalizar el día $j-1$ con $c-1$ asteroides y comprar uno en el día $j$,
+  \item la m.g.n. de finalizar el día $j-1$ con $c+1$ asteroides y vender uno en el día $j$,
+  \item la m.g.n. de finalizar el día $j-1$ con $c$ asteroides y no operar el día $j$.
+ \end{itemize}
+\end{itemize}
+\label{AstroFormRec}
+
+\item Escribir matemáticamente la formulación recursiva enunciada en \ref{AstroFormRec}. Dar los valores de los casos base en función de la restricción de que comienza sin asteroides.
+\item Indicar qué dato es la respuesta al problema con esa formulación recursiva.
+\item Diseñar un algoritmo de PD \emph{top-down} que resuelva el problema y explicar su complejidad temporal y espacial auxiliar.
+\item (Opcional) Diseñar un algoritmo de PD \emph{bottom-up}, reduciendo la complejidad espacial.
+\item (Opcional) Formalmente, el problema consiste en determinar el máximo $g = \sum_{i=1}^n x_i p_i$ para un vector $x = (x_1, \ldots, x_n)$ tal que: $x_i \in \{-1,0,1\}$ para todo $1 \leq i \leq n$ y $\sum_{i=1}^j x_i \geq 0$ para todo $1 \leq j \leq n$.  Demostrar que la formulacion recursiva es correcta. \textbf{Ayuda}: primero demostrar que existe una solución óptima en la que Astro Void se queda sin asteroides en el día $n$.  Luego, demostrar por inducción que la función recursiva respeta la semántica, i.e., que computa la m.g.n.\ al final del día $j$ cuando Astro Void posee $c$ asteroides.
+\end{enumerate}
+
+\item Debemos cortar una vara de madera en varios lugares predeterminados. Sabemos que el costo de realizar un corte en una madera de longitud $\ell$ es $\ell$ (y luego de realizar ese corte quedarán 2 varas de longitudes que sumarán $\ell$).  Por ejemplo, si tenemos una vara de longitud 10 metros que debe ser cortada a los 2, 4 y 7 metros desde un extremo, entonces los cortes se pueden realizar, entre otras maneras, de las siguientes formas:
+\begin{itemize}
+\item Primero cortar en la posición 2, después en la 4 y después en la 7. Esta resulta en un costo de 10 + 8 + 6 = 24 porque el primer corte se hizo en una vara de longitud 10 metros, el segundo en una de 8 metros y el último en una de 6 metros.
+\item Cortar primero donde dice 4, después donde dice 2, y finalmente donde dice 7, con un costo de 10 + 4 + 6 = 20, que es menor.
+\end{itemize}
+\par{Queremos encontrar el mínimo costo posible de cortar una vara de longitud $\ell$.}
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Convencerse de que el mínimo costo de cortar una vara que abarca desde $i$ hasta $j$ con el conjunto $C$ de lugares de corte es $j-i$ mas el mínimo, para todo lugar de corte $c$ entre $i$ y $j$, de la suma entre el mínimo costo desde $i$ hasta $c$ y el mínimo costo desde $c$ hasta $j$.
+\label{maderaFormRec1}
+\item Escribir matemáticamente una formulación recursiva basada en \ref{maderaFormRec1}. Explicar su semántica e indicar cuáles serían los parámetros para resolver el problema.
+\item Diseñar un algoritmo de PD y dar su complejidad temporal y espacial auxiliar. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\label{maderaComplejidad1}
+\item Supongamos que se ordenan los elementos de $C$ en un vector $cortes$ y se agrega un $0$ al principio y un $\ell$ al final. Luego, se considera que el mínimo costo para cortar desde el $i$-ésimo punto de corte en $cortes$ hasta el $j$-ésimo punto de corte será el resultado buscado si $i = 1$ y $j = |C| + 2$.
+\label{maderaFormRec2}
+\begin{enumerate}[label=$\roman*)$,ref=$\roman*)$]
+\item Escribir una formulación recursiva con dos parámetros que esté basada en \ref{maderaFormRec2} y explicar su semántica.
+\item Diseñar un algoritmo de PD, dar su complejidad temporal y espacial auxiliar y compararlas con aquellas de \ref{maderaComplejidad1}. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\end{enumerate}
+\end{enumerate}
+
+\item Hay un terreno, que podemos pensarlo como una grilla de $m$ filas y $n$ columnas, con trampas y pociones. Queremos llegar de la esquina superior izquierda hasta la inferior derecha, y desde cada casilla sólo podemos movernos a la casilla de la derecha o a la de abajo. Cada casilla $i$,$j$ tiene un número entero $A_{i,j}$ que nos modificará el nivel de vida sumándonos el número $A_{i,j}$ (si es negativo, nos va a restar $|A_{i,j}|$ de vida). Queremos saber el mínimo nivel de vida con el que debemos comenzar tal que haya un camino posible de modo que en todo momento nuestro nivel de vida sea al menos 1. Por ejemplo, si tenemos la grilla
+\[ A = \begin{bmatrix}
+-2 & -3 & 3 \\
+-5 & -10 & 1 \\
+10 & 30 & -5
+\end{bmatrix} \]
+\par{el mínimo nivel de vida con el que podemos comenzar es 7 porque podemos realizar el camino que va todo a la derecha y todo abajo.}
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Pensar la idea de un algoritmo de \textit{backtracking} (no hace falta escribirlo).
+\item Convencerse de que, excepto que estemos en los límites del terreno, la mínima vida necesaria al llegar a la posición $i, j$ es el resultado de restar al mínimo entre la mínima vida necesaria en $i+1, j$ y aquella en $i, j+1$, el valor $A_{i,j}$, salvo que eso fuera menor o igual que 0, en cuyo caso sería 1.
+\label{terrenoFormRec}
+\item Escribir una formulación recursiva basada en \ref{terrenoFormRec}. Explicar su semántica e indicar cuáles serían los parámetros para resolver el problema.
+\item Diseñar un algoritmo de PD y dar su complejidad temporal y espacial auxiliar. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\item Dar un algoritmo \textit{bottom-up} cuya complejidad temporal sea $\mathcal{O}(m \cdot n)$ y la espacial auxiliar sea $\mathcal{O}(\min(m, n))$.
+\end{enumerate}
+
+\item Tenemos cajas numeradas de $1$ a $N$, todas de iguales dimensiones. Queremos encontrar la máxima cantidad de cajas que pueden apilarse en una única pila cumpliendo que:
+\begin{itemize}
+\item sólo puede haber una caja apoyada directamente sobre otra;
+\item las cajas de la pila deben estar ordenadas crecientemente por número, de abajo para arriba;
+\item cada caja $i$ tiene un peso $w_i$ y un soporte $s_i$, y el peso total de las cajas que están arriba de otra no debe exceder el soporte de esa otra.
+\end{itemize}
+\par{Si tenemos los pesos $w = [19, 7, 5, 6, 1]$ y los soportes $s = [15, 13, 7, 8, 2]$ (la caja 1 tiene peso 19 y soporte 15, la caja 2 tiene peso 7 y soporte 13, etc.), entonces la respuesta es 4. Por ejemplo, pueden apilarse de la forma 1-2-3-5 o 1-2-4-5 (donde la izquierda es más abajo), entre otras opciones.}
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Pensar la idea de un algoritmo de \textit{backtracking} (no hace falta escribirlo).
+\item Escribir una formulación recursiva que sea la base de un algoritmo de PD. Explicar su semántica e indicar cuáles serían los parámetros para resolver el problema.
+\item Diseñar un algoritmo de PD y dar su complejidad temporal y espacial auxiliar. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\item (Opcional) Formalizar el problema y demostrar que la función recursiva es correcta.
+\end{enumerate}
+
+\item Sea $v=(v_1, v_2, \ldots v_n)$ un vector de n\'umeros naturales, y sea $w \in \mathbb{N}$.
+Se desea intercalar entre los elementos de $v$ las operaciones $+$ (suma), $\times$ (multiplicaci\'on) y $\uparrow$ (potenciaci\'on) de tal manera que al evaluar la expresi\'on obtenida el resultado sea $w$.
+Para evaluar la expresi\'on se opera de izquierda a derecha ignorando la precedencia de los operadores.
+Por ejemplo, si $v=(3, 1, 5, 2, 1)$, y las operaciones elegidas son $+$, $\times$, $\uparrow$ y $\times$ (en ese orden), la expresi\'on obtenida es $3 + 1 \times 5 \uparrow 2 \times 1$, que se evalúa como $(((3 + 1) \times 5) \uparrow 2) \times 1 = 400$.
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Escribir una formulación recursiva que sea la base de un algoritmo de PD que, dados $v$ y $w$, encuentre una secuencia de operaciones como la deseada, en caso de que tal secuencia exista. Explicar su semántica e indicar cuáles serían los parámetros para resolver el problema.
+\label{operacionesFormRec}
+\item Dise\~nar un algoritmo basado en PD con la formulación de \ref{operacionesFormRec} y dar su complejidad temporal y espacial auxiliar. Comparar cómo resultaría un enfoque \textit{top-down} con uno \textit{bottom-up}.
+\item (Opcional) Formalizar el problema y demostrar que la función recursiva es correcta.
+\end{enumerate}
+
+\item Se arrojan simultáneamente $n$ dados, cada uno con $k$ caras numeradas de $1$ a $k$. Queremos calcular todas las maneras posibles de conseguir la suma total $s \in \mathbb{N}$ con una sola tirada. Tomamos dos variantes de este problema.
+
+\begin{enumerate}[label=$(\Alph*)$,ref=$(\Alph*)$]
+\item Consideramos que los dados son \textbf{distinguibles}, es decir que si $n = 3$ y $k = 4$, entonces existen $10$ posibilidades que suman $s = 6$:
+\begin{enumerate}
+\item $4$ posibilidades en las que el primer dado vale $1$
+\item $3$ posibilidades en las que el primer dado vale $2$
+\item $2$ posibilidades en las que el primer dado vale $3$
+\item Una posibilidad en la que el primer dado vale $4$
+\end{enumerate}\label{ejdados:distinguibles}
+\item Consideramos que los dados son \textbf{indistinguibles}, es decir que si $n = 3$ y $k = 4$, entonces existen $3$ posibilidades que suman $s = 6$:
+\begin{enumerate}
+\item Un dado vale $4$, los otros dos valen $1$
+\item Un dado vale $3$, otro $2$ y otro $1$
+\item Todos los dados valen $2$
+\end{enumerate}\label{ejdados:indistinguibles}
+\end{enumerate}
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Definir en forma recursiva la función $f \colon \mathbb{N}^2 \to \mathbb{N}$ tal que $f(n, s)$ devuelve la respuesta para el escenario~\ref{ejdados:distinguibles} (fijado $k$).
+  \item Definir en forma recursiva la función $g \colon \mathbb{N}^3 \to \mathbb{N}$ tal que $f(n, s, k)$ devuelve la respuesta para el escenario~\ref{ejdados:indistinguibles}.
+  \item Demostrar que $f$ y $g$ poseen la propiedad de superposición de subproblemas.
+  \item Definir algoritmos \textit{top-down} para calcular $f(n, s)$ y $g(n, s, k)$ indicando claramente las estructuras de datos utilizadas y la complejidad resultante.
+  \item Escribir el (pseudo-)código de los algoritmos top-down resultantes.
+\end{enumerate}
+ \textbf{Nota:} Una solución correcta de este ejercicio debería indicar cómo se computa tanto $f(n,s)$ como $g(n,s,k)$ en tiempo $O(nk\min\{s, nk\})$.
+
+\end{enumerate}
+
+\subsection*{Golosos ($\equiv$ avariciosos $\equiv$ \textit{greedy})}
+
+\begin{enumerate}[resume*]
+\item Tenemos dos conjuntos de personas y para cada persona sabemos su habilidad de baile. Queremos armar la máxima cantidad de parejas de baile, sabiendo que para cada pareja debemos elegir exactamente una persona de cada conjunto de modo que la diferencia de habilidad sea menor o igual a 1 (en módulo). Además, cada persona puede pertenecer a lo sumo a una pareja de baile.  Por ejemplo, si tenemos un multiconjunto con habilidades $\{ 1, 2, 4, 6 \}$ y otro con $\{ 1, 5, 5, 7, 9 \}$, la máxima cantidad de parejas es 3. Si los multiconjuntos de habilidades son $\{ 1, 1, 1, 1, 1 \}$ y $\{ 1, 2, 3 \}$, la máxima cantidad es 2.
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+\item Considerando que ambos multiconjuntos de habilidades estan ordenados en forma creciente, observar que la solución se puede obtener recorriendo los multiconjuntos en orden para realizar los emparejamientos.
+\label{baileIdea}
+\item Diseñar un algoritmo goloso basado en \ref{baileIdea} que recorra una única vez cada multiconjunto. Explicitar la complejidad temporal y espacial auxiliar.
+\label{baileAlgo}
+\item Demostrar que el algoritmo dado en \ref{baileAlgo} es correcto.
+\end{enumerate}
+
+\item Dado un conjunto $X$ con $|X| = n$ y un entero $k\leq n$ queremos encontrar el máximo valor que pueden sumar los elementos de un subconjunto $S$ de $X$ de tamaño $k$. Más formalmente, queremos calcular $\max\limits_{S \subseteq X, |S| = k} \sum_{s \in S} s$.
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+    \item Proponer un algoritmo \textit{greedy} que resuelva el problema, demostrando su correctitud. Extender el algoritmo para que también devuelva uno de los subconjuntos $S$ que maximiza la suma.\label{sumaIdea}
+    \item Dar una implementación del algoritmo del inciso \ref{sumaIdea} con complejidad temporal $O(n\log n)$.
+
+    \item Dar una implementación del algoritmo del inciso \ref{sumaIdea} con complejidad temporal $O(n \log k)$.
+\end{enumerate}
+
+\item Queremos encontrar la suma de los elementos de un multiconjunto de números naturales. Cada suma se realiza exactamente entre dos números $x$ e $y$ y tiene costo $x + y$.
+\par{Por ejemplo, si queremos encontrar la suma de $\{ 1, 2, 5 \}$ tenemos 3 opciones:}
+\begin{itemize}
+\item 1 + 2 (con costo 3) y luego 3 + 5 (con costo 8), resultando en un costo total de 11;
+\item 1 + 5 (con costo 6) y luego 6 + 2 (con costo 8), resultando en un costo total de 14;
+\item 2 + 5 (con costo 7) y luego 7 + 1 (con costo 8), resultando en un costo total de 15.
+\end{itemize}
+\par{Queremos encontrar la forma de sumar que tenga costo mínimo, por lo que en nuestro ejemplo la mejor forma sería la primera.}
+
+\begin{enumerate}
+ \item Explicitar una estrategia golosa para resolver el problema.
+ \item Demostrar que la estrategia propuesta resuelve el problema.
+ \item Implementar esta estrategia en un algoritmo iterativo.  \textbf{Nota:} el mejor algoritmo simple que conocemos tiene complejidad $\mathcal{O}(n\log n)$ y utiliza una estructura de datos que implementa una secuencia ordenada.
+\end{enumerate}
+
+\item Tomás quiere viajar de Buenos Aires a Mar del Plata en su flamante Renault 12. Como está preocupado por la autonomía de su vehículo, se tomó el tiempo de anotar las distintas estaciones de servicio que se encuentran en el camino. Modeló el mismo como un segmento de $0$ a $M$, donde Buenos aires está en el kilómetro 0, Mar del Plata en el $M$, y las distintas estaciones de servicio están ubicadas en los kilómetros $0 = x_1 \leq x_2 \leq \ldots x_n \leq M$.
+
+Razonablemente, Tomás quiere minimizar la cantidad de paradas para cargar nafta. Él sabe que su auto es capaz de hacer hasta $C$ kilómetros con el tanque lleno, y que al comenzar el viaje este está vacío.
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+    
+    \item Proponer un algoritmo \textit{greedy} que indique cuál es la cantidad mínima de paradas para cargar nafta que debe hacer Tomás, y que aparte devuelva el conjunto de estaciones en las que hay que detenerse. Probar su correctitud.\label{tomasIdea}
+
+    \item Dar una implementación de complejidad temporal $O(n)$ del algoritmo del inciso \ref{tomasIdea}.
+\end{enumerate}
+
+\item En medio de una pandemia, la Escuela de Aulas Grandes y Ventiladas quiere implementar un protocolo especial de distanciamiento social que tenga en cuenta que la escuela no tienen restricciones de espacio.  El objetivo es separar a cada curso en dos subcursos a fin de reducir la cantidad de pares de estudiantes que sean muy cercanos, dado que se estima que estos estudiantes tienen dificultades para respetar tan buscado distanciamiento.  Para este fin, en el protocolo se estableció que cada curso que tenga $c$ parejas de estudiantes cercanos tiene que dividirse en dos subcursos, cada uno de los cuales puede tener a lo sumo $c/2$ parejas de estudiantes cercanos.  Notar que no importa si un subcurso queda con más estudiantes que otro.
+
+Formalmente, para cada curso contamos con un conjunto de estudiantes $E$ y su conjunto $C$ de pares de estudiantes cercanos.  Luego, una partición $(A,B)$ de $E$ es una \emph{solución factible para $(E, C)$} cuando $|(A\times A) \cap C| \leq |C|/2$ y $|(B \times B) \cap C| \leq |C/2|$.  Por ejemplo, si $E = \{1, 2, 3, 4\}$ y $C = \{1\text{-}2, 2\text{-}3, 3\text{-}4\}$, entonces $(\{1,3,4\}, \{2\})$ y $(\{2,4\}, \{1,3\})$ son soluciones factibles.
+
+\begin{enumerate}[label=$\alph*)$, ref=$\alph*)$]
+ \item Especificar el problema descrito definiendo cuál es la instancia (i.e. cuáles son los datos de entrada y qué condiciones satisfacen) y cuál es el resultado esperado (i.e., cuáles son los datos de salida y qué condiciones satisfacen).\label{ej:aulas-grandes:entrada}
+ \item Demostrar que para toda instancia existe un resultado esperado que satisface las condiciones definidas por el protocolo.  \textbf{Ayuda:} hacer inducción en la cantidad de estudiantes.  Para el paso inductivo, considerar que si les estudiantes se asignan iterativamente a los subcursos, entonces conviene enviar a cada estudiante al subcurso que tenga la menor cantidad de estudiantes cercanos a elle.
+ \item A partir de la demostración del inciso anterior, diseñar un algoritmo que encuentre una solución factible en tiempo lineal en función del tamaño de la entrada definido en el inciso~\ref{ej:aulas-grandes:entrada}.
+\end{enumerate}
+
+\item Se define la función $mex: \mathcal{P}(\mathds{N}) \to \mathds{N}$ como
+
+$$
+mex(X) = \min\{j : j\in \mathds{N} \wedge j \notin X\}
+$$
+
+Intuitivamente, $mex$ devuelve, dado un conjunto $X$, el menor número natural que no está en $x$. Por ejemplo, $mex(\{0,1,2\}) = 3$, $mex(\{0, 1, 3\}) = 2$ y $mex(\{1,2,3, \ldots\}) = 0$.
+
+Dado un vector de número $a_1 \ldots a_n$ queremos encontrar la permutación $b_1 \ldots b_n$ de los mismos que maximize
+
+$$
+\sum_{i=1}^n mex(\{b_1 \ldots b_i\})
+$$
+
+Por ejemplo, si el vector es $\{3, 0, 1\}$ podemos ver que la mejor permutación es $\{0, 1, 3\}$, que alcanza un valor de
+
+$$
+mex(\{0\}) + mex(\{0, 1\}) + mex(\{0,1,3\}) = 1+2+2 = 5
+$$
+
+\begin{enumerate}
+    \item Proponer un algoritmo \textit{greedy} que resuelva el problema y demostrar su correctitud. \textbf{Ayuda}: ¿Cuál el máximo valor que puede tomar $mex(X)$ si $X$ tiene $n$ elementos? Si $X \subseteq Y$, ¿Qué pasa con los valores $mex(X)$ y $mex(Y)$?
+
+    \item Dar una implementación del algoritmo del inciso anterior con complejidad temporal $O(n)$.
+\end{enumerate}
+
+\item Como los accesos a memoria RAM son lentos en comparación al trabajo propio del CPU, es común que se coloquen memorias intermedias más diminutas y de alta velocidad entre ambas unidades, las cuales llamamos \textit{cachés}. Cuando un programa se ejecuta y hace una consulta a la memoria por cierta posición $r$ primero se verifica si la posición $r$ está cargada en la caché, en cuyo caso el CPU la puede obtener sin tener que hacer el acceso a la RAM. Cuando esto ocurre, decimos que ocurre un \textit{caché hit}. En cambio, si la posición $r$ no está en la caché, esta se busca a memoria, se carga en la caché, y luego se la informa al CPU. A este evento se lo conoce como \textit{caché miss}.
+
+Como la caché es más chica que la memoria RAM es inevitable que eventualmente ocurra un \textit{caché miss} y que la caché este llena. En ese caso, la caché debe decidir qué información va a desechar para darle lugar a la nueva entrada. Naturalmente, se busca minimizar la cantidad de \textit{misses} de los siguientes accesos.
+
+El problema de \textit{Off-line} caching consiste en determinar, dada una caché $C$ de tamaño $k$ y una lista de $n$ requests $R = \{r_1, r_2, \ldots, r_n\}$\footnote{Sin pérdida de generalidad respecto al problema, podemos asumir que $1 \leq r_i \leq n$ para todo $i$.} a posiciones de memoria, qué decisión debe tomar en cada paso la caché para minimizar la cantidad de \textit{misses}. Por ejemplo, si $k=2$ y $R=\{1,2,3,1\}$ entonces:
+
+\begin{itemize}
+    \item La primera consulta es un \textit{miss}, pero como hay lugar en la caché (empieza vacía) se carga la posición 1 a $C$ ($C= \{1\}$).
+    \item Con la segunda consulta pasa lo mismo, por lo que la caché queda en el estado $C= \{1, 2\}$.
+    \item En la tercera consulta la caché esta llena, por lo que se debe desechar alguna entrada. Notemos que si se desecha $1$ entonces la cuarta consulta dará otro \textit{miss}, mientras que si se desecha $2$ entonces habrá un \textit{hit}.
+\end{itemize}
+
+Una política posible para decidir qué elemento desachar es la \textit{furthest-in-future}: se desecha aquella posición $r$ cuyo siguiente acceso es el más lejano (o bien, que no tiene un siguiente acceso). 
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+    \item \textbf{Opcional}: Definir una función recursiva $f(i, mem)$ que tome un índice y un estado de la memoria y devuelva la mínima cantidad de \textit{caché misses} que deben ocurrir para procesar todas las consultas $\{r_i, r_{i+1}, \ldots, r_n\}$ si el estado actual de la memoria es $mem$ ¿Con qué llamado se resuelve el problema? Estudiar la superposición de subproblemas y explicar en qué casos vale la pena memorizar.
+    
+    \item Probar que la política \textit{furthest-in-future} es óptima (es decir, que minimiza la cantidad de \textit{misses}). \textbf{Ayuda}: Dada una serie de decisiones, probar que si en un paso no se sigue la política \textit{furthest} entonces podemos alterar ese paso para que sí la siga sin afectar la cantidad de \textit{misses}. 
+    \item Dar un algoritmo con complejidad temporal $O(n \log (k))$ que informe qué decisión debe tomar la caché en cada paso para minimizar la cantidad de \textit{misses}.
+\end{enumerate}
+
+\end{enumerate}
+
+\subsection*{Ejercicios integradores}
+
+\begin{enumerate}[resume*]
+
+\item\label{ej:ind set} El problema de la fiesta consiste en determinar un conjunto de invitados que no tengan conflictos entre sí y que sea de cardinalidad máxima.  Formalmente, dado un conjunto $V$ de posibles invitados y un conjunto $E$ de conflictos, formados por pares no ordenados de $V$, queremos encontrar un subconjunto $S \subseteq V$ de cardinalidad máxima entre aquellos que cumplen que $\{v,w\} \not\in E$ para todo par $v,w \in S$. Por ejemplo, si $S = \{1,2,3,4,5\}$ y $E = \{ \{1,2\}, \{2, 3\}, \{3, 4\}, \{4,5\} \}$, entonces una solución es $S = \{1,3,5\}$, ya que no se puede invitar a ningún conjunto de $4$ personas.  Vamos a suponer que los posibles invitados se representan con el conjunto $V = \{1, \ldots, n\}$ para algún $n \geq 0$ (el caso $n=0$ es válido y representa el conjunto $V = \emptyset$).
+\label{ejercicioFiesta}
+
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Decimos que $S \subseteq \mathbb{N}$ y $W \subseteq \mathbb{N}$ son \emph{compatibles} cuando $S \subseteq V$ es un conjunto posible de invitados y ningún elemento de $W \subseteq V \setminus S$ tiene un conflicto con algún elemento de $S$.  En el ejemplo anterior, $S = \{1\}$ y $W = \{4, 5\}$ son compatibles pero $S = \{1,4\}$ y $W = \{2\}$ no lo son.  Sea $\mathcal{V}$ el conjunto de subconjuntos de $V$.  Escribir una función recursiva $\Fiesta \colon \mathcal{V} \times \mathcal{V} \to \mathcal{V}$ tal que, dados $S$ y $W$ compatibles, $\Fiesta(S, W)$ retorne un conjunto de invitados de máxima cardinalidad que contenga a $S$.  (Notar que la llamada recursiva debe garantizar la compatibilidad).  \textbf{Ayuda:} considerar dos posibilidades: no invitar a $w \in W$, o invitar a $w \in W$ y no invitar a nadie que tenga un conflicto con $w$.
+  \label{fiestaFormRec}
+
+  \item En base a \ref{fiestaFormRec}, implementar un algoritmo recursivo de \emph{backtracking} para resolver el problema de la fiesta basado en las siguientes ideas:
+  \begin{itemize}
+   \item cada solución parcial es un conjunto $S \subseteq V$ que no contiene invitados con conflictos.
+   \item a cada nodo del árbol de \textit{backtracking} se le asocia un conjunto $W \subseteq V$ compatible con $S$ de posibles invitados.
+   \item para la extensión, se consideran dos posibilidades: o bien no se invita a $w \in W$ o bien se invita a $w$ y se eliminan de $W$ todos los otros elementos que estén en conflicto con $w$.
+  \end{itemize}
+  \label{fiestaAlgo1}
+  \item Escribir los tres primeros niveles del árbol de \textit{backtracking} resultante de la implementación anterior.
+  \item Describir una regla de optimalidad para poder podar el árbol e incluirla en la implementación de \ref{fiestaAlgo1}.
+  \item\label{ej:ind set:dp} ¿Se le ocurre una forma de escribir una función recursiva $\FiestaPD(V, S, i)$ que, en analogía con el inciso~\ref{ej:subset sum dp:recursion} del Ejercicio~\ref{ej:subset sum dp}, determine el conjunto de invitados óptimo que incluya a $S \subseteq \{1, \ldots, i-1\}$ y que se obtenga agregando sólo invitados de $\{i, \ldots, n\}$? ¿Cuál es el problema?  ¿Se le ocurre alguna manera de escapar a este problema?
+  \item Considerando la función $\Fiesta$ (definida en \ref{fiestaFormRec}) y el inciso anterior, observar que la cantidad posible de instancias es $\Omega(2^n)$.  Concluir que la función $\Fiesta$ no tiene la propiedad de superposición de subproblemas para el caso general del problema de la fiesta.
+ \end{enumerate}
+
+\item  Dado un conjunto de actividades $\mathcal{A} = \{A_1, \ldots, A_n\}$, el problema de selección de actividades consiste en encontrar un subconjunto de actividades $\mathcal{S}$ de cardinalidad máxima, tal que ningún par de actividades de $\mathcal{S}$ se solapen en el tiempo.  Cada actividad $A_i$ se realiza en algún intervalo de tiempo $(s_i, t_i)$, siendo $s_i \in \mathbb{N}$ su momento inicial y $t_i \in \mathbb{N}$ su momento final.  Suponemos que $1 \leq s_i < t_i \leq 2n$ para todo $1 \leq i \leq n$.
+
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Considerar la siguiente analogía con el problema de la fiesta: cada posible actividad es un invitado y dos actividades pueden ``invitarse'' a la fiesta cuando no se solapan en el tiempo.  A partir de esta analogía, proponga un algoritmo de \textit{backtracking} para resolver el problema de selección de actividades.  ¿Cuál es la complejidad del algoritmo?
+
+  \item Supongamos que $\mathcal{A}$ está ordenado por orden de comienzo de la actividad, i.e., $s_i \leq s_{i+1}$ para todo $1 \leq i < n$.  Escribir una función recursiva $\ActividadesPD(\mathcal{A}, \mathcal{S}, i)$ que encuentre el conjunto máximo de actividades seleccionables que contenga a $\mathcal{S} \subseteq \{A_1, \ldots, A_{i-1}\}$ y que se obtenga agregando únicamente actividades de $\{A_i, \ldots, A_{n}\}$.  \textbf{Para reflexionar:} ¿por qué se puede definir $\ActividadesPD$ en este caso y no en el inciso~\ref{ej:ind set:dp} del Ejercicio~\ref{ej:ind set}?
+  \label{actividadesFormRec}
+
+  \item Implementar un algoritmo de programación dinámica para el problema de selección de actividades que se base en la función del inciso \ref{actividadesFormRec}. ¿Cuál es su complejidad temporal y cuál es el espacio extra requerido?
+
+ \item Considerar la siguiente estrategia golosa para resolver el problema de selección de actividades: elegir la actividad cuyo momento final sea lo más temprano posible, de entre todas las actividades que no se solapen con las actividades ya elegidas.  Demostrar que un algoritmo goloso que implementa la estrategia anterior es correcto. \textbf{Ayuda:} demostrar por inducción que la solución parcial $B_1, \ldots, B_i$ que brinda el algoritmo goloso en el paso $i$ se puede extender a una solución óptima.  Para ello, suponga en el paso inductivo que $B_1, \ldots, B_i, B_{i+1}$ es la solución golosa y que $B_1, \ldots, B_i, C_{i+1}, \ldots, C_{j}$ es la extensión óptima que existe por inducción y muestre que $B_1, \ldots, B_{i+1}, C_{i+2}, \ldots, C_j$ es una extensión óptima de $B_1, \ldots, B_{i+1}$.
+
+  \item Mostrar una implementación del algoritmo cuya complejidad temporal sea $\mathcal{O}(n)$.
+ \end{enumerate}
+
+\end{enumerate}
+
+
+
+
+\begin{enumerate}[$1)$]
+ \item La cantidad de combustible consumida por un avión en un viaje dado depende en gran parte de la resistencia que ofrece el aire a la aeronave durante el trayecto. Por ello, es de interés calcular la ruta que incurra en la menor resistencia posible. En este ejemplo simplificado, un avión debe realizar un viaje de $N$ minutos entre dos ciudades. Si bien el curso está prefijado, el avión puede variar la altitud a la que viaja dentro de $H$ bandas posibles numeradas de $0$ a $H-1$. Se tiene un estimativo de la resistencia que provocará viajar durante el minuto $n$ en la banda de altitud $h$, que por simplicidad podemos suponer que tenemos en forma de una tabla $R$ donde $R[i,j]$ es un valor natural que representa la resistencia al aire esperada en el minuto $i$ de vuelo si se está en la banda de altitud $j$. Para moverse entre dos bandas de altitud, el avión debe pasar por todas las bandas intermedias. Pasar de una banda de altitud a una adyacente (da igual si es subiendo o bajando) requiere realizar una maniobra que dura 3 minutos, cuya resistencia se estima como la del minuto de salida en la banda de salida más el máximo entre las resistencias en ambas bandas durante los dos minutos siguientes, es decir, si se realiza la maniobra entre la banda $X$ y la banda $X+1$  desde el minuto 1 al minuto 4, la resistencia al aire será la del minuto 1 en la banda $X$ más el máximo entre la resistencia en la banda $X$ y en la banda $X+1$ en el minuto 2 más el máximo de la resistencia entre la banda $X$ y la banda $X+1$ en el minuto 3. Por ejemplo, para un viaje de 10 minutos con la siguiente tabla de resistencias $R$,
+
+ \begin{center}
+     \centering
+     \newcommand{\myline}{\cline{3-12}}
+     \newcommand{\noline}[1]{\multicolumn{1}{c}{#1}}
+     \begin{tabular}{c c|c|c|c|c|c|c|c|c|c|c|}
+         \noline{} & \noline{} & \multicolumn{10}{c}{minuto} \\
+         \noline{} & \noline{} & \noline{0} & \noline{1} & \noline{2} & \noline{3} & \noline{4} & \noline{5} & \noline{6} & \noline{7} & \noline{8} & \noline{9}\\
+         \myline
+               & $2$ & $7$ & $7$ & $7$ & $6$ & $6$ & $7$ & $6$ & $6$ & $7$ & $6$\\
+         \myline
+         banda & $1$ & $6$ & $5$ & $4$ & $3$ & $4$ & $3$ & $4$ & $4$ & $4$ & $4$ \\
+         \myline
+               & $0$ & $3$ & $5$ & $5$ & $5$ & $5$ & $5$ & $5$ & $3$ & $2$ & $2$ \\
+         \myline
+     \end{tabular}
+ \end{center}
+
+ podemos considerar la resistencia del camino que se encuentra saliendo de la banda $0$ y subiendo en el minuto $0$, luego pasando los minutos $3$ y $4$ en la banda $1$, volviendo a bajar a la banda $0$ en el minuto $5$ y permaneciendo allí. En ese caso, la resistencia total es
+ \begin{equation*}
+ 13 + 3 + 4 + 12 + 2 + 2 = 36
+ \end{equation*}
+
+ Donde el término de valor $13$ se calcula como $R[0,0]+\max\{R[1,0],R[1,1]\}+\max\{R[2,0],R[2,1]\}$ y el $12$ como $R[5,1]+\max\{R[6,0],R[6,1]\}+\max\{R[7,0],R[7,1]\}$.
+
+ Se desea conocer cuál es la mínima resistencia total posible para el vuelo programado, conociendo que al inicio del viaje y al final se debe estar en la banda de altura $0$. En el ejemplo mostrado, el camino presentado es óptimo.
+
+ \begin{enumerate}[$a)$]
+  \item Definir en forma recursiva la función $f_R \colon \nat \times \nat \to \nat$ tal que $f_R(n,h)$ representa la mínima resistencia de aire total estimada que puede afrontar un avión desde el minuto $0$ hasta el minuto $n$ del vuelo proyectado, si al minuto $0$ estaba en la banda de altitud $0$ y en el momento $n$ se encuentra en la banda $h$. Indicar qué llamado(s) hay que hacer a esta función para resolver el problema. \textbf{Importante:} acompañen a la definición recursiva con una explicación en castellano.
+
+  \item Argumentar en qué casos $f_R$ posee la propiedad de superposición de subproblemas.
+
+  \item Definir un algoritmo \textit{top-down} para calcular $f_R(n,h)$ indicando claramente las estructuras de datos utilizadas y la complejidad resultante. Escribir el (pseudo-)código del algoritmo. ¿Es la complejidad obtenida polinomial?
+
+  \item Sin modificar el algoritmo anterior, pero suponiendo que ya fue ejecutado, explicar cómo determinar las bandas de alturas en las que debe viajar el avión para alcanzar la resistencia mínima calculada.
+ \end{enumerate}
+
+ \textbf{Criterio de aprobación:} La función descripta en el inciso a) debe ser correcta y estar adecuadamente justificada, y la complejidad temporal del algoritmo resultante para computar $f_R(n,h)$ en el inciso c) debe ser $O(N H)$ (y también estar justificada).
+
+
+\begin{enumerate}[$1)$]
+
+ \item (No se incluye un ejercicio de programación dinámica - Todas las personas que rinden este recuperatorio tienen el tema aprobado)
+
+ \item En un nuevo episodio de la la Guerra contra los Anuros, Francisco continúa sus preparativos para la red de computadoras $S$ de la facultad ante un posible sabotaje. La red, formada por un conjunto $C$ de cables bidireccionales, incluye una \emph{computadora central} $s_c \in S$ que provee internet a las demás. Sabemos que la red está dispuesta de tal forma que actualmente toda computadora de $S$ tiene conexión a internet, es decir, puede conectarse a $s_c$ por medio de una secuencia de cables. En $S$ también está la computadora $s_f$ de Francisco, además de un conjunto de computadoras $A \subseteq S$ que pertenecen a sus amigos. Los \emph{Anuros}, es decir, los anfibios que habitan Ciudad Universitaria, piensan cortar exactamente un cable de $C$, desconocemos cuál.
+
+ \begin{enumerate}[$a)$]
+     \item Los mejores amigos de Francisco son Aldo, Betty y Diana, cuyas computadoras son $s_a$, $s_b$ y $s_d$ respectivamente. Francisco está preocupado que luego del corte del cable \emph{alguno} de ellos se quede sin conexión a Internet (Francisco está pensando sólo en sus amistades y no le importa si él mismo se puede quedar sin conexión, sólo la posibilidad que alguien de sus 3 amigos lo haga). Dar un algoritmo de complejidad $O(|C|)$ que determine si es posible que por medio del corte de un cable se pueda dejar sin conexión a internet a alguno (o a más de uno) de $s_a$, $s_b$ o $s_d$. Justificar su correctitud y complejidad.
+\end{enumerate}
+
+Los Anuros, al saber de la planificación que está haciendo Francisco para reducir el impacto del sabotaje han decidido que en efecto cortarán el cable que maximice la cantidad de amigos de Francisco (es decir, computadoras en $A$) que se queden sin conexión a Internet.
+
+
+\begin{enumerate}[$1)$]
+ \item 
+
+ \textit{"Porque yo soy tu turrito\\
+Y yo sé que quieres ser mi turrita\\
+Eres justito lo que necesito\\
+Yo no andaba buscando una angelita y tú eres una diablita\\
+Que se está portando mal, serás castigada..."\\}
+
+    En el contexto de un proyecto de vinculación entre la academia y la industria (de la música en este caso) somos responsables de idear el nuevo hit de la música urbana. Para esto nos van a dar una lista $A_1,...,A_n$ de palabras que vamos a usar en ese orden. Nuestro trabajo es decidir cómo se particiona la lista de palabras en versos (un verso es un intervalo de palabras consecutivas). En el género evidentemente no tiene mucha importancia lo que las palabras dicen, así que no es necesario tener en cuenta dónde empiezan/terminan las frases/oraciones para separar. Sí es (muy) importante que rime y limitar la cantidad de palabras por verso. Hay dos restricciones:
+
+    \begin{itemize}
+        \item Vamos a usar rima pareada. Es decir, la última palabra del primer verso debe rimar con la última del segundo, la del tercer verso con la del cuarto, y así. La cantidad de versos debe ser par.
+        \item Nuestro cantante tiene talento $c$: es capaz de cantar hasta $c$ palabras por verso. Por ende, la cantidad de palabras por verso deberá ser mayor a 0 y a lo sumo $c$.\footnote{El valor $c$ es parte del input, no una constante.}
+    \end{itemize}
+
+    Para hacer que rimen dos palabras que en principio no riman podemos utilizar un ``recurso'' que consiste en agregarle la terminación ``-ito''/``-ita'' a una o ambas palabras. Sin embargo, no podemos abusar de esto, porque le produce \emph{cringe} al público. Definimos el \emph{cringe} de la separación en versos como la cantidad de veces que se utiliza el ``recurso''. 
+    
+    Queremos calcular el mínimo \emph{cringe} que puede lograr una canción generada a partir de la lista de palabras $A_1, \ldots, A_n$ teniendo en cuenta que la va a cantar un cantante de talento $c$.
+
+    Pueden asumir que tienen programada una función \textit{se\_puede\_armar\_rima} que dados dos índices $i,j$ tales que $1 \leq i < j \leq n$ y el valor $c$ decide si el intervalo cerrado $A_i,...,A_j$ se puede separar en dos versos válidos que rimen sin modificar palabras. La complejidad de esta función es lineal en el tamaño del intervalo.
+  
+
+\begin{enumerate}[$1)$]
+  \item
+  Nuevamente tenemos que idear un hit de la música urbana. Nuevamente nos van a dar una lista ordenada de $n$ palabras que debemos usar en ese orden, y las vamos a particionar en versos\footnote{Los versos son un intervalo de palabras consecutivas y todas las palabras deben pertenecer a un único verso}. Nuevamente queremos minimizar el \emph{cringe} de la canción resultante, que va a ser la sumatoria del \emph{cringe} de los versos. Esta vez el \emph{cringe} de cada verso va a ser una función que depende de cuántas palabras contenga el verso: llamamos $c_i$ al \emph{cringe} generado por un verso de $i$ palabras.
+
+  \textbf{Ejemplo:} si nos dan $n = 5$ palabras (\textit{el,recu,no,fue,fácil}) y tenemos los siguientes valores de \emph{cringe} por longitud de verso
+
+      \begin{center}
+        \begin{tabular}{|c c c c c|}
+            \hline
+          $c_1$ & $c_2$ & $c_3$ & $c_4$ & $c_5$ \\
+          \hline
+          2 & 3 & 2 & 6 & 12\\
+          \hline
+      \end{tabular}
+      \end{center}
+
+hacer que sea todo un único verso tiene un \emph{cringe} de $c_5 = 12$. Partir en 5 versos de una única palabra cada uno es sumar $c_1$ cinco veces por lo tanto el cringe total es $5*c_1=10$. Ninguna de estas opciones es óptima ya que el mínimo \emph{cringe} alcanzable es 5, y hay dos maneras de lograrlo:
+
+\begin{itemize}
+    \item \textit{el recu} \hspace{7mm} ($c_2$ = 3)\\ \textit{no fue fácil.} ($c_3$ = 2)
+    \item \textit{el recu no} \hspace{2mm}  ($c_3$ = 2) \\ \textit{fue fácil. } \hspace{2.5mm} ($c_2$ = 3)
+\end{itemize}
+
+\textbf{Input del problema:} la cantidad de palabras $n$ y valores enteros $c_1,...,c_n$ indicando el \emph{cringe} generado por cada longitud de verso.
+
+ \begin{enumerate}[$a)$]
+  \item Definir en forma recursiva la funcion $f \colon \mathbb{N} \to \mathbb{N}$ tal que $f(i)$ devuelve el mínimo valor de \emph{cringe} alcanzable para una lista de $i$ palabras. Indicar qué llamado(s) hay que hacer a esta función para resolver el problema. \textbf{Importantísimo:} acompañen a la definición recursiva con una explicación en castellano.
+
+  \item Demostrar que $f$ tiene la propiedad de superposición de subproblemas.
+
+  \item Definir un algoritmo \textit{top-down} para calcular $f(i)$ indicando claramente las estructuras de datos utilizadas y la complejidad resultante.
+
+  \item Escribir el (pseudo-)código del algoritmo top-down resultante.
+ \end{enumerate}
+%  \textbf{Aprobación:} definir y justificar correctamente $f$, indicando cómo se computa $f(i,v,k,uno)$ en tiempo $O(i\min\{v,i\}\min\{k,i\})$.
+ \textbf{Criterio de aprobación:} La función recursiva debe ser correcta y la complejidad temporal del algoritmo final basado en programación dinámica para computar $f(n)$ ser $O(n^2)$.
+ 
+

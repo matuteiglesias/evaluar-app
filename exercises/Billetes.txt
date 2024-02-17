@@ -1,0 +1,23 @@
+\item Tenemos un multiconjunto $B$ de valores de billetes y queremos comprar un producto de costo $c$ de una máquina que no da vuelto.  Para poder adquirir el producto debemos cubrir su costo usando un subconjunto de nuestros billetes. El objetivo es pagar con el mínimo exceso posible a fin de minimizar nuestra pérdida.  Más aún, queremos gastar el menor tiempo posible poniendo billetes en la máquina. Por lo tanto, entre las opciones de mínimo exceso posible, queremos una con la menor cantidad de billetes. Por ejemplo, si $c = 14$ y $B = \{2, 3, 5, 10, 20, 20\}$, la solución es pagar 15, con exceso $1$, insertando sólo dos billetes: uno de 10 y otro de 5.
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+ \item Considerar la siguiente estrategia por \textit{backtracking} para el problema, donde $B = \{b_1, \ldots, b_n\}$. Tenemos dos posibilidades: o agregamos el billete $b_n$, gastando un billete y quedando por pagar $c-b_n$, o no agregamos el billete $b_n$, gastando $0$ billetes y quedando por pagar $c$.  Escribir una función recursiva $\Vuelto(B, c)$ para resolver el problema, donde $\Vuelto(B, c) = (c', q)$ cuando el mínimo costo mayor o igual a $c$ que es posible pagar con los billetes de $B$ es $c'$ y la cantidad de billetes mínima es $q$.
+\label{billetesFormRec}
+
+ \item Implementar la función de \ref{billetesFormRec} en un lenguaje de programación imperativo utilizando una función recursiva con parámetros $B$, $i$, $j$ que compute $\Vuelto(\{b_1, \ldots, b_i\}, j)$.  ¿Cuál es la complejidad del algoritmo?
+ \label{billetesAlgoBT}
+
+ \item Reescribir $\Vuelto$ como una función recursiva $\VueltoPD_B(i, j) = \Vuelto(\{b_1, \ldots, b_i\}, j)$ que implemente la idea anterior \textbf{dejando fijo el parámetro $B$}.  A partir de esta función, determinar cuándo $\VueltoPD_B$ tiene la propiedad de \emph{superposición de subproblemas}.
+
+ \item Definir una estructura de memoización para $\VueltoPD_B$ que permita acceder a $\VueltoPD_B(i, j)$ en $\mathcal{O}(1)$ tiempo para todo $0 \leq i \leq n$ y $0 \leq j \leq k$.
+
+ \item Adaptar el algoritmo de \ref{billetesAlgoBT} para incluir la estructura de memoización.
+
+ \item Indicar cuál es la llamada recursiva que resuelve nuestro problema y cuál es la complejidad del nuevo algoritmo.
+
+ \item (Opcional) Escribir un algoritmo \emph{bottom-up} para calcular todos los valores de la estructura de memoización y discutir cómo se puede reducir la memoria extra consumida por el algoritmo.
+
+ \item (Opcional) Formalmente, en este problema de vuelto hay que computar el mínimo $(\sum V, |V|)$, en orden lexicográfico, de entre los conjuntos $V \subseteq B$ tales que $\sum V \geq c$.  Demostrar que la función $\VueltoPD$ es correcta.  \textbf{Ayuda:} demostrar por inducción que $\VueltoPD(i,j) = (v,k)$ para el mínimo $(v,k)$ tal que existe un subconjunto $V$ de $\{b_1, \ldots, b_i\}$ con $\sum_V \geq j$.
+
+\end{enumerate}
+
