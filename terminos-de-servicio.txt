@@ -1,0 +1,38 @@
+# Términos de Servicio de Nuestra Aplicación Web
+
+## Introducción
+
+Al acceder y utilizar nuestra aplicación web, usted acepta estar sujeto a estos Términos de Servicio, todas las leyes y regulaciones aplicables, y acepta que es responsable del cumplimiento de cualquier ley local aplicable. Si no está de acuerdo con alguno de estos términos, se le prohíbe usar o acceder a este sitio.
+
+## Uso de la Licencia
+
+Se otorga permiso para descargar temporalmente una copia de los materiales (información o software) en la aplicación web de teacher-app para visualización transitoria personal y no comercial únicamente. Esta es la concesión de una licencia, no una transferencia de título, y bajo esta licencia usted no puede:
+
+- modificar o copiar los materiales;
+- usar los materiales para cualquier propósito comercial, o para cualquier exhibición pública (comercial o no comercial);
+- intentar descompilar o revertir ingeniería cualquier software contenido en la aplicación web de teacher-app;
+- remover cualquier derecho de autor u otras notaciones de propiedad de los materiales; o
+- transferir los materiales a otra persona o 'espejar' los materiales en cualquier otro servidor.
+
+Esta licencia terminará automáticamente si usted viola alguna de estas restricciones y puede ser terminada por teacher-app en cualquier momento. Al terminar su visualización de estos materiales o al terminar esta licencia, usted debe destruir cualquier material descargado en su posesión, ya sea en formato electrónico o impreso.
+
+## Descargo de Responsabilidad
+
+Los materiales en la aplicación web de teacher-app se proporcionan 'tal cual'. teacher-app no ofrece garantías, expresadas o implícitas, y por este medio niega y niega todas las otras garantías, incluyendo sin limitación, garantías implícitas o condiciones de comerciabilidad, adecuación para un propósito particular, o no infracción de propiedad intelectual u otra violación de derechos.
+
+## Limitaciones
+
+En ningún caso teacher-app o sus proveedores serán responsables por cualquier daño (incluyendo, sin limitación, daños por pérdida de datos o beneficio, o debido a interrupción del negocio) que surja del uso o la incapacidad de usar los materiales en la aplicación web de teacher-app, incluso si teacher-app o un representante autorizado de teacher-app ha sido notificado oralmente o por escrito de la posibilidad de dicho daño.
+
+## Enlaces
+
+teacher-app no ha revisado todos los sitios vinculados a su aplicación web y no es responsable del contenido de ningún sitio vinculado. La inclusión de cualquier enlace no implica respaldo por parte de teacher-app del sitio. El uso de cualquier sitio web vinculado es a riesgo del usuario.
+
+## Modificaciones
+
+teacher-app puede revisar estos términos de servicio para su aplicación web en cualquier momento sin previo aviso. Al usar esta aplicación web, usted acepta estar sujeto a la versión actual de estos Términos de Servicio.
+
+## Contacto
+
+Si tiene alguna pregunta sobre estos Términos de Servicio, por favor, contáctenos a través de nuestra página de contacto en la aplicación.
+
