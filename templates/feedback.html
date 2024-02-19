@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Retroalimentación del Ejercicio</title>
+    <!-- Incluye Bootstrap para estilizar -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Retroalimentación del Ejercicio</h1>
+        <!-- Muestra la respuesta evaluada -->
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">Tu Retroalimentación</h4>
+            <p>{{ evaluated_response }}</p>
+            <hr>
+            <p class="mb-0">Revisa tu respuesta y continúa practicando para mejorar.</p>
+        </div>
+        <!-- Enlaces para regresar al ejercicio o a la página principal -->
+        <a href="/exercise/{{ exercise_id }}" class="btn btn-primary">Volver al Ejercicio</a>
+        <a href="/" class="btn btn-secondary">Inicio</a>
+    </div>
+    <!-- Opcional: Incluye JavaScript de Bootstrap y Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

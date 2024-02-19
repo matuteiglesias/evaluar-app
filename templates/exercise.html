@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js" integrity="sha512-qXZCaSz0z2P6SBgNqlr5j1/6C/bWFII0z4CVD7PdFyJ7p8X5V0Nfpgj3mDhDZLrSp2EWS0UXx4KouOXz7SBwKg==" crossorigin="anonymous"></script> -->
+</head>
+<body>
+
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        #exerciseContent {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px; /* Adjust based on preference */
+            margin-top: 20px;
+        }
+        button[type="submit"] {
+            margin-top: 20px;
+        }
+    </style>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <!-- Include MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Ejercicio</h1>
+        <p class="lead">Lee el ejercicio cuidadosamente y escribe tu respuesta en el espacio provisto abajo.</p>
+        
+        <!-- Dynamically loaded exercise content -->
+        <section id="exerciseContent">
+            {{content | safe}}
+        </section>
+
+        <!-- Answer submission form
+        <form action="/submit_answer" method="post">
+            <input type="hidden" name="exercise_id" value="{{ exercise_id }}">
+            <textarea name="response" required></textarea>
+            <button type="submit">Submit Answer</button>
+        </form> -->
+        
+        <!-- Answer submission form -->
+        <form action="/submit_answer" method="post" class="mt-4">
+            <input type="hidden" name="exercise_id" value="{{ exercise_id }}">
+            <label for="response">Tu Respuesta:</label>
+            <textarea name="response" id="response" required></textarea>
+            <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
