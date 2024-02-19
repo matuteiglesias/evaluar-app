@@ -1,82 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Educational Platform</title>
-    <!-- Include Google Sign-In JavaScript API -->
+    <title>Plataforma Educativa</title>
+    <!-- <meta name="google-signin-client_id" content="412630077125-c9iupgcs849nlubs50boh69k5mbgnlpi.apps.googleusercontent.com"> -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <!-- Optional: Include a CSS framework like Bootstrap for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
+
+
 <body>
-    <h1>Welcome to the Educational Platform</h1>
-    <!-- Google Sign-In button -->
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-
-    <h2>Available Exercises:</h2>
-
-    <!-- Sections for each unit -->
-    <section id="DivideAndConquer">
-        <h3>Divide and Conquer</h3>
-        <table class="exerciseTable">
-            <tr>
-                <th>Exercise</th>
-                <th>Action</th>
-            </tr>
-            <!-- Exercise rows for Divide and Conquer will be dynamically inserted here -->
-        </table>
-    </section>
-
-    <section id="Backtracking">
-        <h3>Backtracking</h3>
-        <table class="exerciseTable">
-            <!-- Similar structure for Backtracking -->
-        </table>
-    </section>
-
-    <section id="ProgramacionDinamica">
-        <h3>Programación Dinámica</h3>
-        <table class="exerciseTable">
-            <!-- Similar structure for Programacion Dinamica -->
-        </table>
-    </section>
-
-    <section id="Greedy">
-        <h3>Greedy</h3>
-        <table class="exerciseTable">
-            <!-- Similar structure for Greedy -->
-        </table>
-    </section>
-
+    <h1>Lista de Ejercicios</h1>
     <section id="Extras">
         <h3>Extras</h3>
-        <table class="exerciseTable">
-            <!-- Similar structure for Extras -->
+        <table class="exerciseTable" id="extrasTable">
+            <tr>
+                <th>Name</th>
+                <th>Info</th>
+                <th>Action</th>
+            </tr>
+            <!-- Exercise rows for Extras will be dynamically inserted here -->
         </table>
     </section>
 
     <script>
-        // Example structure for exercises, you would replace this with your actual dynamic loading logic
-        const exercises = [
-            {id: 1, unit: "Divide and Conquer", name: "QuickSort"},
-            // Add more exercises as per your CSV file
-        ];
+        
+        
 
-        // Dynamically populate exercises table
-        exercises.forEach(exercise => {
-            let table = document.querySelector(`#${exercise.unit.replace(/\s+/g, '')} .exerciseTable`);
+    document.addEventListener('DOMContentLoaded', function() {
+    fetch('/get_exercises')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data); // Log data to see if it's correctly fetched
+        const table = document.getElementById("extrasTable");
+        data.forEach(exercise => {
             let row = table.insertRow();
             let cell1 = row.insertCell(0);
             let cell2 = row.insertCell(1);
+            let cell3 = row.insertCell(2); // Make sure you have a place for the 'Action' column
             cell1.innerHTML = exercise.name;
-            cell2.innerHTML = `<a href="/exercise/${exercise.id}">Solve</a>`;
+            cell2.innerHTML = exercise.info;
+            // Update the href to point to your Flask route
+            cell3.innerHTML = `<a href="/exercises/${exercise.file}">Resolver</a>`; // This should point to the Flask route
         });
+    })
+    .catch(error => console.error('Error loading exercises:', error));
+    });
 
-        // Handle Google Sign-In
-        function onSignIn(googleUser) {
-            // Get the user's ID token
-            const id_token = googleUser.getAuthResponse().id_token;
-            console.log("User signed in with token:", id_token);
-            // Optionally, send the token to your server for authentication
-        }
+    
     </script>
 </body>
 </html>
