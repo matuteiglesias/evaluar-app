@@ -1,0 +1,28 @@
+# Política de Privacidad de Nuestra Aplicación Web
+
+## Introducción
+
+Nuestra aplicación web respeta la privacidad de sus usuarios y está comprometida a proteger la información personal de los mismos. Esta política de privacidad describe los tipos de información que recopilamos, cómo se utiliza y las medidas que tomamos para asegurar que tu información esté protegida.
+
+## Recolección y Uso de Información
+
+### Información Personal
+
+Al utilizar nuestra aplicación web, se te puede solicitar que proporciones información personal, como tu nombre, dirección de correo electrónico y otros detalles de contacto. Esta información se utiliza para personalizar tu experiencia, proporcionar soporte al cliente y comunicar actualizaciones o información importante relacionada con la aplicación.
+
+### Datos de Uso
+
+Recopilamos información sobre cómo se accede y utiliza la aplicación. Esto puede incluir información como la dirección IP de tu dispositivo, el tipo de navegador, las páginas de nuestra aplicación que visitas, la hora y fecha de tu visita, el tiempo que pasas en esas páginas y otros datos de diagnóstico.
+
+## Seguridad de la Información
+
+La seguridad de tu información es importante para nosotros. Implementamos una variedad de medidas de seguridad para mantener la seguridad de tu información personal. Sin embargo, recuerda que ningún método de transmisión por Internet o método de almacenamiento electrónico es 100% seguro.
+
+## Cambios a Esta Política de Privacidad
+
+Nos reservamos el derecho de modificar nuestra política de privacidad en cualquier momento. Te notificaremos de cualquier cambio publicando la nueva política de privacidad en esta página. Te recomendamos revisar esta política de privacidad periódicamente para estar informado de cualquier cambio.
+
+## Contacto
+
+Si tienes preguntas sobre esta política de privacidad, por favor, contáctanos a través de nuestra página de contacto en la aplicación.
+
