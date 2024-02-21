@@ -4,4 +4,5 @@ flask_session/
 app.log*
 interactions.json
 spreadsheetapp
+.env
 # Y cualquier otro patrón de archivo que desees ignorar
