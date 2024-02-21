@@ -11,13 +11,13 @@
         <h1>Retroalimentación del Ejercicio</h1>
         <!-- Muestra la respuesta evaluada -->
         <div class="alert alert-info" role="alert">
-            <h4 class="alert-heading">Tu Retroalimentación</h4>
-            <p>{{ evaluated_response }}</p>
+            <h4 class="alert-heading">Tu Feedback</h4>
+            <p>{{ evaluated_response|safe }}</p>
             <hr>
             <p class="mb-0">Revisa tu respuesta y continúa practicando para mejorar.</p>
         </div>
         <!-- Enlaces para regresar al ejercicio o a la página principal -->
-        <a href="/exercise/{{ exercise_id }}" class="btn btn-primary">Volver al Ejercicio</a>
+        <!-- <a href="/exercise/{{ exercise_id }}" class="btn btn-primary">Volver al Ejercicio</a> -->
         <a href="/" class="btn btn-secondary">Inicio</a>
     </div>
     <!-- Opcional: Incluye JavaScript de Bootstrap y Popper.js -->

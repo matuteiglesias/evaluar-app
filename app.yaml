@@ -1,10 +1,13 @@
 runtime: python39
+entrypoint: gunicorn -b :$PORT 'main:create_app()' --timeout 120
 
 env_variables:
-  DB_HOST: "34.42.138.123"
-  DB_USER: "root"
-  DB_PASSWORD: "1234"
-  DB_NAME: "interactions"
+  SECRET_KEY: "your_secret_key"
+  OPENAI_API_KEY: "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"
+  GOOGLE_CLIENT_ID: "412630077125-c9iupgcs849nlubs50boh69k5mbgnlpi.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET: "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"
+
+
 
 handlers:
 - url: /.*
