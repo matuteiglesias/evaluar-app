@@ -1,45 +1,9 @@
 id,unit,file,name,info
-1,Divide and Conquer,,QuickSort,Algoritmo de Ordenamiento QuickSort: Divide el conjunto de datos en subconjuntos menores alrededor de un pivote y luego ordena esos subconjuntos.
-2,Divide and Conquer,,Merge Sort,Algoritmo de Ordenamiento por Fusión (Merge Sort): Divide la lista a ordenar en mitades hasta llegar a listas de un solo elemento y luego las fusiona ordenadamente.
-3,Divide and Conquer,,Busqueda Binaria,Algoritmo de Búsqueda Binaria: Divide el conjunto de búsqueda a la mitad en cada paso para encontrar un elemento en una lista ordenada.
-4,Divide and Conquer,,Mul Mat Strassen,Algoritmo de Multiplicación de Matrices de Strassen: Reduce la complejidad de la multiplicación de matrices utilizando una división ingeniosa y combinaciones de submatrices.
-5,Divide and Conquer,,FFT,"Algoritmo de la Transformada Rápida de Fourier (Fast Fourier Transform - FFT): Divide la transformada en componentes de frecuencias más pequeñas, facilitando cálculos complejos de transformadas de Fourier."
-6,Divide and Conquer,,Karatsuba,Algoritmo Karatsuba para Multiplicación de Grandes Números: Reduce la multiplicación de grandes números a multiplicaciones de números más pequeños a través de un método ingenioso de división y combinación.
-7,Divide and Conquer,,HeapSort,"Algoritmo de Ordenamiento HeapSort: Aunque es principalmente un algoritmo de ordenamiento por montículo (heap), emplea la idea de dividir y vencer al construir el montículo y luego ordenar los elementos."
-8,Divide and Conquer,,Max Subarreglo,"Cálculo del Máximo Subarreglo: Un problema clásico en el que se divide el arreglo en dos mitades, encontrando el máximo subarreglo en cada mitad y luego combinando estas soluciones."
-9,Divide and Conquer,,Hanoi,"Torres de Hanoi: Un problema clásico de rompecabezas que se resuelve moviendo discos entre tres postes de acuerdo con un conjunto de reglas, utilizando la división del problema en subproblemas más pequeños."
-10,Divide and Conquer,,Par de Puntos Cercanos,"Algoritmo de Closest Pair of Points (Par de Puntos más Cercano): Utilizado en geometría computacional para encontrar el par de puntos más cercano en un conjunto, dividiendo el conjunto en subconjuntos y minimizando las distancias en estos."
-11,Backtracking,,N Reinas,Problema de las N Reinas: Coloca N reinas en un tablero de ajedrez de N×N sin que se amenacen entre sí.
-12,Backtracking,,Laberintos,Laberintos y Solución de Caminos: Encuentra un camino desde un punto de inicio hasta un punto de destino en un laberinto.
-13,Backtracking,,Mochila (Backtracking),"Problema de la Mochila (Knapsack Problem): Selecciona un subconjunto de elementos con un peso total que no exceda un límite dado, maximizando el valor total."
 14,Backtracking,SumadeSubconjuntos.txt,Suma de Subconjuntos,Problema de Suma de Subconjuntos: Determina si existe un subconjunto de un conjunto dado de números que sume un valor específico.
-15,Backtracking,,Permutaciones,Generación de Permutaciones: Genera todas las permutaciones posibles de un conjunto de elementos.
-16,Backtracking,,Combinaciones,Generación de Combinaciones: Crea todas las combinaciones posibles de un conjunto dado de tamaño n tomadas k a la vez.
-17,Backtracking,,Sudokus,Resolver Sudokus: Rellena un tablero de sudoku de 9x9 siguiendo las reglas del juego.
-18,Backtracking,,Crucigramas,"Búsqueda de Palabras en un Tablero: Encuentra palabras en un tablero de letras, como en juegos de palabras cruzadas o Boggle."
-19,Backtracking,,Coloracion de Grafos,Problema de Coloración de Grafos: Colorea los nodos de un grafo con un número mínimo de colores sin que dos nodos adyacentes compartan el mismo color.
-20,Backtracking,,Viajante (Backtracking),Problema del Viajante de Comercio (Versión de Backtracking): Encuentra la ruta más corta que visita una serie de ciudades exactamente una vez y regresa a la ciudad de origen.
-21,Programacion Dinamica,,Mochila 0-1,Problema de la Mochila 0-1 (0-1 Knapsack Problem): Determina el valor máximo que puede alcanzarse en una mochila de capacidad limitada con objetos de diferentes pesos y valores.
-22,Programacion Dinamica,,Fibonacci,Algoritmo de Fibonacci: Calcula eficientemente el n-ésimo número de Fibonacci usando un enfoque de abajo hacia arriba o de arriba hacia abajo.
-23,Programacion Dinamica,,Dijkstra (Dinamica),"Algoritmo de Dijkstra para Caminos Más Cortos: Encuentra el camino más corto en un gráfico ponderado, aunque comúnmente se asocia con algoritmos greedy, su variante puede implementarse con programación dinámica."
-24,Programacion Dinamica,,Longest Common Subsequence,Problema de la Subsecuencia Común Más Larga (Longest Common Subsequence): Encuentra la longitud de la subsecuencia más larga presente en dos secuencias dadas.
-25,Programacion Dinamica,,Longest Palindromic Subsequence,Problema de la Subcadena Palíndroma Más Larga (Longest Palindromic Substring): Encuentra la subcadena palíndroma más larga en una cadena dada.
-26,Programacion Dinamica,,Escalera,"Problema de la Escalera (Climbing Stairs): Determina de cuántas maneras se pueden subir 'n' escalones, dado un conjunto de pasos permitidos."
-27,Programacion Dinamica,,Edicion Minima,"Problema de la Edición Mínima (Edit Distance): Encuentra el número mínimo de operaciones (inserción, eliminación, sustitución) necesarias para convertir una cadena en otra."
 28,Programacion Dinamica,RodCutting.txt,Rod Cutting,"Problema de Corte de Varillas (Rod Cutting Problem): Maximiza el valor total obtenido al cortar una varilla y vender las piezas, dados precios diferentes para cada longitud."
-29,Programacion Dinamica,,Particion de Conjuntos,Problema de Partición de Conjuntos (Partition Problem): Determina si un conjunto dado se puede dividir en dos subconjuntos con la misma suma.
 30,Programacion Dinamica,SumadeSubconjuntosPD.txt,Suma de Subconjuntos (PD),Problema de la Suma de Subconjuntos (Subset Sum Problem): Verifica si existe un subconjunto de un conjunto dado de números que sume un valor específico.
-31,Greedy,,Dijkstra,"Algoritmo de Dijkstra para Rutas Más Cortas: Encuentra el camino más corto desde un nodo inicial a todos los demás en un gráfico ponderado, eligiendo siempre el siguiente nodo con la distancia más corta acumulada."
-32,Greedy,,Mochila,"Problema de la Mochila Fraccional (Fractional Knapsack Problem): Maximiza el valor total en una mochila de capacidad limitada tomando fracciones de los elementos, a diferencia del problema de la mochila 0-1."
-33,Greedy,,Kruskal,"Algoritmo de Kruskal para Árboles de Expansión Mínima: Construye un árbol de expansión mínima en un gráfico ponderado, seleccionando siempre el siguiente borde más ligero que no forma un ciclo."
-34,Greedy,,Prim,"Algoritmo de Prim para Árboles de Expansión Mínima: Similar a Kruskal, pero construye el árbol de expansión mínima expandiéndose desde un nodo inicial, agregando siempre el borde más ligero conectado al árbol en crecimiento."
-35,Greedy,,Cambio de Monedas,"Problema del Cambio de Moneda (Coin Change Problem): Encuentra la cantidad mínima de monedas necesarias para dar un cambio con denominaciones ilimitadas, eligiendo siempre la moneda de mayor valor que no exceda el monto restante."
-36,Greedy,,Huffman,"Algoritmo de Huffman para Compresión de Datos: Construye un árbol de Huffman para la compresión de datos, seleccionando siempre los dos nodos de menor frecuencia para combinarlos."
-37,Greedy,,Programacion de Intervalos,Problema de Programación de Intervalos (Interval Scheduling Problem): Maximiza el número de actividades compatibles (sin superposiciones) seleccionando siempre la siguiente actividad que termina primero.
-38,Greedy,,Puntos de Gasolina,"Problema de los Puntos de Gasolina (Gas Station Problem): Resuelve la ruta más larga con paradas limitadas para reabastecer combustible, eligiendo siempre la próxima parada de reabastecimiento más cercana."
-39,Greedy,,Longest Increasing Subsequence,"Problema de la Máxima Subsecuencia Creciente (Longest Increasing Subsequence): Aunque comúnmente se resuelve con programación dinámica, existe una versión greedy para este problema."
 40,Greedy,SelecciondeActividades.txt,Seleccion de Actividades,"Selección Óptima de Actividades: Problema de optimización para elegir el máximo número de actividades sin solapamientos temporales, comparable a un ""Problema de Programación de Intervalos"" donde cada actividad es un intervalo y se busca maximizar el número de intervalos no superpuestos."
-41,Extra,CuadradoMagico.txt,Cuadrado Magico,
+41,Extra,CuadradoMagico.txt,Cuadrado Magico,Empty Text
 42,Extra,SubconjuntosyPermutaciones.txt,Subconjuntos y Permutaciones,"es un problema de optimización combinatoria, donde buscas una permutación que minimice una función de costo (en este caso, la suma de elementos de una matriz con restricciones). Puede ser categorizado como un ""Problema de Permutación con Restricciones""."
 43,Extra,Billetes.txt,Billetes,Variante del Problema de la Mochila 0-1 con Minimización de Exceso y Cantidad de Billetes
 44,Extra,Astrovoid.txt,AstroVoid,Variante del Problema de Compra y Venta de Acciones con Restricciones Específicas
