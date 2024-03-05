@@ -1,8 +1,0 @@
-\item Tenemos dos conjuntos de personas y para cada persona sabemos su habilidad de baile. Queremos armar la máxima cantidad de parejas de baile, sabiendo que para cada pareja debemos elegir exactamente una persona de cada conjunto de modo que la diferencia de habilidad sea menor o igual a 1 (en módulo). Además, cada persona puede pertenecer a lo sumo a una pareja de baile.  Por ejemplo, si tenemos un multiconjunto con habilidades $\{ 1, 2, 4, 6 \}$ y otro con $\{ 1, 5, 5, 7, 9 \}$, la máxima cantidad de parejas es 3. Si los multiconjuntos de habilidades son $\{ 1, 1, 1, 1, 1 \}$ y $\{ 1, 2, 3 \}$, la máxima cantidad es 2.
-\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
-\item Considerando que ambos multiconjuntos de habilidades estan ordenados en forma creciente, observar que la solución se puede obtener recorriendo los multiconjuntos en orden para realizar los emparejamientos.
-\label{baileIdea}
-\item Diseñar un algoritmo goloso basado en \ref{baileIdea} que recorra una única vez cada multiconjunto. Explicitar la complejidad temporal y espacial auxiliar.
-\label{baileAlgo}
-\item Demostrar que el algoritmo dado en \ref{baileAlgo} es correcto.
-\end{enumerate}
