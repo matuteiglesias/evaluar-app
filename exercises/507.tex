@@ -1,0 +1,15 @@
+
+
+ \item Para organizar el tráfico, la ciudad de Ciclos Positivos ha decidido implementar las cabinas de peaje inverso. La idea de estas cabinas es incentivar la circulación de vehículos por caminos alternativos, estableciendo un monto que se le paga a le conductore de un vehículo cuando pasa por la cabina. Estas cabinas inversas se suman a las cabinas regulares, donde le conductore paga por pasar por la cabina.  La ciudad sabe que estas nuevas cabinas pueden dar lugar al negocio del ``ciclo puré'', que consiste en transitar \emph{eternamente} por la ciudad a fin de obtener una ganancia que tienda a infinito.  Para evitar esta situación, que genera costos y tráfico adicional, lo cual será aprovechado para desgastar a la administración ante la opinion pública, la ciudad quiere evaluar distintas alternativas antes de llevar las cabinas inversas a la práctica.
+
+ \begin{enumerate}[label=$\alph*$.,ref=$\alph*$]
+  \item Modelar el problema de determinar si la ciudad permite el negocio del ciclo puré cuando el costo de transitar por cada cabina $i$ de peaje es $c_i$ ($c_i < 0$ si la cabina es inversa) y el costo que cuesta viajar de forma directa de cada cabina $i$ a cada cabina $j$ es $c_{ij} > 0$.
+  \item Dar un algoritmo para resolver el problema del inciso anterior, indicando su complejidad temporal.
+ \end{enumerate}
+
+ El sistema arrojó que ninguna de las configuraciones deseadas para desincentivar el tráfico evita el negocio de los ciclos puré.  Desafortunadamente, el plan se filtró a la prensa y comenzaron las peleas mediáticas.  A fin de obtener cierto rédito, desde el departamento de \textit{marketing} sugieren transformar la idea de cabinas inversas en cabinas mixtas.  Cuando un vehículo pasa por una cabina mixta, se le paga a le conductore si se le cobró a le conductore en la cabina anterior; caso contrario, le conductore paga.  Obviamente, desde \textit{marketing} sugieren que se le pague a le conductore cuando la cabina mixta sea la primera cabina recorrida para bajar los malos humores.
+
+ \begin{enumerate}[resume*]
+  \item Modelar el problema de determinar si la ciudad permite el negocio de los ciclos puré cuando se aplica la nueva configuración para las cabinas.  Además de la información utilizada para el problema original, ahora se conoce cuáles cabinas son mixtas: notar que el monto de cobro es $c_i$ y el monto de pago es $-c_i$ para la cabina mixta $i$ (con $c_i > 0$).
+ \end{enumerate}
+

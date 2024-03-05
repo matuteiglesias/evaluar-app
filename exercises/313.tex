@@ -1,0 +1,19 @@
+
+
+ \item Recordar que el \emph{vecindario} de un vértice $v$ es el conjunto $N(v)$ que contiene a todos los vértices adyacentes a $v$.  El \emph{vecindario cerrado} es $N[v] = N(v) \cup \{v\}$.  Dos vértices $u$ y $v$ son \emph{gemelos} cuando $N(u) = N(v)$, mientras que son \emph{mellizos} cuando $N[u] = N[v]$ (Figura~\ref{fig:diamante-y-garra}).
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Observar que las relaciones de gemelos y mellizos son relaciones de equivalencia (i.e., son reflexivas, transitivas y simétricas).
+  \item Probar que el siguiente algoritmo encuentra la partición de $V(G)$ en vértices mellizos.  \textbf{Ayuda:} demostrar por invariante que, luego del paso $i$, $u$ y $w$ pertenecen al mismo conjunto de $\mathcal{P}_i$ si y sólo si $N[u] \cap \{v_1, \ldots, v_i\} = N[w] \cap \{v_1, \ldots, v_i\}$.
+  \begin{enumerate}[label=$\arabic*$.]
+    \item Sea $\mathcal{P}_0 = \{V(G)\}$ ($\mathcal{P}$ es un conjunto de conjuntos)
+    \item Sea $v_1, \ldots, v_n$ un ordenamiento cualquiera de $V(G)$.
+    \item Para $i$ desde $1$ hasta $n$:
+    \item \hspace{7mm} Poner $\mathcal{P}_i := \{W \cap N[v_i]$ $\mid$ $W \in \mathcal{P}_{i-1}\}$ $\cup$ $\{W \setminus N[v_i]$ $\mid$ $W \in \mathcal{P}_{i-1}\}$.
+    \item $\mathcal{P}_n$ es la partición buscada.
+  \end{enumerate}
+  \item Describir la implementación del algoritmo, especificando las estructuras de datos utilizadas.  La mejor implementación que conocemos tiene complejidad temporal $O(n+m)$.
+  \item ¿Qué debería modificarse para que el algoritmo encuentre la partición en vértices gemelos?
+ \end{enumerate}
+
+
+

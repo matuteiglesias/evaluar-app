@@ -1,0 +1,14 @@
+
+ \item Dado un digrafo $D$, un ordenamiento $v_1, \ldots, v_n$ de $V(D)$ es un  \emph{orden topológico} de $D$ cuando para toda arista $v_i \to v_j$ de $D$ ocurre que $i < j$ (Figura~\ref{fig:toposort}).  En la guía pasada vimos que $D$ admite un orden topológico si y solo si $D$ es acíclico.  En este ejercicio vemos cómo determinar si $D$ es acíclico y obtener un orden topológico usando DFS.
+ 
+ Sea $v$ un vértice que alcanza todos los otros vértices de un digrafo $D$ y sea $T$ un árbol generador que se obtiene al ejecutar DFS desde $v$.  Más aun, supongamos que los vértices hermanos de $T$ están ordenados de forma tal que $u$ aparece antes que su hermano $w$ cuando $u$ fue descubierto antes que $w$ por el algoritmo DFS (por lo tanto el vecindario de $u$ fue procesado antes que el de $w$).  Finalmente, sea $S$ la secuencia que se obtiene al revisar $T$ en sentido postorder (Figura~\ref{fig:toposort}; recordar que para todo árbol con raíz $r$ y \textbf{secuencia} de subárboles $T_1, \ldots, T_k$ se tiene postorder($r$) = postorder($T_1$) $+$ \ldots $+$ postorder($T_k$) + $r$).
+ 
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Demostrar que $D$ es acíclico si y solo si el reverso de $S$ es un orden topológico de $D$.
+  
+  \item Describir el algoritmo resultante para determinar si $D$ es acíclico y obtener el orden topológico correspondiente.
+
+  \item Modificar el algortimo anterior para evitar la suposición de que existe un vértice que alcanza a todos los otros vértices.
+ \end{enumerate}
+ 
+ % FIGURA

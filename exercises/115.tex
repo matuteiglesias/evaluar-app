@@ -1,0 +1,18 @@
+
+
+
+\item Queremos encontrar la suma de los elementos de un multiconjunto de números naturales. Cada suma se realiza exactamente entre dos números $x$ e $y$ y tiene costo $x + y$.
+\par{Por ejemplo, si queremos encontrar la suma de $\{ 1, 2, 5 \}$ tenemos 3 opciones:}
+%\begin{itemize}
+\item 1 + 2 (con costo 3) y luego 3 + 5 (con costo 8), resultando en un costo total de 11;
+\item 1 + 5 (con costo 6) y luego 6 + 2 (con costo 8), resultando en un costo total de 14;
+\item 2 + 5 (con costo 7) y luego 7 + 1 (con costo 8), resultando en un costo total de 15.
+%\end{itemize}
+\par{Queremos encontrar la forma de sumar que tenga costo mínimo, por lo que en nuestro ejemplo la mejor forma sería la primera.}
+
+\begin{enumerate}
+ \item Explicitar una estrategia golosa para resolver el problema.
+ \item Demostrar que la estrategia propuesta resuelve el problema.
+ \item Implementar esta estrategia en un algoritmo iterativo.  \textbf{Nota:} el mejor algoritmo simple que conocemos tiene complejidad $\mathcal{O}(n\log n)$ y utiliza una estructura de datos que implementa una secuencia ordenada.
+\end{enumerate}
+

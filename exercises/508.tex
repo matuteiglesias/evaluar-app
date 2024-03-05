@@ -1,0 +1,10 @@
+
+ \item Un \emph{sistema de restricciones de diferencias (SRD)} es un sistema ${\cal S}$ que tiene $m$ inecuaciones y $n$ incógnitas $x_1, \ldots, x_n$.  Cada inecuación es de la forma $x_i - x_j \leq c_{ij}$ para una constante $c_{ij} \in \mathbb{R}$; por cada par $i,j$ existe a lo sumo una inecuación (por qué?).  Para cada SRD ${\cal S}$ se puede definir un digrafo pesado $D({\cal S})$ que tiene un vértice $v_i$ por cada incógnita $x_i$ de forma tal que $v_j \to v_i$ es una arista de peso $c_{ij}$ cuando $x_i - x_j \leq c_{ij}$ es una inecuación de ${\cal S}$.  Asimismo, ${\cal S}$ tiene un vértice $v_0$ y una arista $v_0 \to v_i$ de peso $0$ para todo $1 \leq i \leq n$. \label{ej:SRD}
+
+ \begin{enumerate}[label=$\alph*$.,ref=$\alph*$]
+  \item Demostrar que si $D({\cal S})$ tiene un ciclo de peso negativo, entonces ${\cal S}$ no tiene solución.
+  \item Demostrar que si $D({\cal S})$ no tiene ciclos de peso negativo, entonces $\{x_i = d(v_0, v_i) \mid 1 \leq i \leq n\}$ es una solución de $D({\cal S})$.  Acá $d(v_0, v_i)$ es la distancia desde $v_0$ a $v_i$ en $D({\cal S})$.
+  \item A partir de los incisos anteriores, proponer un algoritmo que permita resolver cualquier SRD.  En caso de no existir solución, el algoritmo debe mostrar un conjunto de inecuaciones contradictorias entre sí.
+ \end{enumerate}
+
+

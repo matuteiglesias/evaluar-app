@@ -1,0 +1,23 @@
+
+\item Dada una matriz simétrica $M$ de $n \times n$ números naturales y un número $k$, queremos encontrar un subconjunto $I$ de $\{1, \ldots, n\}$ con $|I| = k$ que maximice $\sum_{i,j \in I} M_{ij}$.  Por ejemplo, si $k = 3$ y:
+
+
+\[
+    M = \begin{pmatrix}
+          0 & 10 & 10 & 1 \\
+          - &  0 &  5 & 2 \\
+          - &  - &  0 & 1 \\
+          - &  - &  - & 0
+        \end{pmatrix}
+\]
+
+
+entonces $I = \{1,2,3\}$ es una solución óptima.
+
+
+\begin{enumerate}
+ \item Diseñar un algoritmo de \emph{backtracking} para resolver el problema, indicando claramente cómo se codifica una solución candidata, cuáles soluciones son válidas y qué valor tienen, qué es una solución parcial y cómo se extiende cada solución parcial.
+ \item Calcular la complejidad temporal y espacial del mismo.
+ \item Proponer una poda por optimalidad y mostrar que es correcta.
+\end{enumerate}
+

@@ -1,0 +1,19 @@
+
+Se tienen dos arreglos de $n$ naturales $A$ y $B$. $A$ está ordenado
+de manera creciente y $B$ está ordenado de manera decreciente. Ningún valor
+aparece mas de una vez en el mismo arreglo.
+Para cada posición $i$ consideramos la diferencia absoluta entre los valores de
+ambos arreglos $|A[i]-B[i]|$. Se desea buscar el mínimo valor posible de 
+dicha cuenta. Por ejemplo, si los arreglos son $A = [1,2,3,4]$ y $B = [6,4,2,1]$
+los valores de las diferencias son $5,2,1,3$ y el resultado es $1$.
+
+
+\begin{enumerate}
+\item[a)] Implementar la función
+\begin{center}
+minDif(\textbf{in} $A$: arreglo(nat), \textbf{in} $B$: arreglo(nat)) $\to$ nat
+\end{center}
+que resuelve el problema planteado. 
+La función debe ser de tiempo $O(\log n)$, dónde $n = \tam(A) = \tam(B)$.
+\item[b)] Calcular y justificar la complejidad del algoritmo propuesto. 
+\end{enumerate}

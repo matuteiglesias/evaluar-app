@@ -1,0 +1,17 @@
+
+ \item Un grafo $G$ es un \emph{cactus} cuando cada una de sus aristas pertenece a un único ciclo.
+
+ \begin{enumerate}
+  \item Sea $T$ un árbol DFS de un grafo $G$ y sea $T(v,w)$ el unico camino entre $v$ y $w$ en $T$ para todo $v,w\in V(G)$.  Demostrar que $G$ es un cactus si y solo si para toda arista $vw \in E(G) \setminus E(T)$ ocurre que $T(v,w) + vw$ es el único ciclo que contiene a las aristas en $T(v,w)$.
+
+  \item Demostrar que los grafos cactus tienen $O(n)$ aristas.
+
+  \item Diseñar un algoritmo de tiempo $O(n)$ para determinar si un grafo es un cactus.  En caso afirmativo, el algoritmo debe retornar todos los ciclos del grafo.  En caso negativo, el algortimo debe retornar dos ciclos que compartan una arista.
+
+  \item Diseñar un algoritmo de tiempo $O(n)$ para encontrar un árbol generador mínimo de un grafo cactus.  \textbf{Justificar} que el algoritmo es correcto utilizando resultados conocidos.
+
+  \item Proponer una formula para contar la cantidad de árboles generadores mínimos de un grafo cactus que pueda ser computada en $O(n)$ operaciones de suma y multiplicación.  \textbf{Demostrar} que la fórmula es correcta.
+ \end{enumerate}
+
+
+

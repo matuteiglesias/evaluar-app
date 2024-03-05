@@ -1,0 +1,21 @@
+
+
+  
+ \item Una orientación de un grafo $G$ es un grafo orientado $D$ cuyo grafo subyacente es $G$.  (En otras palabras, $D$ es una orientación de $G$ cuando $D$ se obtiene dando una orientación a cada arista de $G$).  Para todo árbol DFS $T$ de un grafo conexo $G$ se define $D(T)$ como la orientación de $G$ tal que $v \to w$ es una arista de $D(T)$ cuando: $v$ es el padre de $w$ en $T$ o $w$ es un ancestro no padre de $v$ en $T$ (Figura~\ref{fig:orientacion-dfs}).
+ 
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Observar que $D(T)$ está bien definido por el Ejercicio~\ref{ej:puentes}\ref{ej:puentes:arista-no-dfs}.
+  
+  \item Demostrar que las siguientes afirmaciones son equivalentes:
+   \begin{enumerate}[label=$\roman*)$,ref=$\roman*)$]
+    \item $G$ admite una orientación que es fuertemente conexa.\label{ej:fuerte-conexo:orientacion}
+    \item $G$ no tiene puentes.\label{ej:fuerte-conexo:puentes}
+    \item para todo árbol DFS de $T$ ocurre que $D(T)$ es fuertemente conexo.\label{ej:fuerte-conexo:dfs}
+    \item existe un árbol DFS de $T$ tal que $D(T)$ es fuertemente conexo.
+  \end{enumerate}
+  \textbf{Ayuda:} para \ref{ej:fuerte-conexo:puentes} $\Rightarrow$ \ref{ej:fuerte-conexo:dfs} observar que alcanza con mostrar que la raíz de $D(T)$ es alcanzable desde cualquier vértice $v$.  Demuestre este hecho haciendo inducción en el nivel de $v$, aprovechando los resultados del Ejercicio~\ref{ej:puentes}.
+    
+  \item Dar un algoritmo lineal para encontrar una orientación fuertemente conexa de un grafo $G$ cuando dicha orientación exista. 
+ \end{enumerate}
+ 
+ % FIGURA

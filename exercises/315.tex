@@ -1,0 +1,36 @@
+
+ \item Un \emph{triángulo} de un grafo $G$ es una tripla $\{v,w,z\}$ que induce un subgrafo completo (de tamaño $3$; ver Figura~\ref{fig:diamante-y-garra}).  Considerar los siguientes algoritmos para decidir si un grafo $G$ de $n$ vértices y $m > n$ aristas tiene un triángulo.
+ \begin{description}
+  \item [Algoritmo cúbico] ~
+  \begin{enumerate}[label=$\arabic*$.]
+   \item Computar la matriz de adyacencias $A$ de $G$.
+   \item Retornar verdadero si existen $v, w, z \in V(G)$ tales que $A_{vw} A_{wz}A_{vz} = 1$.
+  \end{enumerate}
+  \item [Algoritmo cuadrático]  ~
+  \begin{enumerate}[label=$\arabic*$.]
+   \item Computar las listas de adyacencias $N$ de $G$.
+   \item Para cada $v \in V(G)$:
+   \item ~~~~Marcar cada $w \in N(v)$.
+   \item ~~~~Retornar verdadero si existe $wz \in E(G)$ tal que $w$ y $z$ están marcados.
+   \item ~~~~Desmarcar cada $w \in  N(v)$.
+  \end{enumerate}
+  \item [Algoritmo subcuadrático]  ~
+  \begin{enumerate}[label=$\arabic*$.]
+   \item Computar las listas de adyacencias $N$ de $G$.
+   \item Para cada $v \in V(G)$ que tenga $d(v) \geq \sqrt{m}$:
+   \item ~~~~Marcar cada $w \in N(v)$.
+   \item ~~~~Retornar verdadero si existe $wz \in E(G)$ tal que $w$ y $z$ están marcados.
+   \item ~~~~Desmarcar cada $w \in  N(v)$.
+   \item Para cada $v \in V(G)$ que tenga $d(v) < \sqrt{m}$:
+   \item ~~~~Marcar cada $w \in N(v)$.
+   \item ~~~~Para cada $w \in N(v)$ que tenga $d(w) < \sqrt{m}$:
+   \item ~~~~~~~~Retornar verdadero si existe $z \in N(w)$ que esté marcado.
+   \item ~~~~Desmarcar cada $w \in N(v)$.
+  \end{enumerate}
+ \end{description}
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Argumentar por qué cada algoritmo es correcto.
+  \item Demostrar que el algoritmo cúbico requiere tiempo $\Theta(n^3)$, el algoritmo cuadrático requiere tiempo $\Theta(nm) = O(m^2)$ y el algoritmo subcuadrático requiere tiempo $O(m^{3/2})$.  \textbf{Ayuda:} recordar que $O(\sum_{v \in V(G)} d(v)) = O(m)$; para el algoritmo subcuadrático, demostrar primero que todo grafo tiene $O(\sqrt{m})$ vértices con grado al menos $\sqrt{m}$.
+  \item Determinar un mejor y un peor caso para cada uno de los algoritmos.
+ \end{enumerate}
+

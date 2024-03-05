@@ -1,0 +1,13 @@
+
+ 
+ \item\Obligatorio En este ejercicio diseñamos un algoritmo para encontrar ciclos en un digrafo.  Decimos que un digrafo es \emph{acíclico} cuando no tiene ciclos dirigidos.  Recordar que un (di)grafo es \emph{trivial} cuando tiene un sólo vértice.
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+   \item Demostrar con un argumento constructivo que si todos los vértices de un digrafo $D$ tienen grado de salida mayor a $0$, entonces $D$ tiene un ciclo.
+   \item Diseñar un algoritmo que permita encontrar un ciclo en un digrafo $D$ cuyos vértices tengan todos grado de salida mayor a $0$.
+   \item Explicar detalladamente (sin usar código) cómo se implementa el algoritmo del inciso anterior.  El algoritmo resultante tiene que tener complejidad temporal $O(n+m)$. 
+   \item Demostrar que un digrafo $D$ es acíclico si y solo si $D$ es trivial o $D$ tiene un vértice con $d_{out}(v) = 0$ tal que $D \setminus \{v\}$ es acíclico.
+   \item A partir del inciso anterior, diseñar un algoritmo que permita determinar si un grafo $D$ tiene ciclos.  En caso negativo, el algoritmo debe retornar una lista $v_1, \ldots, v_n$ de vértices tales que $d_{out}(v_i) = 0$ en $D \setminus \{v_1,\ldots, v_{i-1}\}$ para todo $i$.  En caso afirmativo, el algoritmo debe retornar un ciclo.
+   \item Explicar detalladamente (sin usar código) cómo se implementa el algoritmo del inciso anterior. El algoritmo resultante tiene que tener complejidad temporal $O(n+m)$. 
+ \end{enumerate}
+ 
+ % FIGURA

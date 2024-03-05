@@ -1,0 +1,13 @@
+
+\begin{enumerate}[label=$\arabic*$.,ref=$\arabic*$]
+ \item\Obligatorio Sea $T$ un árbol generador de un grafo (conexo) $G$ con raíz $r$, y sean $V$ y $W$ los vértices que están a distancia par e impar de $r$, respectivamente.
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Observar que si existe una arista $vw \in E(G) \setminus E(T)$ tal que $v,w\in V$ o $v,w\in W$, entonces el único ciclo de $T \cup \{vw\}$ tiene longitud impar.
+  
+  \item Observar también que si toda arista de $E(G) \setminus E(T)$ une un vértice de $V$ con otro de $W$, entonces $(V, W)$ es una bipartición de $G$ y, por lo tanto, $G$ es bipartito.
+  
+  \item A partir de las observaciones anteriores, diseñar un algoritmo lineal para determinar si un grafo conexo $G$ es bipartito.  En caso afirmativo, el algoritmo debe retornar una bipartición de $G$.  En caso negativo, el algoritmo debe retornar un ciclo impar de $G$.  \textbf{Explicitar cómo es la implementación del algoritmo}; no es necesario incluir el código.
+  
+ \item Generalizar el algoritmo del inciso anterior a grafos no necesariamente conexos observando que un grafo $G$ es bipartito si y solo si sus componentes conexas son bipartitas.
+ \end{enumerate}
+
