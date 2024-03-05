@@ -12,38 +12,99 @@
 
 <body>
     <h1>Lista de Ejercicios</h1>
-    <section id="Extras">
-        <h3>Extras</h3>
-        <table class="exerciseTable" id="extrasTable">
-            <tr>
-                <th>Name</th>
-                <th>Info</th>
-                <th>Action</th>
-            </tr>
-            <!-- Exercise rows for Extras will be dynamically inserted here -->
+
+    <section id="Section1">
+        <h3>Practica 1: Tecnicas Algoritmicas</h3>
+        <table class="exerciseTable" id="section1Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
+        </table>
+    </section>
+    
+    <section id="Section2">
+        <h3>Practica 2: Divide and Conquer</h3>
+        <table class="exerciseTable" id="section2Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
 
+    <section id="Section3">
+        <h3>Practica 3: Algoritmos en Grafos</h3>
+        <table class="exerciseTable" id="section3Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
+        </table>
+    </section>
+    
+    <section id="Section4">
+        <h3>Practica 4: Recorridos y Arboles</h3>
+        <table class="exerciseTable" id="section4Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
+        </table>
+    </section>
+
+    <section id="Section5">
+        <h3>Practica 5: Camino Minimo</h3>
+        <table class="exerciseTable" id="section5Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
+        </table>
+    </section>
+    
+    <section id="Section6">
+        <h3>Practica 6: Flujo en Redes</h3>
+        <table class="exerciseTable" id="section6Table">
+            <!-- Cabecera de la tabla -->
+            <!-- Las filas se añadirán dinámicamente -->
+        </table>
+    </section>
+
+    
+
     <script>
         
-        
+
 
     document.addEventListener('DOMContentLoaded', function() {
     fetch('/get_exercises')
     .then(response => response.json())
     .then(data => {
         console.log(data); // Log data to see if it's correctly fetched
-        const table = document.getElementById("extrasTable");
+
+        // Suponiendo que 'sections' es un objeto que mapea los primeros dígitos a las tablas correspondientes
+        const sections = {
+            '1': document.getElementById("section1Table"),
+            '2': document.getElementById("section2Table"),
+            '3': document.getElementById("section3Table"),
+            '4': document.getElementById("section4Table"),
+            '5': document.getElementById("section5Table"),
+            '6': document.getElementById("section6Table"),
+            // Añade más secciones según sea necesario
+        };
+
+
+        // const table = document.getElementById("extrasTable");
         data.forEach(exercise => {
-            let row = table.insertRow();
-            let cell1 = row.insertCell(0);
-            let cell2 = row.insertCell(1);
-            let cell3 = row.insertCell(2); // Make sure you have a place for the 'Action' column
-            cell1.innerHTML = exercise.name;
-            cell2.innerHTML = exercise.info;
-            // Update the href to point to your Flask route
-            cell3.innerHTML = `<a href="/exercises/${exercise.file}">Resolver</a>`; // This should point to the Flask route
+            let idFirstDigit = exercise.id.toString()[0]; // Obtiene el primer dígito del ID como una cadena
+
+
+            // Comprueba si existe una sección para este primer dígito
+            if (sections[idFirstDigit]) {
+                let table = sections[idFirstDigit]; // Obtiene la tabla correspondiente a esta sección
+                let row = table.insertRow();
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                let cell4 = row.insertCell(2);
+                cell1.innerHTML = exercise.id;
+                cell2.innerHTML = exercise.name;
+                cell3.innerHTML = exercise.info;
+                cell4.innerHTML = `<a href="/exercises/${exercise.file}">Consulta</a>`;
+            }
         });
+
     })
     .catch(error => console.error('Error loading exercises:', error));
     });

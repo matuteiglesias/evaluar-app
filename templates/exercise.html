@@ -28,16 +28,55 @@
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <!-- Include MathJax for LaTeX rendering -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
+            TeX: { 
+                Macros: { 
+                    Obligatorio: '\\ensuremath{\\star}',
+                    tam: '\\text{tam}',
+                    SubsetSum: '\\text{ss}',
+                    SubsetSumAlg: '\\text{subset\\_sum}',
+                    SubsetSumPD: '\\text{ss\'}',
+                    Vuelto: '\\text{cc}',
+                    VueltoPD: '\\text{cc\'}',
+                    Fiesta: '\\text{fs}',
+                    FiestaPD: '\\text{fs}',
+                    ActividadesPD: '\\text{act}',
+                    bwd: '\\text{bwd}'
+                } },
+
+
           tex2jax: {
             inlineMath: [ ['$','$'], ["\\(","\\)"] ],
             processEscapes: true
           }
         });
     </script>
+
+
+
+    <!-- TeX: {
+        Macros: {
+          Obligatorio: "\\ensuremath{\\star}",
+          tam: "\\text{tam}",
+          
+          
+          SubsetSum: "\\text{ss}",
+          SubsetSumAlg: "\\text{subset\\_sum}",
+          SubsetSumPD: "\\text{ss'}",
+          Vuelto: "\\text{cc}",
+          VueltoPD: "\\text{cc'}",
+          Fiesta: "\\text{fs}",
+          FiestaPD: "\\text{fs}",
+          ActividadesPD: "\\text{act}"
+          bwd: "\\text{bwd}"
+
+
+        } -->
+
+
 
 </head>
 
@@ -61,7 +100,7 @@
         <!-- Answer submission form -->
         <form action="/submit_answer" method="post" class="mt-4">
             <input type="hidden" name="exercise_id" value="{{ exercise_id }}">
-            <label for="response">Tu Respuesta:</label>
+            <label for="response">Tu Consulta:</label>
             <textarea name="response" id="response" required></textarea>
             <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
         </form>
