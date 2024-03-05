@@ -2,19 +2,20 @@
 This is the main file of the educational platform.
 '''
 
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_from_directory
 from authlib.integrations.flask_client import OAuth
 from flask_session import Session
 import os
 import requests
 from dotenv import load_dotenv
 # from evaluator import Evaluator
-from evaluator import Evaluator35, Evaluator40
+from evaluator import Evaluator35, Evaluator40, Consulta40
 import json
 import logging
-from logging.handlers import RotatingFileHandler
+# from logging.handlers import RotatingFileHandler
 import pandas as pd
 import markdown
+import re
 
 load_dotenv()
 
@@ -184,14 +185,26 @@ def create_app():
             return "User email not available or not verified by Google.", 400
 
     ## EXERCISES ROUTES
+
+    @app.route('/tikzpics/<filename>')
+    def tikzpics(filename):
+        return send_from_directory('tikzpics', filename)
         
     @app.route('/get_exercises')
     def get_exercises():
         df = pd.read_csv('./exercises/exercises.csv')
         return jsonify(df.to_dict(orient='records'))
 
-    def preprocess_latex_for_mathjax(latex_content):
-        # Simple replacement; for demonstration purposes only
+    def preprocess_latex_for_mathjax(latex_content, exercise_id):
+        # Reemplaza \emph{} con <em></em>
+        latex_content = re.sub(r'\\emph\{(.*?)\}', r'<em>\1</em>', latex_content)
+        
+        # Reemplaza \textit{} con <i></i>
+        latex_content = re.sub(r'\\textit\{(.*?)\}', r'<i>\1</i>', latex_content)
+        
+        # Reemplaza \textbf{} con <strong></strong>
+        latex_content = re.sub(r'\\textbf\{(.*?)\}', r'<strong>\1</strong>', latex_content)
+            
         # A robust solution would require actual LaTeX parsing
         latex_content = latex_content.replace(r'\begin{enumerate}', '<ol>')
         latex_content = latex_content.replace(r'\end{enumerate}', '</ol>')
@@ -199,21 +212,14 @@ def create_app():
         # Close the list item
         latex_content = latex_content.replace(r'</li><li>', '</li>\n<li>')
         latex_content = latex_content.replace(r'\begin{center}', '<div style="text-align: center;">').replace(r'\end{center}', '</div>')
-        return latex_content
 
-    # def get_exercise_content(filename):
-    #     # Assuming your exercise text files are stored in a directory named 'exercises'
-    #     exercises_dir = 'exercises'
-    #     filepath = os.path.join(exercises_dir, filename)
-    #     try:
-    #         with open(filepath, 'r', encoding='utf-8') as file:
-    #             content = file.read()
-    #             # Optional: Wrap LaTeX content in delimiters here if necessary
-    #             content = preprocess_latex_for_mathjax(content)
-    #             return content
-    #     except FileNotFoundError:
-    #         return "Exercise content not found."
-                
+        # Reemplaza el marcador con la etiqueta img HTML
+        figure_placeholder = "% FIGURA"
+        # img_html = f'<img src="/tikzpics/{exercise_id}.png" alt="Figura para el ejercicio {exercise_id}" />'
+        img_html = f'<img src="/tikzpics/{exercise_id}.png" alt="Figura para el ejercicio {exercise_id}" style="max-width: 80%; height: auto; display: block; margin-left: auto; margin-right: auto;" />'
+        latex_content = latex_content.replace(figure_placeholder, img_html)
+
+        return latex_content
 
     # @app.route('/exercises/<filename>')
     def get_exercise_content(filename):
@@ -226,8 +232,12 @@ def create_app():
             with open(filepath, 'r', encoding='utf-8') as file:
                 content = file.read()
                 logger.debug(f"Successfully read content from {filename}")
+
+                # Extrae el ID del ejercicio del nombre del archivo, asumiendo que el formato es 'ID.tex'
+                exercise_id = filename.split('.')[0]
+
                 # Opcional: Envuelve el contenido LaTeX en delimitadores aquí si es necesario
-                content = preprocess_latex_for_mathjax(content)
+                content = preprocess_latex_for_mathjax(content, exercise_id)
                 return content
         except FileNotFoundError:
             logger.error(f"File {filename} not found in directory {exercises_dir}.")
@@ -292,7 +302,9 @@ def create_app():
         if model == "gpt-3.5":
             evaluator = Evaluator35()
         elif model == "gpt-4":
-            evaluator = Evaluator40()
+            # evaluator = Evaluator40()
+            evaluator = Consulta40()
+            
         else:
             raise ValueError(f"Modelo de evaluador no soportado: {model}")
 

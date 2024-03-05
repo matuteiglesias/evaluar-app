@@ -1,6 +1,7 @@
 /* /static/css/style.css */
 
 body {
+    margin: 20px; /* Ajusta según lo necesario */
     font-family: Arial, sans-serif;
     color: #333;
     background-color: #f4f4f4;
@@ -9,12 +10,28 @@ body {
 
 h1, h3 {
     color: #444;
+    margin-bottom: 30px; /* Espacio debajo del título principal */
+}
+
+section {
+    margin-bottom: 40px; /* Espacio entre secciones */
+    margin: 20px auto; /* Ajusta el valor de 20px según sea necesario */
+    padding: 20px; /* Añade un relleno si es necesario */
+}
+
+img {
+    max-width: 20%; /* Esto asegura que la imagen no sea más ancha que su contenedor */
+    height: auto; /* Esto mantiene la proporción de la imagen */
+    display: block; /* Esto permite centrar la imagen con margen automático */
+    margin: 10px auto; /* Esto añade espacio arriba y abajo de la imagen y la centra horizontalmente */
 }
 
 table.exerciseTable {
-    width: 100%;
+    width: 90%;
     border-collapse: collapse;
     margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 table.exerciseTable th, table.exerciseTable td {
@@ -24,7 +41,11 @@ table.exerciseTable th, table.exerciseTable td {
 }
 
 table.exerciseTable th {
-    background-color: #f2f2f2;
+    /* background-color: #f2f2f2; */
+    background-color: #4CAF50; /* Color de fondo para los encabezados de las columnas */
+    color: white; /* Color del texto para los encabezados */
+    padding-top: 12px; /* Espacio superior en los encabezados */
+    padding-bottom: 12px; /* Espacio inferior en los encabezados */
 }
 
 table.exerciseTable tr:nth-child(even) {
