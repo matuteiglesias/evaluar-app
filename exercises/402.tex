@@ -1,0 +1,17 @@
+
+
+
+ \item\Obligatorio Una arista de un grafo $G$ es \emph{puente} si su remoción aumenta la cantidad de componentes conexas de $G$.  Sea $T$ un árbol DFS de un grafo conexo $G$.\label{ej:puentes}
+ 
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+   \item Demostrar que $vw$ es un puente de $G$ si y solo si $vw$ no pertenece a ningún ciclo de $G$.
+ 
+   \item Demostrar que si $vw \in E(G) \setminus E(T)$, entonces $v$ es un ancestro de $w$ en $T$ o viceversa.\label{ej:puentes:arista-no-dfs}
+   
+   \item Sea $vw \in E(G)$ una arista tal que el nivel de $v$ en $T$ es menor o igual al nivel de $w$ en $T$.  Demostrar que $vw$ es puente si y solo si $v$ es el padre de $w$ en $T$ y ninguna arista de $G \setminus \{vw\}$ une a un descendiente de $w$ (o a $w$) con un ancestro de $v$ (o con $v$).
+   
+   \item Dar un algoritmo lineal basado en DFS para encontrar todas las aristas puente de $G$. \textbf{Ayuda:} el algoritmo puede hacer un uso inteligente de un único DFS.  Conceptualmente, y a los efectos de este ejercicio, puede convenir separar el algoritmo en dos fases. La primera fase aplica DFS para calcular el mínimo nivel que se puede alcanzar desde cada vértice usando back edges que estén en su subárbol. La segunda fase recorre todas las aristas (sin DFS) para chequear la condición.
+ \end{enumerate}
+
+
+

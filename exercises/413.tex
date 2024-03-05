@@ -1,0 +1,21 @@
+
+ 
+ \item\Obligatorio El algoritmo de Kruskal (resp.\ Prim) con orden de selección es una variante del algoritmo de Kruskal (resp.\ Prim) donde a cada arista $e$ se le asigna una prioridad $q(e)$ además de su peso $p(e)$. Luego, si en alguna iteración del algoritmo de Kruskal (resp.\ Prim) hay más de una arista posible para ser agregada, entre esas opciones se elige alguna de mínima prioridad.
+ 
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Demostrar que para todo árbol generador mínimo $T$ de $G$, si las prioridades de asignación están definidas por la función
+  
+  
+$$
+    q_T(e) =
+    \begin{cases}
+      0 &  \text{si $e \in T$}  \\
+      1 &  \text{si $e \notin T$}
+    \end{cases}
+ $$
+ 
+ 
+ entonces se obtiene $T$ como resultado del algoritmo de Kruskal (resp.\ Prim) con orden de selección ejecutado sobre $G$ (resp.\ cualquiera sea el vértice inicial en el caso de Prim).
+  \item Usando el inciso anterior, demostrar que si los pesos de $G$ son todos distintos, entonces $G$ tiene un único árbol generador mínimo.
+ \end{enumerate}
+

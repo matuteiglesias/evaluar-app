@@ -1,0 +1,29 @@
+
+Se tiene un arreglo de n\'umeros naturales $A$. Adem\'as se cuenta con
+estructuras adicionales sobre el arreglo que proveen la
+funci\'on
+\begin{center}
+aparece?(\textbf{in} $A$: arreglo(nat), \textbf{in} $i$:nat, \textbf{in} $j$:nat, \textbf{in} $e$: nat) $\to$ bool
+\end{center}
+que dado el arreglo $A$, \'indices $i,j$ y un natural $e$, devuelve \textit{true}
+si y s\'olo si $e = A[k]$ para alg\'un $k$ tal que $i \le k \le j$. Adem\'as se
+sabe que aparece? toma tiempo $O(\sqrt{j-i+1})$, es decir, la raiz cuadrada del
+tama\~no del intervalo de b\'usqueda.
+
+Se desea encontrar un algoritmo sublineal 
+que encuentra el \'indice de un elemento $e$ en el arreglo $A$, asumiendo que
+tal elemento existe en el arreglo.
+El resultado de la funci\'on es justamente el \'indice $i$ tal que $A[i] = e$.
+
+\begin{enumerate}
+\item[a)] Implementar la funci\'on
+\begin{center}
+ubicar?(\textbf{in} $A$: arreglo(nat), \textbf{in} $e$: nat) $\to$ nat
+\end{center}
+que resuelve el problema planteado. 
+La función debe ser de tiempo estrictamente menor a $O(n)$, dónde
+$n = \tam(A) = \tam(B)$ (formalmente, la complejidad del algoritmo \textbf{no}
+debe pertenecer a $\Omega(n)$)
+\item[b)] Calcular y justificar la complejidad del algoritmo propuesto. 
+\end{enumerate}
+

@@ -1,0 +1,14 @@
+
+
+ \item Queremos diseñar un algoritmo que, dado un digrafo $G$ y dos vértices $s$ y $t$, encuentre el recorrido de longitud par de $s$ a $t$ que use la menor cantidad de aristas.
+
+ \begin{enumerate}
+  \item Sea $H$ el digrafo bipartito que tiene dos vértices $v^0$, $v^1$ por cada vértice $v \in V(G)$, donde $v^0$ es adyacente a $w^1$ en $H$ si y solo si $v$ y $w$ son adyacentes en $G$.  (Notar que $\{v^i \mid v \in V(G)\}$ es un conjunto independiente para $i \in \{0, 1\}$.)  Demostrar que $v_1, \ldots, v_k$ es un recorrido de $G$ si y sólo si $v_1^1, v_2^0, \ldots, v_k^{k \bmod 2}$ es un recorrido de $H$.
+
+  \item Sea $G^{=2}$ el digrafo que tiene los mismos vértices de $G$ tal que $v$ es ayacente a $w$ en $G^{=2}$ si y solo si existe $z \in G$ tal que $v \to z \to w$ es un camino de $G$.  Demostrar que $G$ tiene un recorrido de longitud $2k$ si y solo si $G^{=2}$ tiene un recorrido de longitud $k$.
+
+  \item Diseñar dos algoritmos basados en las propiedades anteriores para resolver el problema de encontrar el recorrido de longitud par de $s$ a $t$ que use la menor cantidad de aristas.
+
+  \item Justifique cuál de los dos algoritmos es mejor, considerando: la complejidad temporal y espacial, la dificultad de la implementación y la posibilidad de modificar el algoritmo para encontrar recooridos de longitud impar.
+ \end{enumerate}
+

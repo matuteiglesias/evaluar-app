@@ -1,0 +1,44 @@
+
+\item En este ejercicio vamos a resolver el problema de suma de subconjuntos con la técnica de \textit{backtracking}.  Dado un multiconjunto $C = \{c_1, \ldots, c_n\}$ de números naturales y un natural $k$, queremos determinar si existe un subconjunto de $C$ cuya sumatoria sea $k$.  Vamos a suponer fuertemente que $C$ está ordenado de alguna forma arbitraria pero conocida (i.e., $C$ está implementado como la secuencia $c_1, \ldots, c_n$ o, análogamente, tenemos un iterador de $C$).  Las \emph{soluciones (candidatas)} son los vectores $a = (a_1, \ldots, a_n)$ de valores binarios; el subconjunto de $C$ representado por $a$ contiene a $c_i$ si y sólo si $a_i = 1$.  Luego, $a$ es una solución \emph{válida} cuando $\sum_{i=1}^n a_i c_i = k$.  Asimismo, una \emph{solución parcial} es un vector $p = (a_1, \ldots, a_i)$ de números binarios con $0 \leq i \leq n$.  Si $i < n$, las soluciones \emph{sucesoras} de $p$ son $p \oplus 0$ y $p \oplus 1$, donde $\oplus$ indica la concatenación.
+\label{ejercicioSumaDeSubconjuntos}
+
+\begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+ \item Escribir el conjunto de soluciones candidatas para $C = \{6, 12, 6\}$ y $k = 12$.
+ \item Escribir el conjunto de soluciones válidas para $C = \{6, 12, 6\}$ y $k = 12$.
+ \item Escribir el conjunto de soluciones parciales para $C = \{6, 12, 6\}$ y $k = 12$.
+ \item Dibujar el árbol de \textit{backtracking} correspondiente al algoritmo descrito arriba para $C = \{6, 12, 6\}$ y $k = 12$, indicando claramente la relación entre las distintas componentes del árbol y los conjuntos de los incisos anteriores.
+ \item Sea $\mathcal{C}$ la familia de todos los multiconjuntos de números naturales.  Considerar la siguiente función recursiva $\SubsetSum \colon \mathcal{C} \times \mathbb{N} \to \{V,F\}$ (donde $\mathbb{N} = \{ 0, 1, 2, \dots \}$, $V$ indica verdadero y $F$ falso):
+ 
+ 
+$$
+  \SubsetSum(\{c_1, \ldots, c_n\}, k) = \begin{cases}
+   k = 0 & \text{si $n = 0$} \\
+   \SubsetSum(\{c_1, \ldots, c_{n-1}\}, k) \lor \SubsetSum(\{c_1, \ldots, c_{n-1}\}, k - c_n) & \text{si $n > 0$}
+  \end{cases}
+$$
+ 
+ 
+ Convencerse de que $\SubsetSum(C, k) = V$ si y sólo si el problema de subconjuntos tiene una solución válida para la entrada $C, k$.  Para ello, observar que hay dos posibilidades para una solución válida $a = (a_1, \ldots, a_n)$ para el caso $n > 0$: o bien $a_n = 0$ o bien $a_n = 1$.  En el primer caso, existe un subconjunto de $\{c_1, \ldots, c_{n-1}\}$ que suma $k$; en el segundo, existe un subconjunto de $\{c_1, \ldots, c_{n-1}\}$ que suma $k - c_n$.
+ \label{sumaDeSubconjuntosFormRecBT}
+ \item Convencerse de que la siguiente es una implementación recursiva de $\SubsetSum$ en un lenguaje imperativo y de que retorna la solución para $C, k$ cuando se llama con $C, |C|, k$. ¿Cuál es su complejidad?
+ \label{sumaDeSubconjuntosAlgoBT}
+
+ \begin{enumerate}
+  \item $\SubsetSumAlg(C, i, j)$: // implementa $\SubsetSum(\{c_1, \ldots, c_i\}, j)$
+  \item ~~~~Si $i = 0$, retornar $(j = 0)$
+  \item ~~~~Si no, retornar $\SubsetSumAlg(C, i-1, j) \lor \SubsetSumAlg(C, i-1, j - C[i])$
+ \end{enumerate}
+
+ \item Dibujar el árbol de llamadas recursivas para la entrada $C = \{6, 12, 6\}$ y $k = 12$, y compararlo con el árbol de \textit{backtracking}.
+ \item Considerar la siguiente \emph{regla de factibilidad}: $p = (a_1, \ldots, a_i)$ se puede extender a una solución válida sólo si $\sum_{q=1}^i a_q c_q \leq k$.  Convencerse de que la siguiente implementación incluye la regla de factibilidad.
+
+  \begin{enumerate}
+  \item $\SubsetSumAlg(C, i, j)$: // implementa $\SubsetSum(\{c_1, \ldots, c_i\}, j)$
+  \item ~~~~Si $j < 0$, retornar \textbf{falso} // regla de factibilidad
+  \item ~~~~Si $i = 0$, retornar $(j = 0)$
+  \item ~~~~Si no, retornar $\SubsetSumAlg(C, i-1, j) \lor \SubsetSumAlg(C, i-1, j - C[i])$
+ \end{enumerate}
+
+ \item Definir otra regla de factibilidad, mostrando que la misma es correcta; no es necesario implementarla.
+ \item Modificar la implementación para imprimir el subconjunto de $C$ que suma $k$, si existe. \textbf{Ayuda:} mantenga un vector con la solución parcial $p$ al que se le agregan y sacan los elementos en cada llamada recursiva; tenga en cuenta de no suponer que este vector se copia en cada llamada recursiva, porque cambia la complejidad.
+\end{enumerate}

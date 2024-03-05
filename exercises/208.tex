@@ -1,0 +1,16 @@
+Se tiene una matriz booleana $A$ de $n \times n$ y una operación
+\emph{conjunciónSubmatriz} que toma $O(1)$ y
+que dados 4 enteros $i_0,i_1,j_0,j_1$ devuelve la conjunción de todos los
+elementos en la submatriz que toma las filas $i_0$ hasta $i_1$ y las columnas
+$j_0$ hasta $j_1$. Formalmente:
+$$\mbox{conjunciónSubmatriz}(i_0,i_1,j_0,j_1) = \bigwedge_{i_0 \le i \le i_1, j_0 \le j \le j_1} A[i,j]$$
+
+\begin{enumerate}
+\item Dar un algoritmo que tome tiempo estrictamente menor que $O(n^2)$ que calcule
+la posición de algún false, asumiendo que hay al
+menos uno. Calcular y justificar la complejidad del algoritmo.
+\item Modificar el algoritmo anterior para que cuente cuántos false hay en la
+matriz. Asumiendo que hay a lo sumo 5 elementos false en toda la matriz,
+calcular y justificar la complejidad del algoritmo. 
+\item Si obtuvo una complejidad $O(n^2)$ en el punto anterior, mejore el
+algoritmo y/o el cálculo para obtener una complejidad menor.

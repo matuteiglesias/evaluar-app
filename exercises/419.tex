@@ -1,0 +1,19 @@
+
+ \item Sea $F$ un bosque generador de un grafo $G$ pesado con una función $c \colon E(G) \to \mathbb{R}$.  Decimos que una arista $vw$ es \emph{segura} si $v$ y $w$ pertenecen a distintos árboles de $F$.  La arista $vw$ es \emph{candidata para el árbol $T$ de $F$ que contiene a $v$} cuando $vw$ es segura y $c(vw) \leq c(xy)$ para toda arista segura $xy$ tal que $x \in T$.  Considere el siguiente \emph{(meta-)}algoritmo que computa un árbol generador mínimo de $(G, c)$:
+ \begin{enumerate}[label={$\arabic*$:}]
+  \item Sea $F = (V(G), \emptyset)$ un bosque generador de $G$.
+  \item Para $i = 1, \ldots, n-1$:
+  \item ~~~~Agregar a $F$ una arista candidata de algún árbol $T$.
+ \end{enumerate}
+ 
+ \begin{enumerate}[label=$\alph*)$,ref=$\alph*)$]
+  \item Demostrar que el algoritmo anterior retorna un árbol generador mínimo $T$ de $G$.  \textbf{Ayuda:} hacer inducción en $i$ y demostrar en cada paso que el bosque $F_i$ es un subgrafo de un árbol generador mínimo de $G$.\label{ej:generico:demo}
+  \item Mostrar que tanto Prim como Kruskal son casos particulares de este algoritmo en las que la arista candidata se determina usando una política específica.  Concluir que la demostración anterior prueba la corrección de Prim y Kruskal en forma conjunta.
+ \end{enumerate}
+ 
+ Sin pérdida de generalidad, se puede suponer que todas las aristas de $G$ tienen un peso diferente.  En efecto, alcanza con extender $c(\cdot)$ a una función de pesos que $c'(\cdot)$ tal que $c'(v) = (c(v), v)$, donde $v$ es el identificador del vértice (i.e., un numero en $[1, n] \cap \mathbb{N}$).  Bajo la hipótesis de que todos los pesos son distintos, el algoritmo que consiste en insertar todas las aristas candidatas posibles a $F$ en cada iteración computa un árbol generador mínimo por el inciso~\ref{ej:generico:demo}.  Este algoritmo fue propuesto por Bor{\r u}vka en 1926, mucho antes de que Prim y Krukal propusieran los suyos.  
+ \begin{enumerate}[resume*]
+  \item Describir una implementación simple del algoritmo de Bor{\r u}vka que requiera $O(m\log n)$ tiempo cuando un grafo $G$ con $n$ vértices y $m$ aristas es dado.
+ \end{enumerate}
+\end{enumerate}
+

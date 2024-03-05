@@ -1,0 +1,12 @@
+
+\item En medio de una pandemia, la Escuela de Aulas Grandes y Ventiladas quiere implementar un protocolo especial de distanciamiento social que tenga en cuenta que la escuela no tienen restricciones de espacio.  El objetivo es separar a cada curso en dos subcursos a fin de reducir la cantidad de pares de estudiantes que sean muy cercanos, dado que se estima que estos estudiantes tienen dificultades para respetar tan buscado distanciamiento.  Para este fin, en el protocolo se estableció que cada curso que tenga $c$ parejas de estudiantes cercanos tiene que dividirse en dos subcursos, cada uno de los cuales puede tener a lo sumo $c/2$ parejas de estudiantes cercanos.  Notar que no importa si un subcurso queda con más estudiantes que otro.
+
+Formalmente, para cada curso contamos con un conjunto de estudiantes $E$ y su conjunto $C$ de pares de estudiantes cercanos.  Luego, una partición $(A,B)$ de $E$ es una \emph{solución factible para $(E, C)$} cuando $|(A\times A) \cap C| \leq |C|/2$ y $|(B \times B) \cap C| \leq |C/2|$.  Por ejemplo, si $E = \{1, 2, 3, 4\}$ y $C = \{1\text{-}2, 2\text{-}3, 3\text{-}4\}$, entonces $(\{1,3,4\}, \{2\})$ y $(\{2,4\}, \{1,3\})$ son soluciones factibles.
+
+\begin{enumerate}[label=$\alph*)$, ref=$\alph*)$]
+ \item Especificar el problema descrito definiendo cuál es la instancia (i.e. cuáles son los datos de entrada y qué condiciones satisfacen) y cuál es el resultado esperado (i.e., cuáles son los datos de salida y qué condiciones satisfacen).\label{ej:aulas-grandes:entrada}
+ \item Demostrar que para toda instancia existe un resultado esperado que satisface las condiciones definidas por el protocolo.  \textbf{Ayuda:} hacer inducción en la cantidad de estudiantes.  Para el paso inductivo, considerar que si les estudiantes se asignan iterativamente a los subcursos, entonces conviene enviar a cada estudiante al subcurso que tenga la menor cantidad de estudiantes cercanos a elle.
+ \item A partir de la demostración del inciso anterior, diseñar un algoritmo que encuentre una solución factible en tiempo lineal en función del tamaño de la entrada definido en el inciso~\ref{ej:aulas-grandes:entrada}.
+\end{enumerate}
+
+

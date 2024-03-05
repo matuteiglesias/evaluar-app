@@ -1,0 +1,5 @@
+  \item Dado un digrafo $D$ con pesos $c\colon E(D) \to \mathbb{N}$ y dos vértices $s$ y $t$, decimos que una arista $v \to w$ es \emph{$st$-eficiente} cuando $v \to w$ pertenece a algún camino mínimo de $s$ a $t$.  Sea $d(\cdot,\cdot)$ la función que indica el peso de un camino mínimo entre dos vértices.\label{ej:segundo-camino}
+  \begin{enumerate}[label=$\alph*$.,ref=$\alph*$]
+   \item Demostrar que $v \to w$ es $st$-eficiente si y sólo si $d(s, v) + c(v \to w) + d(w, t) = d(s,t)$.\label{ej:segundo-camino:eficiencia}
+   \item Usando el inciso anterior, proponga un algoritmo eficiente que encuentre el mínimo de los caminos entre $s$ y $t$ que no use aristas $st$-eficientes.  Si dicho camino no existe, el algoritmo retorna $\bot$.
+  \end{enumerate}
