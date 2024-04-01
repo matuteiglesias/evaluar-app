@@ -25,6 +25,41 @@
             margin-top: 20px;
         }
     </style>
+
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+        
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+              apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
+              authDomain: "evaluar-app.firebaseapp.com",
+              projectId: "evaluar-app",
+              storageBucket: "evaluar-app.appspot.com",
+              messagingSenderId: "412630077125",
+              appId: "1:412630077125:web:610bd920072faa5b632aac",
+              measurementId: "G-P2VS0C5GRK"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+          </script>
+
+          
+
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <!-- Include MathJax for LaTeX rendering -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -57,27 +92,6 @@
 
 
 
-    <!-- TeX: {
-        Macros: {
-          Obligatorio: "\\ensuremath{\\star}",
-          tam: "\\text{tam}",
-          
-          
-          SubsetSum: "\\text{ss}",
-          SubsetSumAlg: "\\text{subset\\_sum}",
-          SubsetSumPD: "\\text{ss'}",
-          Vuelto: "\\text{cc}",
-          VueltoPD: "\\text{cc'}",
-          Fiesta: "\\text{fs}",
-          FiestaPD: "\\text{fs}",
-          ActividadesPD: "\\text{act}"
-          bwd: "\\text{bwd}"
-
-
-        } -->
-
-
-
 </head>
 
 <body>
@@ -90,18 +104,24 @@
             {{content | safe}}
         </section>
 
-        <!-- Answer submission form
-        <form action="/submit_answer" method="post">
-            <input type="hidden" name="exercise_id" value="{{ exercise_id }}">
-            <textarea name="response" required></textarea>
-            <button type="submit">Submit Answer</button>
-        </form> -->
+
+
+        <!-- Guidance for formulating questions -->
+        <div class="guidance">
+            <p class="small-font">Antes de enviar tu respuesta, revisa que hayas comprendido bien la pregunta y que tu respuesta sea clara y completa. Si tienes dudas específicas, formula tu pregunta detalladamente para facilitar la ayuda.</p>
+        </div>
         
         <!-- Answer submission form -->
         <form action="/submit_answer" method="post" class="mt-4">
             <input type="hidden" name="exercise_id" value="{{ exercise_id }}">
-            <label for="response">Tu Consulta:</label>
+            <label for="response">Tus Consultas:</label>
             <textarea name="response" id="response" required></textarea>
+
+            <div class="guidance">
+                <p class="small-font">Describe claramente qué parte del ejercicio no entiendes o en qué paso te encuentras atascado. Cuanto más específica sea tu consulta, mejor podremos asistirte. Puede demorar varios segundos.</p>
+            </div>
+
+
             <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
         </form>
     </div>

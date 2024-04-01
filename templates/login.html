@@ -1,9 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Your CSS styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            text-align: center;
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-button {
+            background-color: #4285F4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-button:hover {
+            background-color: #357ae8;
+        }
+
+    </style>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P2VS0C5GRK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-P2VS0C5GRK');
+    </script>
 </head>
+
+
 <body>
-    <a href="/login">Login with Google</a>
+    <div class="login-container">
+        <h2>Iniciar Sesión</h2>
+        <!-- Link or button to trigger Google OAuth flow -->
+        <button onclick="window.location.href='/login';" class="login-button">Iniciar sesión con Google</button>
+        <!-- The URL in href should be replaced with your backend endpoint that handles Google OAuth -->
+    </div>
 </body>
+</html>
+
+
 </html>

@@ -1,11 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
+
+
 <head>
     <meta charset="UTF-8">
     <title>Retroalimentación del Ejercicio</title>
     <!-- Incluye Bootstrap para estilizar -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+
+
+        <!-- Opcional: Incluye JavaScript de Bootstrap y Popper.js -->
+        <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Full version of jQuery -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+              apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
+              authDomain: "evaluar-app.firebaseapp.com",
+              projectId: "evaluar-app",
+              storageBucket: "evaluar-app.appspot.com",
+              messagingSenderId: "412630077125",
+              appId: "1:412630077125:web:610bd920072faa5b632aac",
+              measurementId: "G-P2VS0C5GRK"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+          </script>
+
+          
 </head>
+
+
 <body>
     <div class="container">
         <h1>Retroalimentación del Ejercicio</h1>
@@ -13,16 +59,86 @@
         <div class="alert alert-info" role="alert">
             <h4 class="alert-heading">Tu Feedback</h4>
             <p>{{ evaluated_response|safe }}</p>
+            
             <hr>
-            <p class="mb-0">Revisa tu respuesta y continúa practicando para mejorar.</p>
+            <p class="mb-0">Revisa tu respuesta. Deja tu Feedback abajo.</p>
         </div>
+        
+
         <!-- Enlaces para regresar al ejercicio o a la página principal -->
-        <!-- <a href="/exercise/{{ exercise_id }}" class="btn btn-primary">Volver al Ejercicio</a> -->
+        
         <a href="/" class="btn btn-secondary">Inicio</a>
-    </div>
-    <!-- Opcional: Incluye JavaScript de Bootstrap y Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+        <!-- Improved feedback form -->
+        <div class="mt-4">
+            <h2>Envía tu Feedback</h2>
+            <p class="text-muted">Tu opinión mejora la calidad de respuestas y ayuda a adaptar los modelos.</p>
+            <form id="feedbackForm" action="/submit-feedback" method="post" class="form-group">
+                <input type="hidden" name="exercise_id" id="exerciseId" value="{{ exercise_id }}">
+
+                <!-- Agrega un campo oculto para la respuesta de IA o el identificador único de la interacción -->
+                <input type="hidden" name="evaluated_response" id="evaluated_response" value="{{ session['evaluated_response'] }}">
+
+
+                <label for="feedback" class="h4">Feedback:</label>
+                <textarea id="feedback" name="feedback" class="form-control" rows="4" placeholder="Escribe tu feedback aquí..."></textarea>
+                <small class="form-text text-muted">Las afirmaciones formuladas por el agente IA pueden no ser verdaderas. Por favor: verificalas a la luz de la bibliografia de la materia. Reporta las limitaciones que notes. Inclui detalles específicos o sugerencias. </small>
+                <button type="submit" class="btn btn-primary mt-2">Enviar Feedback</button>
+            </form>
+        </div>
+
+
+        <script>
+            // JavaScript for form submission handling
+            $(document).ready(function() {
+                $('#feedbackForm').on('submit', function(e) {
+                    e.preventDefault(); // Prevent the form from submitting through the browser
+                    var form = $(this);
+                    $.ajax({
+                        type: form.attr('method'),
+                        url: form.attr('action'),
+                        data: form.serialize(),
+                        success: function(response) {
+                            // Modifica esta línea para mostrar el mensaje deseado.
+                            alert("Feedback enviado. ¡Muchas gracias!"); // Mensaje personalizado
+                            // Limpia los campos del formulario después del envío
+                            $('#feedback').val('');
+                        },
+                        error: function(xhr, status, error) {
+                            // Puedes agregar manejo de errores aquí, por ejemplo:
+                            alert("Hubo un problema al enviar tu feedback. Por favor, intenta nuevamente o reporta el problema a los docentes.");
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+        <!-- Inside the body, after the current form -->
+        <div class="mt-4">
+            <h2>Solicitar Consulta en Clase</h2>
+            <p class="text-muted">Si aún tenes dudas, solicita una consulta con docentes. Describi tu consulta con claridad para que podamos prepararnos mejor.</p>
+            <form action="/request-teacher-time" method="post" class="form-group">
+                <!-- Hidden fields for studentId, exerciseId can be dynamically filled based on session or other logic -->
+                <input type="hidden" id="studentId" name="studentId" value="{{ exercise_id }}">
+                <input type="hidden" id="exerciseId" name="exercise_id" value="{{ exercise_id }}">
+
+                <label for="question" class="h4">Tu Consulta:</label>
+                <textarea id="question" name="question" class="form-control" rows="4" placeholder="Escribi tu consulta aquí..."></textarea>
+                <small class="form-text text-muted">Sé lo más específico posible para una mejor asistencia.</small>
+
+                <!-- This field can be set based on user action, for example, a checkbox to request teacher time -->
+                <input type="hidden" id="requestTeacher" name="requestTeacher" value="true">
+                
+                <button type="submit" class="btn btn-warning mt-2">Solicitar Consulta</button>
+            </form>
+        </div>
+
+</div>
+
+
+
 </body>
+
+
 </html>

@@ -6,12 +6,53 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+        
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+              apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
+              authDomain: "evaluar-app.firebaseapp.com",
+              projectId: "evaluar-app",
+              storageBucket: "evaluar-app.appspot.com",
+              messagingSenderId: "412630077125",
+              appId: "1:412630077125:web:610bd920072faa5b632aac",
+              measurementId: "G-P2VS0C5GRK"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+          </script>
+
+
 </head>
 
 
 
 <body>
     <h1>Lista de Ejercicios</h1>
+
+
+    <!-- General Instructions -->
+    <p><small>Asegúrate de detallar bien tu pregunta para que la ayuda que recibas sea lo más precisa posible.
+
+        Las consultas se reciben hasta las 16.00 horas de la fecha de la practica.
+    </small></p>
+
 
     <section id="Section1">
         <h3>Practica 1: Tecnicas Algoritmicas</h3>
@@ -21,46 +62,42 @@
         </table>
     </section>
     
+
+    <!-- Las secciones se descomentaran cuando llegue su fecha. -->
+    <!-- 
+
+
     <section id="Section2">
         <h3>Practica 2: Divide and Conquer</h3>
         <table class="exerciseTable" id="section2Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
 
     <section id="Section3">
         <h3>Practica 3: Algoritmos en Grafos</h3>
         <table class="exerciseTable" id="section3Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
     
     <section id="Section4">
         <h3>Practica 4: Recorridos y Arboles</h3>
         <table class="exerciseTable" id="section4Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
 
     <section id="Section5">
         <h3>Practica 5: Camino Minimo</h3>
         <table class="exerciseTable" id="section5Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
     
     <section id="Section6">
         <h3>Practica 6: Flujo en Redes</h3>
         <table class="exerciseTable" id="section6Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
         </table>
     </section>
 
+    -->
     
 
     <script>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación de Solicitud</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
+</head>
+
+<body>
+    
+            <!-- # Guardar detalles del ticket en la sesión
+            session['ticket_details'] = {
+                'ticket_id': ticket_id,
+                'exerciseId': exercise_id,
+                'question': question,
+                'studentName': session['user']['name'],
+                'studentEmail': session['user']['email'],
+                'teacher_name': teacher_name
+            } -->
+            
+
+
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">¡Solicitud Enviada!</h1>
+            <p class="lead">Gracias por tu solicitud, <strong>{{ session['ticket_details']['studentName'] }}</strong>. Hemos recibido tu consulta para tiempo con un docente.</p>
+            <hr class="my-4">
+
+            <p><strong>Número de consulta:</strong> {{ session['ticket_details']['ticket_id'] }}</p>
+            <p><strong>Ejercicio:</strong> {{ session['ticket_details']['exerciseId'] }}</p>
+            <p><strong>Consulta:</strong> "{{ session['ticket_details']['question'] }}"</p>
+            <p><strong>Docente asignado:</strong> {{ session['ticket_details']['teacher_name'] }}</p>
+            <p>Te esperamos el miércoles de 17:00 a 22:00.</p>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" href="/" role="button">Volver al Inicio</a>
+                <button class="btn btn-info btn-lg" onclick="downloadTicket()">Descargar Resumen de la Consulta</button>
+            </p>
+        </div>
+    </div>
+
+
+    <script>
+        function downloadTicket() {
+            // Asegurándonos de que el objeto JavaScript se inicializa correctamente
+            // con un objeto JSON derivado de los detalles del ticket en la sesión de Flask.
+            // Nota: se agregan paréntesis alrededor de la expresión de la plantilla Flask para asegurar
+            // que se interpreta correctamente como un argumento para JSON.stringify().
+            var ticketDetails = JSON.parse('{{ session["ticket_details"] | tojson | safe }}');
+            
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ticketDetails));
+            var downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "consulta_" + ticketDetails.ticket_id + ".json");
+            document.body.appendChild(downloadAnchorNode); // Requerido para Firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+    </script>
+
+    
+</body>
+
+
+</html>
