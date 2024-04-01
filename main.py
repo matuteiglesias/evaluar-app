@@ -337,6 +337,10 @@ def create_app():
         logger.info("Stored evaluated response in session.")
 
         # Record the interaction with all details
+        # record_interaction(user_details, exercise_id, response, evaluated_response)
+
+        # Record the interaction
+        user_details = session.get('user')
         record_interaction(user_details, exercise_id, response, evaluated_response)
         logger.info("Recorded interaction.")
 
@@ -345,33 +349,45 @@ def create_app():
         return render_template('feedback.html', evaluated_response=evaluated_response_html, exercise_id=exercise_id)
 
 
+    def record_interaction(user_details, exercise_id, user_query, ai_response):
+        """Record user interactions with the AI in Firestore."""
+        interaction_ref = db.collection('interaction_records').document()
+        interaction_ref.set({
+            "exerciseId": exercise_id,
+            "userId": user_details['id_'],
+            "userName": user_details['name'],
+            "userQuery": user_query,
+            "aiResponse": ai_response,
+            "timestamp": firestore.SERVER_TIMESTAMP  # Use server timestamp for consistency
+        })
+        app.logger.info("Interaction recorded with Firestore.")
 
-    def record_interaction(user_details, exercise_id, response, evaluated_response):
-        interaction = {
-            "user_id": user_details.get('id_'),
-            "user_name": user_details.get('name'),
-            "user_email": user_details.get('email'),
-            "exercise_id": exercise_id,
-            "response": response,
-            "evaluated_response": evaluated_response
-        }
-        # Use the /tmp directory for compatibility with GCP's environment
-        interactions_file_path = '/tmp/interactions.json'
-        try:
-            with open(interactions_file_path, 'r+') as file:
-                try:
-                    data = json.load(file)
-                except json.JSONDecodeError:
-                    data = []  # If the file is empty and causing errors
-                data.append(interaction)
-                file.seek(0)
-                file.truncate()  # Clear the file before re-writing
-                json.dump(data, file, indent=4)
-        except FileNotFoundError:
-            with open(interactions_file_path, 'w') as file:
-                json.dump([interaction], file, indent=4)
-            # with open('/interactions.json', 'w') as file:
-            #     json.dump([interaction], file, indent=4)
+    # def record_interaction(user_details, exercise_id, response, evaluated_response):
+    #     interaction = {
+    #         "user_id": user_details.get('id_'),
+    #         "user_name": user_details.get('name'),
+    #         "user_email": user_details.get('email'),
+    #         "exercise_id": exercise_id,
+    #         "response": response,
+    #         "evaluated_response": evaluated_response
+    #     }
+    #     # Use the /tmp directory for compatibility with GCP's environment
+    #     interactions_file_path = '/tmp/interactions.json'
+    #     try:
+    #         with open(interactions_file_path, 'r+') as file:
+    #             try:
+    #                 data = json.load(file)
+    #             except json.JSONDecodeError:
+    #                 data = []  # If the file is empty and causing errors
+    #             data.append(interaction)
+    #             file.seek(0)
+    #             file.truncate()  # Clear the file before re-writing
+    #             json.dump(data, file, indent=4)
+    #     except FileNotFoundError:
+    #         with open(interactions_file_path, 'w') as file:
+    #             json.dump([interaction], file, indent=4)
+    #         # with open('/interactions.json', 'w') as file:
+    #         #     json.dump([interaction], file, indent=4)
 
     
     @app.route('/logout')
