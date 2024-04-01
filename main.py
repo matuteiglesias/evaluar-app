@@ -472,7 +472,7 @@ def create_app():
         
         # If no previous teacher or all are overloaded, find any eligible teacher
         for teacher_id, load in teachers_load.items():
-            if load <= (average_load + 3):
+            if load <= (average_load + 1):
                 app.logger.debug(f"Assigning to teacher {teacher_id} with load {load}")
                 return teacher_id
         
