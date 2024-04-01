@@ -194,9 +194,9 @@ class Consulta40(Evaluator):
 
         # Construcción específica del prompt para GPT-4
         prompt_introduction = (
-            "Soy un asistente de IA diseñado para actuar como un docente virtual en el campo de las ciencias de la computación. "
-            "Mi objetivo es ayudarte a entender mejor los conceptos y resolver las dudas que puedas tener sobre los ejercicios propuestos. "
-            "Voy a proporcionar explicaciones claras y detalladas, guiarte a través de los pasos lógicos y alentarte en tu proceso de aprendizaje. "
+            "Eres un asistente de IA diseñado para actuar como un docente virtual en el campo de las ciencias de la computación. "
+            "Tu objetivo es ayudar a entender mejor los conceptos y resolver las dudas que el estudiante tiene sobre los ejercicios propuestos. "
+            "Si el estudiante no propone una resolución detallada, no inviertas tu esfuerzo en una respuesta larga. \n\n"
         )
 
         # Incorporación del contenido del ejercicio y la consulta del estudiante
@@ -207,12 +207,6 @@ class Consulta40(Evaluator):
 
         # Instrucciones para la IA sobre cómo proceder con la asistencia
         assistance_instructions = (
-            "Responde a la consulta siguiendo estas pautas, enfocándote en clarificar dudas y fortalecer la comprensión del estudiante. "
-            "Si la consulta es sobre un problema específico, desglosa el problema y guía al estudiante hacia la solución con preguntas orientadoras y pistas, en lugar de dar la respuesta directamente. "
-            "Si la consulta es conceptual, proporciona una explicación detallada del concepto, con ejemplos que ilustren su aplicación práctica. "
-            "Anima al estudiante a seguir explorando el tema y a aplicar el conocimiento de manera creativa. "
-            "Recuerda utilizar un lenguaje amigable y accesible, evitando jergas innecesarias, y confirma que cualquier recurso que menciones esté disponible y sea relevante. "
-            "Mantén un tono alentador y asegúrate de que el estudiante se sienta apoyado en su proceso de aprendizaje. "
             "Considera la brevedad y la precisión, ajustando la longitud de tu respuesta a la complejidad de la consulta del estudiante."
         )
 
@@ -240,7 +234,8 @@ class Consulta40(Evaluator):
                 "Tu feedback debe incorporar consideraciones académicas y prácticas en informática, adecuadas para estudiantes avanzados. "
                 "Guiá en español de Argentina y mantené un tono de apoyo y aliento para fomentar un ambiente de aprendizaje positivo. "
                 "Buscá estimular la reflexión y la iniciativa, incluyendo recomendaciones prácticas y teóricas para apoyar el desarrollo académico y profesional. "
-                "Alentá la revisión de estudios de casos o ejemplos prácticos para una comprensión aplicada y más profunda de los conceptos. "
+                "Si la consulta es sobre un problema específico, desglosa el problema y guía al estudiante hacia la solución con preguntas orientadoras y pistas, en lugar de dar la respuesta directamente. "
+                "Si la consulta es conceptual, proporciona una explicación detallada del concepto, con ejemplos que ilustren su aplicación práctica. "
                 )
             }
 
@@ -252,7 +247,7 @@ class Consulta40(Evaluator):
                     {"role": "user", "content": self.construct_prompt(exercise_content, response)}
                 ],
                 temperature=0.7,
-                max_tokens=500,
+                max_tokens=900,
                 n=1,
                 stop=None
             )
@@ -278,7 +273,7 @@ class AnalizadorEjercicios(Evaluator):
     
         # Construcción específica del prompt para GPT-4
         prompt_introduction = (
-            "Estamos analizando ejercicios para estudiantes avanzados en ciencias de la computación.  Basándote en el siguiente detalle del ejercicio:"
+            "Aquí tienes un problema educativo complejo:"
         )
         
         
@@ -287,11 +282,20 @@ class AnalizadorEjercicios(Evaluator):
         )
         
         
+        # # Instructions for AI on how to proceed with the evaluation
+        # evaluation_instructions = (
+        #     "\nGenera un Nombre: Proporciona un nombre único y atractivo para el ejercicio que capte la esencia del desafío y lo haga memorable. Este nombre debe ser breve (una palabra o una frase muy corta) y reflejar el objetivo central o la característica distintiva del problema."
+        #     "\nDescribe en Info: Escribe una descripción muy breve y precisa que explique el núcleo del problema, su objetivo, y cualquier restricción específica o particularidad que lo haga interesante. Limita esta descripción a una o dos oraciones para mantenerla directa y accesible."
+        # )
+
+
         # Instructions for AI on how to proceed with the evaluation
         evaluation_instructions = (
-            "\nGenera un Nombre: Proporciona un nombre único y atractivo para el ejercicio que capte la esencia del desafío y lo haga memorable. Este nombre debe ser breve (una palabra o una frase muy corta) y reflejar el objetivo central o la característica distintiva del problema."
-            "\nDescribe en Info: Escribe una descripción muy breve y precisa que explique el núcleo del problema, su objetivo, y cualquier restricción específica o particularidad que lo haga interesante. Limita esta descripción a una o dos oraciones para mantenerla directa y accesible."
+            "Por favor, sin decir nada, analízalo en profundidad, piensa no solo en cómo se resuelve, sino también en por qué se aborda de esta manera, qué conceptos fundamentales se ilustran, y si tal vez tiene un aprendizaje importante aplicable en otros contextos. Luego:"
+            "\nGenera un Nombre: Proporciona un nombre único y atractivo para el ejercicio que capte la esencia del desafío y lo haga memorable. Este nombre debe ser breve (una palabra o una frase muy corta) y reflejar el ser del problema."
+            "\nDescribe en Info: Escribe una descripción muy breve y precisa, pudiendo referirte a cuestiones (contexto educativo, razonamiento crítico, habilidades en este problema utiles a otros contextos, objetivo de aprendizaje principal, implicancias de las técnicas para el problema) pero teniendo que priorizar y poner las dos cosas clave. Limita esta descripción a una o dos oraciones para mantenerla directa y accesible. "
         )
+
         
         # Combining all parts into the final prompt
         complete_prompt = f"{prompt_introduction}{exercise}{evaluation_instructions}"
@@ -310,10 +314,17 @@ class AnalizadorEjercicios(Evaluator):
         try:
 
             # system_instructions para reflejar la tarea
+            # system_instructions = {
+            #     "role": "system",
+            #     "content": "Eres una inteligencia artificial diseñada para analizar ejercicios de ciencias de la computación. Tu tarea es generar un nombre y una descripción concisa para cada ejercicio basándote en su contenido. El nombre debe ser corto y reflejar la esencia del desafío. La descripción debe ser breve, explicando el objetivo y particularidades del problema. Tu respuesta debe ser en español y orientada a estudiantes avanzados, pero puedes evitar exceso de lenguaje formal para no establecer tanta distancia con los estudiantes."
+            # }
             system_instructions = {
                 "role": "system",
-                "content": "Eres una inteligencia artificial diseñada para analizar ejercicios de ciencias de la computación. Tu tarea es generar un nombre y una descripción concisa para cada ejercicio basándote en su contenido. El nombre debe ser corto y reflejar la esencia del desafío. La descripción debe ser breve, explicando el objetivo y particularidades del problema. Tu respuesta debe ser en español y orientada a estudiantes avanzados, pero puedes evitar exceso de lenguaje formal para no establecer tanta distancia con los estudiantes."
+                "content": "Tu tarea es analizar profundamente ejercicios de ciencias de la computación, identificando los conceptos fundamentales en juego, las habilidades de pensamiento crítico que se promueven, y la aplicabilidad de estas técnicas en contextos más amplios. No te limites a describir las técnicas utilizadas; explora por qué se seleccionan estas técnicas y cómo contribuyen al aprendizaje significativo. Considera tanto la solución específica como su relevancia educativa general."
             }
+
+
+
 
             chat_completion = openai.ChatCompletion.create(
                 model="gpt-4-turbo-preview",
@@ -336,3 +347,82 @@ class AnalizadorEjercicios(Evaluator):
         except Exception as e:
             logger.error(f"Error calling OpenAI API: {e}")
             return "Error evaluando la respuesta."
+
+
+
+# Para alinear el comportamiento de la IA con el feedback del profesor y mejorar la manera en que se describen y analizan los ejercicios, podemos ajustar el proceso de generación de prompts y la interpretación de los ejercicios. El objetivo es fomentar una comprensión más profunda de los problemas, destacando no solo la técnica de resolución, sino también el razonamiento detrás de la selección de esa técnica y su aplicación en diferentes contextos. Aquí te propongo una versión revisada de la clase `AnalizadorEjercicios`, incorporando estos cambios:
+
+# ```python
+# import requests
+# class AnalizadorEjercicios(Evaluator):
+#     def __init__(self):
+#         super().__init__(model_name="gpt-4-turbo-preview")
+
+#     def construct_prompt(self, exercise_content, evaluation_style="neutral"):
+#         # Construcción específica del prompt para GPT-4
+#         prompt_introduction = (
+#             "Estamos profundizando en el análisis de ejercicios para estudiantes avanzados en ciencias de la computación. Considerando la importancia de entender no solo la solución, sino también el razonamiento detrás de la elección de técnicas específicas y su aplicación en contextos variados, analiza el siguiente detalle del ejercicio:"
+#         )
+        
+#         exercise = (
+#             f"Ejercicio:\n{exercise_content}\n\n"
+#         )
+        
+#         # Instructions for AI on how to proceed with the evaluation
+#         evaluation_instructions = (
+#             "\nGenera un Nombre: Proporciona un nombre único y atractivo para el ejercicio que refleje la esencia del desafío y su importancia educativa."
+#             "\nDescribe en Info: Describe el ejercicio detallando su contexto educativo, el razonamiento crítico necesario, y cómo este problema ayuda a desarrollar habilidades aplicables en otros contextos. Incluye el objetivo de aprendizaje principal y explora las implicancias de las técnicas usadas para resolver el problema."
+#         )
+        
+#         # Combining all parts into the final prompt
+#         complete_prompt = f"{prompt_introduction}{exercise}{evaluation_instructions}"
+#         logger.info(f"Constructed prompt for OpenAI API call. : {complete_prompt}")
+#         return complete_prompt
+
+#     def evaluate(self, exercise_content):
+#         logger.info(f"Inside AnalizadorEjercicios")
+#         timeout_duration = 2  # Establece un tiempo máximo de espera de 2 segundos
+
+#         # System instructions to reflect the task's nature
+#         system_instructions = {
+#             "role": "system",
+#             "content": "Analiza ejercicios de ciencias de la computación profundizando en la comprensión del problema, destacando la importancia del razonamiento crítico y la aplicación de conceptos en diversos contextos. Genera un nombre y descripción que no solo resumen el problema, sino que también explican su relevancia educativa, el proceso de pensamiento necesario, y cómo las técnicas aplicadas se extienden a otras situaciones. Tu respuesta debe ser en español y adaptada para estudiantes avanzados, evitando un lenguaje excesivamente formal."
+#         }
+
+#         try:
+#             chat_completion = openai.ChatCompletion.create(
+#                 model="gpt-4-turbo-preview",
+#                 messages=[
+#                     system_instructions,
+#                     {"role": "user", "content": self.construct_prompt(exercise_content)}
+#                 ],
+#                 temperature=0.7,
+#                 max_tokens=1100,
+#                 n=1,
+#                 stop=None,
+#                 timeout=timeout_duration  # Añade un timeout a tu solicitud
+#             )
+            
+#             evaluated_response = chat_completion.choices[0].message['content'].strip()
+#             logger.info("Received evaluation response from OpenAI API.")
+#             return evaluated_response
+        
+#         except requests.Timeout:
+#             # Manejo específico para cuando la solicitud excede el tiempo máximo de espera
+#             logger.error(f"La solicitud a OpenAI ha superado el tiempo máximo de espera de {timeout_duration} segundos.")
+#             return "Error: Tiempo de espera excedido."
+        
+#         except Exception as e:
+#             # Manejo general para cualquier otro tipo de error
+#             logger.error(f"Error al llamar a la API de OpenAI: {e}")
+#             return "Error evaluando la respuesta."
+
+# ```
+
+# Este enfoque ajustado busca:
+# - Enfatizar el contexto educativo de los ejercicios y la importancia de entender el porqué detrás de cada técnica.
+# - Fomentar el desarrollo de habilidades transferibles, tales como el razonamiento crítico y la solución de problemas en contextos variados.
+# - Proporcionar descripciones que van más allá de la superficie del problema, invitando a los estudiantes a reflexionar sobre el proceso de aprendizaje.
+
+# Este cambio en la formulación de prompts se orienta hacia una IA que actúa más como un facilitador de aprendizaje profundo, en línea con la visión educativa expresada por el profesor.
+        
