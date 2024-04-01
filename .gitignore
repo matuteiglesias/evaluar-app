@@ -5,4 +5,6 @@ app.log*
 interactions.json
 spreadsheetapp
 .env
+data/
+app.yaml
 # Y cualquier otro patrón de archivo que desees ignorar
