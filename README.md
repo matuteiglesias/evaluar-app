@@ -33,6 +33,8 @@ _(agregar capturas reales del home, selector de curso y tabla de ejercicios)_
 - Visualización de ejercicios y acceso a consultas:
   ![Ejercicios cargados](docs/assets/tabla-ejercicios.png)
 
+**Docs:** https://matuteiglesias.github.io/evaluar-app/
+
 ---
 
 ## 🙌 ¿Cómo podés contribuir?
