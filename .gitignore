@@ -1,10 +1,27 @@
-__pycache__
-bkp/
-flask_session/ 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.env
+env/
+venv/
+.venv/
+
+# Logs and debug
+*.log
 app.log*
+*.out
+
+# Secrets
+*.json
+!firebase/*.json  # Except Firebase config if needed
+
+# Sessions and temp files
+flask_session/
+*.sqlite3
 interactions.json
 spreadsheetapp
 .env
-data/
-app.yaml
 # Y cualquier otro patrón de archivo que desees ignorar
