@@ -45,10 +45,41 @@ def configure_logging():
 
 
 def create_app():
+    """
+    Creates and configures the Flask application.
+
+    This function initializes the Flask app with necessary configurations, 
+    sets up logging, session management, OAuth with Google, and Firebase Admin SDK. 
+    It also registers the application's blueprints for routing.
+
+    Returns:
+        Flask: The configured Flask application instance.
+
+    Raises:
+        FileNotFoundError: If the Firebase service account file is not found.
+
+    Configuration:
+        - SECRET_KEY: The secret key for the Flask application, loaded from environment variables.
+        - SESSION_PERMANENT: Boolean indicating whether sessions are permanent.
+        - SESSION_TYPE: The type of session storage (e.g., filesystem).
+        - SESSION_FILE_DIR: Directory for storing session files.
+
+    Blueprints:
+        - auth_bp: Handles authentication routes.
+        - exercises_bp: Handles routes related to exercises.
+        - teachers_bp: Handles routes related to teachers.
+        - core_bp: Handles core application routes.
+        - static_bp: Handles static file routes.
+
+    External Services:
+        - Google OAuth: Configured for user authentication using Google.
+        - Firebase Admin SDK: Initialized for Firebase integration.
+    """
     logger = configure_logging()
     logger.info("Creating Flask app")
 
     app = Flask(__name__)
+    app.logger.setLevel(logging.INFO)
     app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 
     # Flask session configuration
@@ -75,7 +106,7 @@ def create_app():
     # Initialize Firebase only once
     global firebase_initialized
     if not firebase_initialized and not firebase_admin._apps:
-        service_account_path = './evaluar-app-firebase-adminsdk-mvow6-456d541606.json'
+        service_account_path = './env/evaluar-app-firebase-adminsdk-mvow6-456d541606.json'
         logger.info("Initializing Firebase Admin SDK")
         cred = credentials.Certificate(service_account_path)
         initialize_app(cred)

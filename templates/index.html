@@ -6,37 +6,40 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 
-        <!-- Add Firebase products that you want to use -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+        
 
         
-        <script type="module">
-            // Import the functions you need from the SDKs you need
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
-            // TODO: Add SDKs for Firebase products that you want to use
-            // https://firebase.google.com/docs/web/setup#available-libraries
-          
-            // Your web app's Firebase configuration
-            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-            const firebaseConfig = {
-              apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
-              authDomain: "evaluar-app.firebaseapp.com",
-              projectId: "evaluar-app",
-              storageBucket: "evaluar-app.appspot.com",
-              messagingSenderId: "412630077125",
-              appId: "1:412630077125:web:610bd920072faa5b632aac",
-              measurementId: "G-P2VS0C5GRK"
-            };
-          
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app);
-          </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
+            authDomain: "evaluar-app.firebaseapp.com",
+            projectId: "evaluar-app",
+            storageBucket: "evaluar-app.appspot.com",
+            messagingSenderId: "412630077125",
+            appId: "1:412630077125:web:610bd920072faa5b632aac",
+            measurementId: "G-P2VS0C5GRK"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
 
 
 </head>
@@ -45,22 +48,6 @@
 
 <body>
 
-<<<<<<< HEAD
-
-    <!-- Notice -->
-    <div class="emergency-notice" style="border: 2px solid #000; padding: 10px; margin-bottom: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
-        <p style="font-style: italic;">"La UBA se ha declarado en emergencia presupuestaria. Toma conciencia. Ayudanos a defender tu educación como bien público."</p>
-    </div>
-
-
-    <!-- Notice -->
-    <div class="emergency-notice" style="border: 2px solid #000; padding: 10px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
-        <p style="font-style: italic;">"INTENTAR HACER HASTA 2 PREGUNTAS POR EJERCICIO"</p>
-    </div>
-    
-
-    <h1>Lista de Ejercicios</h1>
-=======
     <div style="text-align: left;">
         <!-- Notice -->
 
@@ -79,150 +66,65 @@
     
 
 
-    
-    <section id="Section6">
-        <h3>Practica 6: Flujo en Redes</h3>
-        <table class="exerciseTable" id="section6Table">
-        </table>
-    </section>
-
-    <section id="Section5">
-        <h3>Practica 5: Camino Minimo</h3>
-        <table class="exerciseTable" id="section5Table">
-        </table>
-    </section>
 
     
-    <section id="Section4">
-        <h3>Practica 4: Recorridos y Arboles</h3>
-        <table class="exerciseTable" id="section4Table">
-        </table>
-    </section>
 
+    <div id="exerciseSections"></div>
 
-    <section id="Section3">
-        <h3>Practica 3: Algoritmos en Grafos</h3>
-        <table class="exerciseTable" id="section3Table">
-        </table>
-    </section>
-    
-    <section id="Section2">
-        <h3>Practica 2: Divide and Conquer</h3>
-        <table class="exerciseTable" id="section2Table">
-        </table>
-    </section>
->>>>>>> 89011c4 (Refactor: Reorganización de rutas, limpieza de main.py, estructura por blueprints)
-
-    <!-- General Instructions -->
-    <p><small>Asegúrate de detallar bien tu pregunta para que la ayuda que recibas sea lo más precisa posible.
-
-        Las consultas se reciben hasta las 16.00 horas de la fecha de la practica.
-    </small></p>
-
-
-    <section id="Section1">
-        <h3>Practica 1: Tecnicas Algoritmicas</h3>
-        <table class="exerciseTable" id="section1Table">
-            <!-- Cabecera de la tabla -->
-            <!-- Las filas se añadirán dinámicamente -->
-        </table>
-    </section>
-<<<<<<< HEAD
     
 
-    <section id="Section2">
-        <h3>Practica 2: Divide and Conquer</h3>
-        <table class="exerciseTable" id="section2Table">
-        </table>
-    </section>
-
-
-    <!-- Las secciones se descomentaran cuando llegue su fecha. -->
-    <!-- 
-
-    <section id="Section3">
-        <h3>Practica 3: Algoritmos en Grafos</h3>
-        <table class="exerciseTable" id="section3Table">
-        </table>
-    </section>
-    
-    <section id="Section4">
-        <h3>Practica 4: Recorridos y Arboles</h3>
-        <table class="exerciseTable" id="section4Table">
-        </table>
-    </section>
-
-    <section id="Section5">
-        <h3>Practica 5: Camino Minimo</h3>
-        <table class="exerciseTable" id="section5Table">
-        </table>
-    </section>
-    
-    <section id="Section6">
-        <h3>Practica 6: Flujo en Redes</h3>
-        <table class="exerciseTable" id="section6Table">
-        </table>
-    </section>
-
-=======
-
-
-    <!-- Las secciones se descomentaran cuando llegue su fecha. -->
-    <!-- 
-
-
-
->>>>>>> 89011c4 (Refactor: Reorganización de rutas, limpieza de main.py, estructura por blueprints)
-    -->
-    
 
     <script>
         
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-    fetch('/get_exercises')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // Log data to see if it's correctly fetched
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const course = urlParams.get('course') || 'tda';
 
-        // Suponiendo que 'sections' es un objeto que mapea los primeros dígitos a las tablas correspondientes
-        const sections = {
-            '1': document.getElementById("section1Table"),
-            '2': document.getElementById("section2Table"),
-            '3': document.getElementById("section3Table"),
-            '4': document.getElementById("section4Table"),
-            '5': document.getElementById("section5Table"),
-            '6': document.getElementById("section6Table"),
-            // Añade más secciones según sea necesario
-        };
+        fetch(`/get_exercises?course=${course}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById("exerciseSections");
+                const sectionMap = {};
 
+                data.forEach(ex => {
+                    const sectionLabel = ex.section || "Otros"; // fallback label
+                    if (!sectionMap[sectionLabel]) {
+                        // Create new section title and table
+                        const title = document.createElement('h2');
+                        title.textContent = `Sección: ${sectionLabel}`;
+                        const table = document.createElement('table');
+                        table.classList.add('exercise-table');
+                        table.innerHTML = `
+                            <thead>
+                                <tr><th>ID</th><th>Nombre</th><th>Info</th><th>Consulta</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        `;
+                        container.appendChild(title);
+                        container.appendChild(table);
+                        sectionMap[sectionLabel] = table.querySelector('tbody');
+                    }
 
-        // const table = document.getElementById("extrasTable");
-        data.forEach(exercise => {
-            let idFirstDigit = exercise.id.toString()[0]; // Obtiene el primer dígito del ID como una cadena
-
-
-            // Comprueba si existe una sección para este primer dígito
-            if (sections[idFirstDigit]) {
-                let table = sections[idFirstDigit]; // Obtiene la tabla correspondiente a esta sección
-                let row = table.insertRow();
-                let cell1 = row.insertCell(0);
-                let cell2 = row.insertCell(1);
-                let cell3 = row.insertCell(2);
-                let cell4 = row.insertCell(2);
-                cell1.innerHTML = exercise.id;
-                cell2.innerHTML = exercise.name;
-                cell3.innerHTML = exercise.info;
-                cell4.innerHTML = `<a href="/exercises/${exercise.file}">Consulta</a>`;
-            }
-        });
-
-    })
-    .catch(error => console.error('Error loading exercises:', error));
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${ex.id}</td>
+                        <td>${ex.name}</td>
+                        <td>${ex.info}</td>
+                        <td><a href="/exercises/${course}/${ex.file}">Consulta</a></td>
+                    `;
+                    sectionMap[sectionLabel].appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error loading exercises:', error));
     });
 
-    
+
+
     </script>
 </body>
+
+
+
 </html>

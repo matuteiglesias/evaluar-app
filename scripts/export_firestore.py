@@ -1,15 +1,16 @@
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import firestore
 import json
 
 
-cred = credentials.Certificate('evaluar-app-firebase-adminsdk-mvow6-456d541606.json')
+cred = credentials.Certificate('env/evaluar-app-firebase-adminsdk-mvow6-456d541606.json')
 firebase_admin.initialize_app(cred)
 
+from services.firebase import get_db
+db = get_db()
 
 def export_firestore_collection(collection_name):
-    db = firestore.client()
+    db = get_db()
     collection_ref = db.collection(collection_name)
     docs = collection_ref.stream()
     

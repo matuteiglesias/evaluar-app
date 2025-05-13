@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bienvenido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+
+    <div class="container" style="max-width: 700px; margin: 50px auto; text-align: center; font-family: Arial, sans-serif; color: #2c3e50;">
+    
+        <h1 style="font-size: 2.4rem; font-weight: bold; margin-bottom: 10px;">Bienvenido a la Plataforma de Consultas</h1>
+        
+        <p style="font-size: 1.1rem; margin-bottom: 25px;">
+            Este sitio está pensado para acompañar el aprendizaje en cursos de ciencias de la computación. 
+            Podés explorar ejercicios, realizar consultas y recibir orientación personalizada de manera simple y ordenada.
+        </p>
+    
+        <div style="background-color: #e8f5e9; border-left: 4px solid #2e7d32; padding: 15px; margin-bottom: 30px;">
+            <p style="margin: 0; font-style: italic;">
+                Si sos docente o parte del equipo, podés sumar ejercicios, colaborar con correcciones o mejorar esta plataforma.
+            </p>
+        </div>
+    
+        <div style="margin-bottom: 20px;">
+            <label for="courseSelector" style="font-weight: bold;">Elegí tu curso:</label>
+            <select id="courseSelector" style="margin-left: 10px; padding: 5px 10px;"></select>
+        </div>
+    
+        <button id="enterButton" class="btn btn-primary" style="padding: 8px 20px; font-size: 1rem;">Entrar</button>
+    
+        <hr style="margin: 40px 0;">
+    
+        <div style="font-size: 0.9rem; color: #555;">
+            <p>¿Querés saber más sobre cómo funciona esta plataforma o cómo colaborar?</p>
+            <p>Escribinos o sumate al equipo desde la sección de ayuda (en construcción).</p>
+        </div>
+    
+    </div>
+
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/get_courses')
+                .then(res => res.json())
+                .then(courses => {
+                    const selector = document.getElementById('courseSelector');
+                    courses.forEach(course => {
+                        const option = document.createElement('option');
+                        option.value = course;
+                        option.textContent = course;
+                        selector.appendChild(option);
+                    });
+
+                    document.getElementById('enterButton').addEventListener('click', () => {
+                        const selected = selector.value;
+                        window.location.href = `/course?course=${selected}`;
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

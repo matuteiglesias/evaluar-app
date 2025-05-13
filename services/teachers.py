@@ -2,14 +2,18 @@
 
 import random
 import string
-from firebase_admin import firestore
 
 from flask import current_app as app
 
-db = firestore.client()
+
+# from firebase_admin import firestore
+# db = firestore.client()
+
+from services.firebase import get_db
+db = get_db()
 
 
-def generate_custom_ticket_id(teacher_id, exercise_id):
+def _generate_custom_ticket_id(teacher_id, exercise_id):
     # Genera una letra aleatoria (mayúscula) y dos números
     random_letter = random.choice(string.ascii_uppercase)
     random_numbers = random.randint(10, 99)  # Genera un número entre 10 y 99
@@ -20,6 +24,20 @@ def generate_custom_ticket_id(teacher_id, exercise_id):
 
 
 def find_eligible_teacher(exercise_id, teachers_load, average_load):
+    """
+    Finds an eligible teacher for a given exercise based on their previous involvement 
+    and current workload.
+    Args:
+        exercise_id (str): The ID of the exercise for which a teacher is being assigned.
+        teachers_load (dict): A dictionary mapping teacher IDs to their current workload.
+        average_load (float): The average workload across all teachers.
+    Returns:
+        str or None: The ID of the eligible teacher if found, otherwise None.
+    The function first attempts to find a teacher who has previously worked on the 
+    specified exercise and whose workload does not exceed the average load plus a 
+    threshold. If no such teacher is found, it searches for any teacher whose workload 
+    is within the acceptable range. If no eligible teacher is found, it returns None.
+    """
     # Logging the entry to the function with given parameters
     app.logger.info(f"Finding eligible teacher for exercise {exercise_id} with average load {average_load}")
 
@@ -44,16 +62,29 @@ def find_eligible_teacher(exercise_id, teachers_load, average_load):
 
 
 
-
-def obtener_todos_los_profesores_ids():
+def _obtener_todos_los_profesores_ids():
     teachers = db.collection('teachers').stream()  # Asume que 'db' es tu objeto de base de datos de Firestore
     teacher_ids = [teacher.to_dict().get('teacherId') for teacher in teachers]
     return teacher_ids
 
+
 def get_teacher_loads():
+    """
+    Calculate the workload of each teacher and the average workload.
+    This function retrieves all teacher IDs and initializes their workloads to zero.
+    It then iterates through all tickets in the database, incrementing the workload
+    for the corresponding teacher based on the 'teacherId' field in each ticket.
+    Finally, it calculates the average workload across all teachers, including those
+    without any assigned tickets.
+    Returns:
+        tuple: A dictionary mapping teacher IDs to their respective workloads, and
+               a float representing the average workload across all teachers.
+    Logs:
+        Logs the teachers' workloads and the average workload for debugging purposes.
+    """
     # Inicializar las cargas de todos los profesores posibles con 0
     # Aquí necesitarías una lista o conjunto de todos los IDs de profesores posibles
-    all_teacher_ids = obtener_todos_los_profesores_ids()
+    all_teacher_ids = _obtener_todos_los_profesores_ids()
     teachers_load = {teacher_id: 0 for teacher_id in all_teacher_ids}
     
     tickets = db.collection('tickets').stream()

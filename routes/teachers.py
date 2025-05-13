@@ -1,19 +1,59 @@
 # routes/teachers.py
 
 from flask import Blueprint, request, session, redirect, url_for, render_template, current_app
-from firebase_admin import firestore
+
+
 from services.teachers import (
     get_teacher_loads,
     find_eligible_teacher,
-    generate_custom_ticket_id
+    _generate_custom_ticket_id
 )
 
 teachers_bp = Blueprint('teachers', __name__)
-db = firestore.client()
+
+from services.firebase import get_db
+db = get_db()
+
+# from firebase_admin import firestore
+# db = firestore.client()
 
 
 @teachers_bp.route('/request-teacher-time', methods=['POST'])
 def request_teacher_time():
+    """
+    Handles the request for teacher assistance on a specific exercise.
+
+    This route processes a POST request to assign a teacher to a student's query
+    regarding an exercise. It validates the input, determines an eligible teacher
+    based on their load, and creates a ticket in the database for the request.
+
+    Returns:
+        - Redirects to the core index page if the user is not authenticated.
+        - Returns a 400 response if required form data is missing.
+        - Returns a 500 response if there is an error creating the ticket.
+        - Redirects to the confirmation page upon successful ticket creation.
+
+    Session:
+        - Stores ticket details in the session for later use.
+
+    Raises:
+        - Logs warnings and errors for unauthorized access, missing data, teacher
+        assignment issues, and database operations.
+
+    Form Data:
+        - exercise_id: The ID of the exercise the student needs help with.
+        - question: The student's question about the exercise.
+
+    Session Data:
+        - user: The currently logged-in user's information.
+
+    Database:
+        - Reads teacher load information to assign an eligible teacher.
+        - Creates a ticket in the 'tickets' collection with the request details.
+
+    Side Effects:
+        - Logs various events and errors for monitoring and debugging purposes.
+    """
     user = session.get('user')
     if not user:
         current_app.logger.warning("Unauthorized access to teacher time request")
@@ -45,7 +85,7 @@ def request_teacher_time():
     else:
         assigned_teacher_id = "na"
 
-    ticket_id = generate_custom_ticket_id(assigned_teacher_id, exercise_id)
+    ticket_id = _generate_custom_ticket_id(assigned_teacher_id, exercise_id)
     ticket_data = {
         "exerciseId": exercise_id,
         "question": question,

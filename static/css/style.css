@@ -1,66 +1,103 @@
-/* /static/css/style.css */
-
+/* Global styling */
 body {
-    margin: 20px; /* Ajusta según lo necesario */
-    font-family: Arial, sans-serif;
+    margin: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
-    background-color: #f4f4f4;
+    background-color: #f8f9fa;
     font-size: 14px;
 }
 
+/* Titles */
 h1, h3 {
-    color: #444;
-    margin-bottom: 30px; /* Espacio debajo del título principal */
+    color: #2c3e50;
+    margin-top: 30px;
+    margin-bottom: 10px;
 }
 
+/* Sections container */
 section {
-    margin-bottom: 40px; /* Espacio entre secciones */
-    margin: 20px auto; /* Ajusta el valor de 20px según sea necesario */
-    padding: 20px; /* Añade un relleno si es necesario */
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    max-width: 95%;
 }
 
-img {
-    max-width: 20%; /* Esto asegura que la imagen no sea más ancha que su contenedor */
-    height: auto; /* Esto mantiene la proporción de la imagen */
-    display: block; /* Esto permite centrar la imagen con margen automático */
-    margin: 10px auto; /* Esto añade espacio arriba y abajo de la imagen y la centra horizontalmente */
-}
-
+/* Table styling */
 table.exerciseTable {
-    width: 90%;
+    width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 10px;
 }
 
-table.exerciseTable th, table.exerciseTable td {
+table.exerciseTable th,
+table.exerciseTable td {
+    padding: 12px 10px;
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    vertical-align: top;
 }
 
 table.exerciseTable th {
-    /* background-color: #f2f2f2; */
-    background-color: #4CAF50; /* Color de fondo para los encabezados de las columnas */
-    color: white; /* Color del texto para los encabezados */
-    padding-top: 12px; /* Espacio superior en los encabezados */
-    padding-bottom: 12px; /* Espacio inferior en los encabezados */
+    background-color: #1976d2;
+    color: white;
+    text-align: left;
+    font-weight: 500;
 }
 
+table.exerciseTable td:nth-child(1) {
+    width: 50px;
+    font-weight: bold;
+    color: #555;
+}
+
+table.exerciseTable td:nth-child(2) {
+    width: 180px;
+    font-weight: 500;
+    color: #222;
+}
+
+table.exerciseTable td:nth-child(3) {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #444;
+}
+
+table.exerciseTable td:nth-child(4) {
+    width: 80px;
+    text-align: center;
+}
+
+/* Alternating row colors */
 table.exerciseTable tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f4f8fb;
 }
 
 table.exerciseTable tr:hover {
-    background-color: #eaeaea;
+    background-color: #e3f2fd;
 }
 
+/* Link styles */
 a {
-    color: #337ab7;
+    color: #1976d2;
     text-decoration: none;
+    font-weight: 500;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+/* Notice box */
+.emergency-notice {
+    border: 2px solid #222;
+    background: #fff;
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 30px;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15px;
+    font-style: italic;
 }
