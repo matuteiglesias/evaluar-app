@@ -2,6 +2,17 @@ import pandas as pd
 import json
 
 def json_to_csv(json_filename, csv_filename):
+    """
+    Converts a JSON file to a CSV file.
+    Args:
+        json_filename (str): The path to the input JSON file.
+        csv_filename (str): The path to the output CSV file.
+    The function reads the JSON file, converts its content into a pandas DataFrame,
+    and then writes the DataFrame to a CSV file with UTF-8-SIG encoding.
+    Note:
+        The JSON file should contain data in a format that can be directly converted
+        into a pandas DataFrame (e.g., a list of dictionaries).
+    """
     # Leer el archivo JSON
     with open(json_filename, 'r', encoding='utf-8') as jsonfile:
         data = json.load(jsonfile)

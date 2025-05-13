@@ -15,5 +15,11 @@ def health():
 @core_bp.route('/')
 def index():
     if 'user' in session:
-        return render_template('index.html', user=session['user'])
+        return render_template('home.html', user=session['user'])
     return render_template('login.html')
+
+
+@core_bp.route('/course')
+def course_index():
+    return render_template('index.html')
+

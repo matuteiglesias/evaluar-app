@@ -16,6 +16,20 @@ google_client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 @auth_bp.route("/login")
 def login():
+    """
+    Handles the login route for the application.
+
+    This route redirects the user to Google's OAuth2 login page for authentication.
+    It generates a redirect URI for the OAuth2 callback and specifies the required
+    scopes for the authentication process.
+
+    Logs:
+        Logs an informational message indicating the redirection to Google's OAuth2 login page.
+
+    Returns:
+        A redirect response to Google's OAuth2 login page with the specified redirect URI
+        and requested scopes.
+    """
     current_app.logger.info("Redirecting to Google's OAuth2 login page")
     redirect_uri = url_for('auth.callback', _external=True)
     return oauth.google.authorize_redirect(redirect_uri=redirect_uri, scope="openid email profile")
@@ -23,6 +37,26 @@ def login():
 
 @auth_bp.route("/login/callback")
 def callback():
+    """
+    Handles the callback from Google's OAuth 2.0 login flow.
+
+    This route is triggered after the user authenticates with Google and is redirected
+    back to the application. It processes the authorization code, exchanges it for an
+    access token, retrieves user information, and logs the user into the application.
+
+    Returns:
+        Response: A redirect to the application's main page if authentication is successful.
+        Otherwise, returns an error message with a 400 status code.
+
+    Raises:
+        Exception: If there are issues with the token exchange or user information retrieval.
+
+    Logs:
+        - Logs the entry into the callback route.
+        - Logs errors if the authorization code is missing or the user's email is not verified.
+        - Logs the authenticated user's details.
+        - Logs the creation of a new user if the user does not already exist in the database.
+    """
     current_app.logger.info("Entered login callback")
     code = request.args.get("code")
     if not code:

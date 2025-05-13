@@ -26,3 +26,4 @@ spreadsheetapp
 .env
 # Y cualquier otro patrón de archivo que desees ignorar
 data/
+deploy/app.yaml
