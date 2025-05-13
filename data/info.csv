@@ -1,0 +1,290 @@
+,userQuery
+7,"¿Cual sería la complejidad temporal de una implementación de este problema en un lenguaje imperativo sin usar programación dinámica, osea utilizando solo recursión?"
+30,C está ordenado?
+37,"// Top Down
+int min_costo(int i, int j) {
+    if (i+1 == j) return 0;
+    if (memo[i][j] == -1) {
+        int costo = cortes.size(); // corte más largo
+        bool hay_corte = false;
+        for(int q = i + 1; q < j; q++) {
+            // En caso de que el las posicion sea de un corte caluclo el minimo
+            if (cortes[q]) {
+                costo = min(costo, min_costo(i, q) + min_costo(q, j));
+                hay_corte = true;
+            }
+        }
+        if (hay_corte) memo[i][j] = costo + j - i;
+        else memo[i][j] = 0;
+    }
+    return memo[i][j];
+}"
+104,"Que te parece el siguiente algoritmo que pensé? Sirve como solución?
+
+corte(c,l) = corteMin(c,0,l);
+
+corteMin(c,i,j){
+
+    memoria = {}
+
+    if(i = j+1){
+        
+        return 0;
+    }
+
+    else if(memoria[i][j] != undefined){
+
+        return memoria[i][j];
+    }
+
+    else{
+
+        costoMin = -1;
+        
+        for(k in c){
+
+            if(k in range(i+1, j)){
+
+                costoActual = corteMin(c,i,k) + corteMin(c,k,j) + j-i;
+
+                if(costoMin == -1 v costoMin > costoActual){
+
+                    costoMin = costoActual;
+                }
+            }
+
+        }
+
+        memoria[i][j] = costoMin;
+
+        return costoMin;
+    }
+}"
+114,"El punto 4 dice que ""Supongamos que se ordenan los elementos de C en un vector cortes y se agrega un 0 al
+principio y un ℓ al final. Luego, se considera que el mínimo costo para cortar desde el i-ésimo
+punto de corte en cortes hasta el j-ésimo punto de corte será el resultado buscado si i = 1
+y j = |C| + 2."" que es |C|? La longitud de cortes antes o despues de agregar al 0 y al l? En el caso del ejemplo que tenes el vector cortes {2,4,7} cuanto valdria |C|?"
+136,"Que te parece el siguiente algoritmo que pensé? Sirve como solución? Cual seria la complejidad espacial y temporal?
+
+corte(c,l) = corteMin(c,0,l);
+
+memoria = {} //Es variable global
+
+corteMin(c,i,j){
+
+    if(i = j+1){
+        
+        return 0;
+    }
+
+    else if(memoria[i][j] != undefined){
+
+        return memoria[i][j];
+    }
+
+    else{
+
+        costoMin = -1;
+        
+        for(k in c){
+
+            if(i < k < j){
+
+                costoActual = corteMin(c,i,k) + corteMin(c,k,j) + j-i;
+
+                if(costoMin == -1 v costoMin > costoActual){
+
+                    costoMin = costoActual;
+                }
+            }
+        }
+
+        memoria[i][j] = costoMin;
+
+        return costoMin;
+    }
+}"
+147,Como explicarias la formula del inciso 1 utilizando el ejemplo del problema?
+159,"¿Como sería una implementacion bottom up del punto 3?
+"
+167,Como explicarias la formula del inciso 1 utilizando el ejemplo del problema?
+191,"El inciso 4 no seria lo mismo que el 3? Me refiero a que si se agrega al principio un 0 y se cuenta desde i = 1 seria como ignorar ese 0 al calcular el corte, lo mismo ocurriria con j = |C| + 2, seria la longitud total."
+199,"Hice el codigo en c++ y
+Mi problema es que cuando en la permutacion toma los cortes 4 y 2, solo se queda con la barra desde la posicion 0 a 4, y cuando quiero hacer el corte en la posicion 7, no me deja, pero deveria dejar ya que tengo un pedazo de tamaño 6"
+204,"me podrias mostrar mas casos de test por favor. Gracias
+"
+206,"En el punto 4 queria saber para que se agregaban 0 y l al final, entiendo que la idea en este punto es que i y j sean puntos de corte y no que sean como en otra implementacion puntos de la vara. Tampoco me queda del todo claro porque antes ordena el vector cortes."
+221,cómo seria la formulación recursiva basada en a)?
+229,"Inicializar M[i, j] = ⊥ para todo 0 <= i, j <= l
+proc m(i, j):
+    si no existe c en C tal que i < c < j:
+        retornar 0
+    si M[i, j] = ⊥:
+        s = ∞
+        para c en C tal que i < c < j:
+            s' = m(i, c) + m(c, j)
+            si s' < s:
+                s' = s
+        M[i, j] = j - i + s
+    retornar M[i, j]
+no entiendo este codigo
+"
+236,"Este algoritmo resolveria el problema?
+
+cortemin(c,l){
+
+    if(vacio?(c)){
+
+        return 0
+    }
+
+    else{
+
+        return l + min(cortemin(c-{i},l-i), cortemin(c-{i},i));
+    }
+}"
+259,me detallas mejor el a)?
+287,"No estoy entendiendo bien el problema, podrias explicarme los cortes del ejemplo?
+"
+379,cómo seria la formulación recursiva basada en a)?
+425,como sería la formulación recursiva basada en a)? Pero haciendo exclusivamente backtracking.
+430,"Que te parece el siguiente algoritmo que pensé? Sirve como solución?
+
+corte(c,l) = corteMin(c,0,l);
+
+memoria = {} //Es variable global
+
+corteMin(c,i,j){
+
+    if(i = j+1){
+        
+        return 0;
+    }
+
+    else if(memoria[i][j] != undefined){
+
+        return memoria[i][j];
+    }
+
+    else{
+
+        costoMin = -1;
+        
+        for(k in c){
+
+            if(i < k < j){
+
+                costoActual = corteMin(c,i,k) + corteMin(c,k,j) + j-i;
+
+                if(costoMin == -1 v costoMin > costoActual){
+
+                    costoMin = costoActual;
+                }
+            }
+        }
+
+        memoria[i][j] = costoMin;
+
+        return costoMin;
+    }
+}"
+463,"#include<vector>
+#include<iostream>
+#include <algorithm>
+#include <cassert>
+bool existeEntre(const std::vector<int> &m, int i, int j){
+    bool res = false;
+    for (int l = 0; l < m.size(); l++){
+        if (i < m[l] && m[l] < j){
+            res = true;
+        }
+    }
+    return res;
+}
+int pagomin(const std::vector<int> &C,int i,int j){
+    if (existeEntre(C,i,j) == false){
+        return 0;
+    }
+    else{
+        std::vector<int> m ={};
+        for(int l = 0;l< C.size() && i < C[l] && C[l] < j; l++){
+            m.push_back(pagomin(C,i,C[l])+pagomin(C,C[l],j));
+        }
+        if (m.empty()) {
+            return 0;
+        }
+        auto min_inter = min_element(m.begin(),m.end());
+        int min_valor = *min_inter;
+        min_valor += (j-i);
+        return min_valor;
+    }
+
+}
+int main(){
+    int i = 0;
+    int j = 10;
+    std::vector<int> c = {2,4,7};
+    int res = pagomin(c,i,j);
+    std::cout << ""Pago minimo: "" << res <<std::endl;
+}"
+505,"Como armarias la formula del inciso 2?
+"
+520,"esto es correcto para el b?
+def minCostoBacktracking(cuts):
+    cuts = [0] + cuts + [L]
+    n = len(cuts)
+
+    def costo(i, j):
+        return cuts[j] - cuts[i]
+
+    def minCosto(i, j):
+        if j - i <= 1:
+            return 0
+
+        min_costo = float('inf')
+        for k in range(i + 1, j):
+            costo_actual = costo(i, j) + minCosto(i, k) + minCosto(k, j)
+            min_costo = min(min_costo, costo_actual)
+
+        return min_costo
+
+    L = cuts[-1]
+    return minCosto(0, n - 1)
+
+"
+575,como sería la formulación recursiva basada en a)? Pero haciendo exclusivamente backtracking.
+582,"¿Como sería la formulación recursiva que se pide en el punto 4, subíndice 1?"
+600,Porque el caso base seria 0 si i + 1 = j?
+606,"import sys
+
+def min_costo(i, j):
+    if i+1 == j:
+        return 0  # No hay espacio para cortes entre i y j.
+    if memo[i][j] != -1:
+        return memo[i][j]  # Ya calculado.
+
+    costo = sys.maxsize
+    for k in range(i + 1, j):
+        # Calcula el costo de cortar entre i y j con un corte en k.
+        costo = min(costo, min_costo(i, k) + min_costo(k, j) + (cortes[j] - cortes[i]))
+
+    memo[i][j] = costo  # Almacena el resultado en memo.
+    return costo
+"
+624,cómo podria ser el algoritmo top down y bottom up? y ademas sus complejidades temporales.
+677,No entiendo exactamente el primer inciso. 
+693,"Inicializar M[i, j] = ⊥ para todo 0 <= i, j <= l
+proc m(i, j):
+    si no existe c en C tal que i < c < j:
+        retornar 0
+    si M[i, j] = ⊥:
+        s = ∞
+        para c en C tal que i < c < j:
+            s' = m(i, c) + m(c, j)
+            si s' < s:
+                s' = s
+        M[i, j] = j - i + s
+    retornar M[i, j]
+"
+731,"cómo seria la formulación recursiva basada en a)?
+"

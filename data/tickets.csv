@@ -1,0 +1,166 @@
+﻿studentId,status,studentEmail,teacherId,exerciseId,timestamp,question,studentName
+114599966470867500801,open,juanfranciscoorga@gmail.com,01,101,2024-03-21T18:15:47.464000+00:00,"no entiendo :
+subset_sum(C, i, j): // implementa ss({c1, . . . , ci}, j) que significa?
+
+",Juan Francisco
+114487024670667745097,open,vladimirkannemann11@gmail.com,01,101,2024-03-24T19:43:23.634000+00:00,"¿cómo se va llenando la solución a con la recursión? porque la recursion va de n hasta llegar a 0, pero el primer elemento d a q es el q corresponde a cn va a terminar siendo el ultimo cuando se llene.
+ Sea C la familia de todos los multiconjuntos de números naturales. Considerar la siguiente
+función recursiva ss: C × N → {V, F} (donde N = {0, 1, 2, . . . }, V indica verdadero y F
+falso):
+ss({c1, . . . , cn}, k) = (
+k = 0 si n = 0
+ss({c1, . . . , cn−1}, k) ∨ ss({c1, . . . , cn−1}, k − cn) si n > 0
+Convencerse de que ss(C, k) = V si y sólo si el problema de subconjuntos tiene una solución
+válida para la entrada C, k. Para ello, observar que hay dos posibilidades para una solución
+válida a = (a1, . . . , an) para el caso n > 0: o bien an = 0 o bien an = 1. En el primer caso,
+existe un subconjunto de {c1, . . . , cn−1} que suma k; en el segundo, existe un subconjunto
+de {c1, . . . , cn−1} que suma k − cn.
+",Vladimir
+103748849453097977309,open,lc.calderon.lara@gmail.com,01,101,2024-03-27T16:25:50.366000+00:00,"Le propuse lo siguiente a la ia para el 1.10: 
+ss(C,i,j,p) // donde  se inicia con C el subset, i la cant de elementos inicial de c, j la sumatoria que busco, p un vector de length igual a C con todos ceros.
+If j<0, return false
+If i=0 then:
+    if j=0 then
+         print p
+         return True
+   else 
+         return false
+sin incluir = ss(c,i-1,j,p)
+p[i-1]=1
+incluir = ss(c,i-1,j-c[i-1],p)
+return sin incluir || incluir
+Pero la ia me dijo que antes del ultimo return, tengo que resetear p[i-1] con 0 :
+Manipulación de p: Tu acercamiento para manipular p es correcto en términos de marcar con un 1 cuando un elemento se incluye en la suma. Sin embargo, es crucial que, después de explorar la rama en la que incluyes el elemento c[i-1] en la suma (y antes de retornar al llamador), debes volver a establecer p[i-1] a 0. Esto es porque cuando retrocedes (backtrack) para explorar la rama donde no incluyes el elemento, el estado de p debe reflejar esa decisión.
+No entiendo porque hay que resetear p[i-1] antes del return, medio que lo probe a mano y siento que no es necesario porque p tiene 0 desde la pos 1 hasta la pos i-1(lo q no explore aun).",Lara
+111066984089311705623,open,gaspar.onesto@gmail.com,01,101,2024-03-21T18:54:05.123000+00:00,Necesito saber si hay alguna poda ademas de las 2 basicas que vimos en la practica y esta en el ejercicio.,Gaspar
+111066984089311705623,open,gaspar.onesto@gmail.com,01,101,2024-03-21T19:00:57.210000+00:00,"mi codigo no es lo suficientemente eficiente para lo solicitado? no entenderia porque.
+como se supone que tengo que manejar las soluciones multiples? con un operador OR?",Gaspar
+105836751495458958764,open,benjascaf@gmail.com,01,103,2024-03-31T17:36:26.370000+00:00,"Me gustaria una consulta para discutir mi implementacion y como podira haberla mejorado para no usar un argument opcional en cada uno de los llamados, asi como poder tratar de entender como abarcar calculos de complejidad espacial de algoritmos y poder discutir una poda para la implementacion propuesta.",benja
+113786003330932661860,open,francovalentinograsso@gmail.com,01,103,2024-03-24T20:54:05.344000+00:00,"Tengo muchas consultas acerca de este ejercicio, me parece muy ambiguo y muy poco explicado el tema del subconjunto I. La inteligencia no logra explicar del todo bien para otros casos.
+Tampoco sé como implementarlo ya que me parece un salto grande del punto 2 al 3. Me parece que este ejercicio se deberia explicar en clase.",Franco Valentino
+103717594846025732548,open,valentinopons@gmail.com,01,303,2024-05-01T15:38:19.266000+00:00,"pero no existen 2 grafos? ya que uno puede tener las flechas con un flujo especifico y el otro el  flujo contrario
+",valentino
+117294748241890179692,open,diegortabarez@gmail.com,02,101,2024-03-27T19:57:26.324000+00:00,Consulta general sobre como se corta la recursión una vez se encuentra una solución válida ,Diego
+114487024670667745097,open,vladimirkannemann11@gmail.com,02,101,2024-03-24T20:12:56.692000+00:00,"cual es la diferencia entre factibilidad y optimalidad?
+",Vladimir
+112447902082576925872,open,brandweineric@gmail.com,02,101,2024-04-01T22:58:05.043000+00:00,Consulta consultona,Eric
+111682128284760213691,open,gluca@dc.uba.ar,02,102,2024-03-22T20:24:31.049000+00:00,"Quiero saber si mi ""demostración"" Es lo suficientemente formal.
+Como no me deja attachear imagenes, dejo mi resolución en imgur para que el docente encargado la pueda leer
+https://i.imgur.com/cZaIaBP.png
+
+Sepan disculpar la letra.",Gaspar Onesto De luca
+113920930685617159149,open,jcmontero2003@gmail.com,02,102,2024-03-23T16:52:31.846000+00:00,Yo en un momento pense que como es una solucion de fuerza bruta podria llegar a aceptar cuadrados con el mismo numero. Eso no seria posible porque estamos trabajando con un conjunto no?,Juan Cruz
+111682128284760213691,open,gluca@dc.uba.ar,02,102,2024-03-22T21:52:55.167000+00:00,"Logré hacer la inducción como se nos enseñó en algebra 1, pero me queda un excedente y esto al hacer una ecuación y no una inecuación, matematicamente hablando no puedo decir que está probado totalmente por inducción. Y no sé con que argumentar.
+
+Me quedó:
+
+siendo M_k el numero magico para orden K
+
+M_k + (3k²+3k)/2 +1
+
+Y no sé que hacer con este excedente y tampoco estoy seguro lo que representa, seguramente algo de un incremento pero no la veo bien.
+¿tengo que hacer una inducción fuerte/completa y asumir que para k+1 tambien es verdadero?",Gaspar Onesto De luca
+118224868607406149417,open,plam8p@gmail.com,02,102,2024-03-24T22:31:51.206000+00:00,Quiero entender mejor cuando y como se pasa de una explicacion a una demostracion,Pedro
+109715271640161269925,open,vigabf@gmail.com,02,117,2024-05-05T21:11:55.047000+00:00,No entiendo como el algoritmo de este punto 3 puede cumplir la complejidad pedida,Victor Gabriel
+109779403237206615492,open,mburda@dc.uba.ar,03,103,2024-03-25T00:26:00.660000+00:00,¿Una poda por optimización posible podría ser empezar con un elemento i0 como en primeRing? Y se terminaría reduciendo el espacio de búsqueda por un factor de 1/n.,Manuel Fernandez Burda
+116359237587434890327,open,tobiasllop@gmail.com,03,103,2024-03-25T00:51:24.594000+00:00,Como quedaria la matriz del enunciado sin los guiones?,Tobias
+111412724586628681046,open,valnrms@gmail.com,03,103,2024-03-25T00:37:31.226000+00:00,El algoritmo de bruteforce y backtracking de este ejercicio es 💀. La consulta es si pueden explicarlo y mostrarlo en clase porque ya ni veo como hacer el bruteforce.,Valentín
+113920930685617159149,open,jcmontero2003@gmail.com,03,103,2024-03-24T22:54:21.969000+00:00,Quisiera preguntar algunas cuestiones acerca de la sintaxis que use para resolver el algoritmo y a la vez verificar si mi resolucion es correcta y cumple un algoritmo de backtracking,Juan Cruz
+109779403237206615492,open,mburda@dc.uba.ar,03,104,2024-03-25T00:46:10.515000+00:00,"¿Qué poda se podría implementar? Entiendo que es bastante parecido al ejercicio anterior, pero no me queda claro a qué se refiere con esta ""estimación 
+optimista"" ni cómo encontrarla.",Manuel Fernandez Burda
+115234347669368732114,open,kennobith@gmail.com,03,104,2024-03-27T18:25:54.019000+00:00,Me cuesta todo el ejercicio así que quiero ver la explicación del docente en vivo,kennobith
+108057776215484893152,open,lucia.silva.alberto@gmail.com,03,119,2024-05-06T11:33:12.808000+00:00,"En este ejercicio estoy teniendo problemas para escribir la demo, la idea general la tengo pero me esta costando escribirla. ",Lucía
+113920930685617159149,open,jcmontero2003@gmail.com,03,201,2024-04-15T18:20:38.223000+00:00,"No me termina de quedar claro como usar el teorema maestro
+",Juan Cruz
+118420824533761564787,open,brunoventrici@gmail.com,04,103,2024-03-26T02:28:22.038000+00:00,"¿La complejidad temporal puede ser O(n! * k) si veo todas las combinaciones del conjunto de índices sin podas (se repiten y quedan n! hojas en peor caso), hago la suma de k elementos en cada hoja y busco la que maximiza (con n! comparaciones)? ¿Al calcular complejidad espacial tengo que tener en cuenta solo la matriz y un conjunto con la solución parcial o también cuantos llamados se hacen hasta llegar a una hoja?",Bruno
+112588938318092924983,open,santiagobassani2000@gmail.com,04,103,2024-03-29T17:30:32.876000+00:00,"Si M en (3,2), (2,1), (3,1) son 0 Porque en la respuesta anterior indicas que son 10 y/o 5?",Santiago
+115234347669368732114,open,kennobith@gmail.com,04,105,2024-04-03T19:21:05.226000+00:00,,kennobith
+111682128284760213691,open,gluca@dc.uba.ar,04,105,2024-03-30T05:23:47.066000+00:00,"En la linea 4 dice poner M[i,j] := M ... etc
+No puedo seguir detalladamente la lógica de como seguirlo.
+O sea en pocas palabras si quiero pasar ese pseudo código a un código de algún lenguaje imperativo no sabría cómo.
+¿me pueden ayudar a entender esto?
+",Gaspar Onesto De luca
+111682128284760213691,open,gluca@dc.uba.ar,04,106,2024-03-31T23:36:09.821000+00:00,"Me gustaría si me pueden ayudar a revisar mi implementación.
+",Gaspar Onesto De luca
+113920930685617159149,open,jcmontero2003@gmail.com,04,106,2024-03-30T22:11:44.146000+00:00,"Quisiera pedir un momento con un profe asi puedo verificar si mi algoritmo realmente resuelve el problema, ya que no estoy seguro de estar manejando bien la recursion",Juan Cruz
+108057776215484893152,open,lucia.silva.alberto@gmail.com,04,106,2024-04-03T15:09:41.296000+00:00,"tengo una duda respecto a el valor de q, yo en mis codigos lo utilice como parametro para entender mejor el problema, ahora quiero codear sin utilizar el parametro q y no entiendo como hacerlo.
+mi codigo:
+#b)
+def optipagoBacktracking(B,c,q):
+    if c == 0:
+        return (0,0)
+    if len(B) == 0  and c > 0:
+        return (float('inf'), float('inf'))
+    if c < 0:
+        return (-c,q)
+    else:
+        return min(optipagoBacktracking(B[:-1],c- B[-1], q + 1), optipagoBacktracking(B[:-1],c,q))
+        
+billetes = [2,3,5,10,20,20]
+costo = 14
+print(optipagoBacktracking(billetes,costo,0))
+
+# la complejidad de mi codigo es O(2^n) esto se debe a la llamada recursiva de tomar el billete o no.
+
+# d)
+memo = []
+for _ in range(len(billetes)):
+    row = []
+    for _ in range(costo + 10):
+        row.append(None)
+    memo.append(row)
+
+
+def optipagoDP(B,c,q):
+    if c == 0:
+        return (0,0)
+    if len(B) == 0 and c > 0:
+        return (float('inf'), float('inf'))
+    if c < 0:
+        return (-c, q)
+    else:
+        if memo[len(B) - 1][c] == None:
+            memo[len(B) - 1][c] = min(optipagoDP(B[:-1],c- B[-1], q + 1), optipagoDP(B[:-1],c,q))
+        return memo[len(B) - 1][c]
+
+billetes = [2,3,5,10,20,20]
+costo = 14
+print(optipagoDP(billetes,costo,0))
+",Lucía
+113920930685617159149,open,jcmontero2003@gmail.com,04,106,2024-03-30T23:05:56.307000+00:00,No termino de entender como adaptar programacion dinamica para hacer este algoritmo,Juan Cruz
+108584871871524532852,open,aschwartzmann@dc.uba.ar,05,105,2024-04-03T01:00:24.938000+00:00,"Me encantaria verificar que la caja negra mágica es correcta, yo le creo pero en el disclaimer nos informan que pueden contener errores",Alejandro Ezequiel Schwartzmann
+101896696455923176838,open,bruzzo.bruno@gmail.com,05,107,2024-04-02T17:54:04.949000+00:00,"Necesito mejorar estructura de memorizacion. Complejidad espacial es muy grande en mi caso.
+
+Memorizo con una matriz mem[1....n][1....n/2][(n/2)*max(precio)....(n/2)*max(precio)]
+Es decir, DIAS X # ASTEROIDES X MONTO QUE PUEDO ACUMULAR.",Bruno
+105836751495458958764,open,benjascaf@gmail.com,05,107,2024-04-03T19:00:39.175000+00:00,"Me gustaría poder discutir acerca de las pruebas formales que nos piden en el ejercicio, así como también tratar de entender como pensar usando bottom up.",benja
+109715271640161269925,open,vigabf@gmail.com,05,108,2024-04-15T19:02:39.755000+00:00,No termino de entender en que se diferencia el caso planteado en el punto d con el resto del ejercicio. Tampoco entiendo como podrían ser las implementaciones bottom up tanto de este punto d como del punto c.,Victor Gabriel
+111682128284760213691,open,gluca@dc.uba.ar,05,108,2024-04-06T23:14:37.534000+00:00,"Necesito ver esto en clase y que me ayuden a entenderlo y hacer el arbol. 
+Lo pongo por acá porque no se si al final usan esto o que xd",Gaspar Onesto De luca
+105836751495458958764,open,benjascaf@gmail.com,05,108,2024-04-03T18:49:59.587000+00:00,"Me gustaría profundizar acerca de la implementación del algoritmo bottom up, así como discutir el último ítem del ejercicio",benja
+111682128284760213691,open,gluca@dc.uba.ar,05,108,2024-04-05T22:37:00.538000+00:00,"No entiendo porque esto es así
+
+es aproximadamente O((n+2)^2).
+
+no veo esto",Gaspar Onesto De luca
+105836751495458958764,open,benjascaf@gmail.com,05,109,2024-04-03T18:43:03.493000+00:00,"El modelo hace referencia a confusiones que tengo en cuanto a direcciones de dependencia en algoritmos de PD, confusion que me gustaría aclarar de ser posible",benja
+118420824533761564787,open,brunoventrici@gmail.com,05,111,2024-04-03T14:43:00.008000+00:00,"11.a) Puedo escribir una formulación recursiva que devuelva si es verdadero que se puede alcanzar el peso, pero no se como escribirlo para que devuelva la secuencia de operaciones. ¿O solo se pide que se vea si es verdadero pero no devolver la secuencia? ¿Hay una mejor manera de escribir esta formulación recursiva con menos parámetros o mas clara que otra forma?",Bruno
+113920930685617159149,open,jcmontero2003@gmail.com,06,107,2024-04-08T14:02:32.256000+00:00,No me esta funcionando el algoritmo ya que estaria actualizando mal la matriz.,Juan Cruz
+102979071222963608746,open,santiago199913@gmail.com,06,107,2024-04-23T13:29:18.583000+00:00,"Cuando uso memoria en la recursion?
+",Santiago
+108584871871524532852,open,aschwartzmann@dc.uba.ar,06,107,2024-04-07T15:46:43.687000+00:00,Como lograr complejidad espacial lineal,Alejandro Ezequiel Schwartzmann
+111682128284760213691,open,gluca@dc.uba.ar,06,109,2024-04-08T18:45:47.691000+00:00,"pero que pasa si hay un camino que me queda con un numero positivo sobrado?
+podría empezar con 1?",Gaspar Onesto De luca
+109715271640161269925,open,vigabf@gmail.com,06,110,2024-04-21T21:12:15.178000+00:00,"No termino de entender la respuesta que me dio la IA. Queria ver que me respondía porque mí formulación recibia dos parametros, la caja i que estoy considerando en este momento y la cantidad máxima de peso que podía soportar la pila que tenía armada hasta ese momento (teniendo un valor reservado por ejemplo -1 para cuando no hay que fijarse si puede soportar porque sería la primera caja de la pila). El punto es que es factible esa formulación, pero no puedo asegurar la superposición de problemas ya que mi segundo parametro depende de los posibles valores de resistencia de las cajas y estos pueden ser arbitrariamente grandes, y veo que a la inteligencia artificial le pasa lo mismo.",Victor Gabriel
+111682128284760213691,open,gluca@dc.uba.ar,06,114,2024-04-22T12:56:22.088000+00:00,Necesito saber como hacer estas demostraciones de la forma más natural posible.,Gaspar Onesto De luca
+108057776215484893152,open,lucia.silva.alberto@gmail.com,06,204,2024-04-13T20:36:42.758000+00:00,No entiendo como se termina de demostrar el caso 3 del teorema maestro al intentar probar la condición de regularidad. debo probar 3n/2 <= cn para c < 1 pero esto se satisface para c = 1 solamente. ,Lucía
+116359237587434890327,open,tobiasllop@gmail.com,06,204,2024-04-20T19:41:13.949000+00:00,Necesito consultar sobre el ejrcicio 6. No termino de entender como aplicar el teorema maestro.,Tobias
+111682128284760213691,open,gluca@dc.uba.ar,07,115,2024-04-26T17:12:47.224000+00:00,"no encuentro forma de hacer esto ""greedy"", se me ocurre programación dinamica.
+",Gaspar Onesto De luca
+110893046592068954090,open,micaelapego@gmail.com,07,115,2024-05-05T18:44:21.218000+00:00,"Mi consulta es sobre el TP 3 (el de la ardilla), ya que a pesar de implementar todas las optimizaciones posibles no logro hacer que corra en 3000ms y me salta Time Limit Exceed. Quisiera revisar mi solución con un docente para saber qué cosas serán las que está haciendo que no logre pasar el vjudge.",Micaela Giselle
+118216950201458356792,open,florencia.kiszkurno@gmail.com,07,302,2024-05-04T19:44:14.830000+00:00,"Tengo otra duda, cuando habla de grado. Habla de grado de salida o de entrada? Porque pense que era la suma de ambos. Por lo que si tengo el grafo G=({v1,v2,v3},{(v1,v3),(v3,v2),(v2,v3)}) entiendo que el grado de v1 es 1, el de v3 es 3 y el de v2 es 2, por lo que no hay dos vertices con el mismo grado. Pero si tengo en cuenta solo el grado de salida tengo que d(v1) = d(v2) = d(v3) = 1 y el de entrada es d(v1)=0, d(v2)=1=d(v3)",Florencia
+108137749646920253979,open,mathibruno@gmail.com,07,302,2024-04-29T18:57:15.333000+00:00,Es siempre suficiente con ver casos extremos? Cubre esto los casos mas chicos?,Mathias
+102979071222963608746,open,santiago199913@gmail.com,07,412,2024-06-28T14:21:20.513000+00:00,"La contradiccion cuando surge?
+",Santiago
+108773776489773651352,open,alexis.starcenbaum@gmail.com,07,611,2024-06-29T16:08:41.701000+00:00,"entonces como lo modelarias con estos cambios?
+",Alexsb
