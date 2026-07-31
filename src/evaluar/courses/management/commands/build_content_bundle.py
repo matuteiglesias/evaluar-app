@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
-from content_pipeline import compile_content, write_bundle
+from evaluar.content_pipeline import compile_content, write_bundle
 
 
 class Command(BaseCommand):

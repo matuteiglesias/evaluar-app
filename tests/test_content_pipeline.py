@@ -1,7 +1,7 @@
 import csv
 import json
 from pathlib import Path
-from content_pipeline import bundle_bytes, compile_content
+from evaluar.content_pipeline import bundle_bytes, compile_content
 
 
 def write_course(root: Path, course: str, rows):

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from content_pipeline import load_bundle
-from courses.services import publish_bundle
+from evaluar.content_pipeline import load_bundle
+from evaluar.courses.services import publish_bundle
 
 
 class Command(BaseCommand):

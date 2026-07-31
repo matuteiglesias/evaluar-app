@@ -6,15 +6,15 @@ import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.urls import reverse
-from courses.models import (
+from evaluar.courses.models import (
     ContentPublication,
     Course,
     Exercise,
     ExerciseVersion,
     PublishedExerciseVersion,
 )
-from courses.policies import can_manage_course
-from identity.models import AuditEvent, CourseMembership, User
+from evaluar.courses.policies import can_manage_course
+from evaluar.identity.models import AuditEvent, CourseMembership, User
 
 pytestmark = pytest.mark.django_db
 

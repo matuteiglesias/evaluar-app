@@ -2,7 +2,7 @@ from collections import defaultdict
 from django.db import transaction
 from django.db.models import Max
 from django.utils import timezone
-from content_pipeline.schema import Bundle
+from evaluar.content_pipeline.schema import Bundle
 from .models import ContentPublication, Course, Exercise, ExerciseVersion, PublishedExerciseVersion
 
 

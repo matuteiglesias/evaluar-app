@@ -1,2 +1,2 @@
-web: gunicorn config.wsgi:application --chdir src/evaluar
+web: gunicorn evaluar.config.wsgi:application
 release: python manage.py migrate --noinput

@@ -88,14 +88,14 @@ published release for each course. It intentionally contains no AI execution or 
 ```bash
 uv sync
 uv run python manage.py migrate
-DJANGO_SETTINGS_MODULE=config.settings.local uv run python manage.py runserver
+DJANGO_SETTINGS_MODULE=evaluar.config.settings.local uv run python manage.py runserver
 ```
 
 Set `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `GOOGLE_CLIENT_ID`, and
-`GOOGLE_CLIENT_SECRET` in production. Run with `config.settings.production` (the WSGI/ASGI
+`GOOGLE_CLIENT_SECRET` in production. Run with `evaluar.config.settings.production` (the WSGI/ASGI
 default); production startup rejects missing secrets and enables HTTPS cookie and HSTS settings.
 
-The framework-independent compiler is available as `content_pipeline.compile_content(root)`. It
+The framework-independent compiler is available as `evaluar.content_pipeline.compile_content(root)`. It
 returns a canonical bundle with checksums and formal validation findings; content import/publishing
 should reject bundles whose `valid` property is false.
 

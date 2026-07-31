@@ -23,8 +23,8 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "identity",
-    "courses",
+    "evaluar.identity",
+    "evaluar.courses",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -36,7 +36,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-ROOT_URLCONF = "config.urls"
+ROOT_URLCONF = "evaluar.config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -51,8 +51,8 @@ TEMPLATES = [
         },
     }
 ]
-WSGI_APPLICATION = "config.wsgi.application"
-ASGI_APPLICATION = "config.asgi.application"
+WSGI_APPLICATION = "evaluar.config.wsgi.application"
+ASGI_APPLICATION = "evaluar.config.asgi.application"
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     from urllib.parse import urlparse
@@ -83,7 +83,7 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*"]
 SOCIALACCOUNT_ONLY = True
 SOCIALACCOUNT_LOGIN_ON_GET = False
-SOCIALACCOUNT_ADAPTER = "identity.adapters.GoogleSocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "evaluar.identity.adapters.GoogleSocialAccountAdapter"
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 SOCIALACCOUNT_PROVIDERS = {

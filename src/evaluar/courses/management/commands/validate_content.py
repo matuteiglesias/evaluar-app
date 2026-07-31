@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from content_pipeline import compile_content
+from evaluar.content_pipeline import compile_content
 
 
 class Command(BaseCommand):

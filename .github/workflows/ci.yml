@@ -7,8 +7,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --all-groups
+      - run: uv build
+      - run: uv run python -c "import evaluar; print(evaluar.__file__)"
       - run: uv run ruff check src/evaluar tests
-      - run: uv run ruff format --check src/evaluar tests/test_content_pipeline.py tests/test_django_phase2.py
+      - run: uv run ruff format --check src/evaluar tests/test_content_pipeline.py tests/test_django_phase2.py tests/test_packaging_layout.py
       - run: uv run mypy src/evaluar
       - run: uv run pytest
       - run: uv run python manage.py makemigrations --check --dry-run

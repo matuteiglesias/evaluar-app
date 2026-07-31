@@ -37,16 +37,13 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["llm", "models", "routes", "services", "src/evaluar/config", "src/evaluar/identity", "src/evaluar/courses", "src/evaluar/content_pipeline", "src/evaluar/common", "src/evaluar/tutoring", "src/evaluar/support"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"src/evaluar/templates" = "templates"
+packages = ["llm", "models", "routes", "services", "src/evaluar"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [".", "src/evaluar"]
+pythonpath = [".", "src"]
 django_find_project = false
-DJANGO_SETTINGS_MODULE = "config.settings.test"
+DJANGO_SETTINGS_MODULE = "evaluar.config.settings.test"
 
 [tool.ruff]
 target-version = "py310"

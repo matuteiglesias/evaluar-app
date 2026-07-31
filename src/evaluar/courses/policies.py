@@ -1,4 +1,4 @@
-from identity.models import CourseMembership
+from evaluar.identity.models import CourseMembership
 from .models import Course
 
 
