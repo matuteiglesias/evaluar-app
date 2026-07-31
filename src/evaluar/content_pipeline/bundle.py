@@ -75,10 +75,11 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
         {"path": asset, "checksum": checksum((root / asset).read_bytes())}
         for asset in sorted(known_assets)
     )
+    course_records = tuple(sorted(courses, key=lambda item: item["slug"]))
     payload = {
         "schema_version": BUNDLE_SCHEMA_VERSION,
         "source_commit": source_commit,
-        "courses": sorted(courses, key=lambda item: item["slug"]),
+        "courses": course_records,
         "exercises": [item.__dict__ for item in compiled],
         "assets": assets,
         "issues": [item.__dict__ for item in issues],
@@ -86,7 +87,7 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
     return Bundle(
         BUNDLE_SCHEMA_VERSION,
         source_commit,
-        tuple(payload["courses"]),
+        course_records,
         tuple(compiled),
         assets,
         tuple(issues),

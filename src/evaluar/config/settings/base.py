@@ -1,6 +1,7 @@
 """Shared settings for the Evaluar Django application."""
 
 from pathlib import Path
+from typing import Any
 import os
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -70,9 +71,9 @@ if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     }
 else:
     DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
+        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": str(BASE_DIR / "db.sqlite3")}
     }
-AUTH_PASSWORD_VALIDATORS = []
+AUTH_PASSWORD_VALIDATORS: list[dict[str, Any]] = []
 AUTH_USER_MODEL = "identity.User"
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
