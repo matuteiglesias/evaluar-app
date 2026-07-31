@@ -23,7 +23,7 @@ def configure_logging():
     return logging.getLogger(__name__)
 
 
-def create_app(config_overrides=None):
+def create_app(config_overrides=None, adapters=None):
     """
     Creates and configures the Flask application.
 
@@ -62,6 +62,8 @@ def create_app(config_overrides=None):
     app.config.update(runtime_settings(app.root_path))
     if config_overrides:
         app.config.update(config_overrides)
+    if adapters:
+        app.extensions.update(adapters)
     validate_settings(app.config)
 
     # Initialize session

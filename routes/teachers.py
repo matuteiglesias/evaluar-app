@@ -1,15 +1,18 @@
 # routes/teachers.py
 
 from flask import Blueprint, request, session, redirect, url_for, render_template, current_app
-from firebase_admin import firestore
-from google.api_core.exceptions import GoogleAPICallError
-from services.firebase import get_db
 from services.authentication import login_required
 from services.exercise_repository import ExerciseNotFound, read_exercise
+from services.persistence import get_persistence
+from services.runtime_boundaries import new_id, now
+
+# Retained as import-compatible legacy evidence; generic packets do not call them.
+from services.teachers import (
+    find_eligible_teacher as find_eligible_teacher,
+    get_teacher_loads as get_teacher_loads,
+)
 from extensions import limiter
 
-
-from services.teachers import get_teacher_loads, find_eligible_teacher, _generate_custom_ticket_id
 
 teachers_bp = Blueprint("teachers", __name__)
 
@@ -21,40 +24,7 @@ teachers_bp = Blueprint("teachers", __name__)
 @login_required
 @limiter.limit(lambda: current_app.config["TEACHER_HELP_RATE_LIMIT"])
 def request_teacher_time():
-    """
-    Handles the request for teacher assistance on a specific exercise.
-
-    This route processes a POST request to assign a teacher to a student's query
-    regarding an exercise. It validates the input, determines an eligible teacher
-    based on their load, and creates a ticket in the database for the request.
-
-    Returns:
-        - Redirects to the core index page if the user is not authenticated.
-        - Returns a 400 response if required form data is missing.
-        - Returns a 500 response if there is an error creating the ticket.
-        - Redirects to the confirmation page upon successful ticket creation.
-
-    Session:
-        - Stores ticket details in the session for later use.
-
-    Raises:
-        - Logs warnings and errors for unauthorized access, missing data, teacher
-        assignment issues, and database operations.
-
-    Form Data:
-        - exercise_id: The ID of the exercise the student needs help with.
-        - question: The student's question about the exercise.
-
-    Session Data:
-        - user: The currently logged-in user's information.
-
-    Database:
-        - Reads teacher load information to assign an eligible teacher.
-        - Creates a ticket in the 'tickets' collection with the request details.
-
-    Side Effects:
-        - Logs various events and errors for monitoring and debugging purposes.
-    """
+    """Create one generic, explicitly unassigned teacher-help packet."""
     user = session["user"]
     exercise_id = request.form.get("exercise_id")
     course = request.form.get("course", "tda")
@@ -70,51 +40,36 @@ def request_teacher_time():
     except ExerciseNotFound:
         return "Exercise not found", 404
 
-    # Get load information
-    try:
-        teachers_load, avg_load = get_teacher_loads()
-        teacher_id = find_eligible_teacher(exercise_id, teachers_load, avg_load)
-    except GoogleAPICallError as error:
-        current_app.logger.error("Error assigning teacher: %s", error)
-        teacher_id = None
-
-    teacher_name = "No asignado"
-    if teacher_id:
-        try:
-            teacher_doc = get_db().collection("teachers").document(teacher_id).get()
-            teacher_name = teacher_doc.to_dict().get("name", teacher_name)
-        except GoogleAPICallError as error:
-            current_app.logger.warning("Failed to get teacher info for %s: %s", teacher_id, error)
-        assigned_teacher_id = teacher_id
-    else:
-        assigned_teacher_id = "na"
-
-    ticket_id = _generate_custom_ticket_id(assigned_teacher_id, exercise_id)
+    identity = f"{course}:{exercise_id}"
+    ticket_id = new_id("teacher-packet", identity)
     ticket_data = {
+        "ticketId": ticket_id,
+        "course": course,
         "exerciseId": exercise_id,
         "question": question,
         "status": "open",
         "studentId": user["id_"],
         "studentName": user["name"],
         "studentEmail": user["email"],
-        "teacherId": assigned_teacher_id,
-        "timestamp": firestore.SERVER_TIMESTAMP,
+        "assignment": "unassigned",
+        "timestamp": now(),
     }
 
     try:
-        get_db().collection("tickets").document(ticket_id).set(ticket_data)
-        current_app.logger.info(f"Ticket {ticket_id} created successfully.")
-    except GoogleAPICallError as error:
-        current_app.logger.error("Failed to create ticket %s: %s", ticket_id, error)
+        get_persistence().save_teacher_packet(ticket_id, ticket_data)
+        current_app.logger.info("Teacher packet %s created successfully", ticket_id)
+    except Exception:
+        current_app.logger.exception("Failed to create teacher packet %s", ticket_id)
         return "Failed to submit request", 500
 
     session["ticket_details"] = {
         "ticket_id": ticket_id,
+        "course": course,
         "exerciseId": exercise_id,
         "question": question,
         "studentName": user["name"],
         "studentEmail": user["email"],
-        "teacher_name": teacher_name,
+        "assignment": "unassigned",
     }
 
     return redirect(url_for("teachers.confirmation_page"))

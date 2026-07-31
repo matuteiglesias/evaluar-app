@@ -38,9 +38,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="exercise_id" id="exerciseId" value="{{ exercise_id }}">
                 <input type="hidden" name="course" value="{{ course }}">
-
-                <!-- Agrega un campo oculto para la respuesta de IA o el identificador único de la interacción -->
-                <input type="hidden" name="evaluated_response" id="evaluated_response" value="{{ session['evaluated_response'] }}">
+                <input type="hidden" name="response_id" value="{{ response_id }}">
 
 
                 <label for="feedback" class="h4">Feedback:</label>
