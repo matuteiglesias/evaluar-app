@@ -4,7 +4,6 @@ Sets up the Flask app, environment, sessions, OAuth, Firebase, and routes.
 """
 
 import logging
-import uuid
 from flask import Flask
 from flask_session import Session
 from dotenv import load_dotenv
@@ -72,15 +71,7 @@ def create_app(config_overrides=None, adapters=None):
     from extensions import csrf, limiter
 
     csrf.init_app(app)
-    # Never let tests consume or reset a developer/CI shared limiter backend.
-    # The extension is process-global, so reset its ephemeral store for every
-    # test app to avoid counters leaking between app fixtures.
-    if app.config.get("TESTING"):
-        app.config["RATELIMIT_STORAGE_URI"] = "memory://"
-        app.config["RATELIMIT_KEY_PREFIX"] = f"test-app:{uuid.uuid4()}"
     limiter.init_app(app)
-    if app.config.get("TESTING"):
-        limiter.reset()
     # Initialize OAuth with Google
     oauth.init_app(app)
     oauth.register(

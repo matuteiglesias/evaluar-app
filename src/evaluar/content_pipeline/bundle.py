@@ -48,6 +48,18 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
                         )
                     )
                 used_assets.update(matches)
+            if "% FIGURA" in source.source_text:
+                figure = f"tikzpics/{source.exercise_id}.png"
+                if figure not in known_assets:
+                    issues.append(
+                        ValidationIssue(
+                            "unknown_asset",
+                            source.source_path,
+                            f"missing legacy figure {figure!r}",
+                        )
+                    )
+                else:
+                    used_assets.add(figure)
             rendered = render_latex(source.source_text)
         else:
             # Markdown is deliberately not interpreted as HTML in this production slice.

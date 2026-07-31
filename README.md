@@ -120,3 +120,10 @@ versions included in the course's active publication.
 Development remains possible without Docker using the local SQLite default. To run the production
 shape with PostgreSQL, use `docker compose up --build`. The image migrates an empty database before
 starting Gunicorn and exposes `/health/live` and database-backed `/health/ready` probes.
+
+### Release boundary
+
+The default distribution, production container, and required CI job certify only the Django Phase 2
+application in `src/evaluar`. The retained Flask source is not packaged or installed in that runtime.
+Its characterization suite is preserved in the path-triggered and manually runnable **Legacy Flask
+Verification** workflow; install it locally with `uv sync --group dev --extra legacy`.

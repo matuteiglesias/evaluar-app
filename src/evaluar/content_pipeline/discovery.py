@@ -131,9 +131,12 @@ def discover(
             issues.append(
                 ValidationIssue("schema_invalid", index.relative_to(root).as_posix(), str(error))
             )
+    asset_roots = (root / name for name in ("assets", "tikzpics", "images", "img"))
     assets = {
-        p.relative_to(root).as_posix()
-        for p in root.rglob("*")
-        if p.is_file() and p.suffix.lower() in ASSET_SUFFIXES
+        path.relative_to(root).as_posix()
+        for asset_root in asset_roots
+        if asset_root.is_dir()
+        for path in asset_root.rglob("*")
+        if path.is_file() and path.suffix.lower() in ASSET_SUFFIXES
     }
     return courses, exercises, assets, issues

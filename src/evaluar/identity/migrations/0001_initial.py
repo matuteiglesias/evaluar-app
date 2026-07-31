@@ -1,5 +1,6 @@
 import uuid
 from django.conf import settings
+import django.contrib.auth.models
 import django.contrib.auth.validators
 from django.db import migrations, models
 import django.db.models.deletion
@@ -68,7 +69,7 @@ class Migration(migrations.Migration):
                     models.BooleanField(
                         default=True,
                         help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
-                        verbose_name="active status",
+                        verbose_name="active",
                     ),
                 ),
                 (
@@ -85,7 +86,7 @@ class Migration(migrations.Migration):
                     "groups",
                     models.ManyToManyField(
                         blank=True,
-                        help_text="The groups this user belongs to.",
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
                         related_name="user_set",
                         related_query_name="user",
                         to="auth.group",
@@ -104,7 +105,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False},
+            options={"verbose_name": "user", "verbose_name_plural": "users"},
+            managers=[("objects", django.contrib.auth.models.UserManager())],
         ),
         migrations.CreateModel(
             name="CourseMembership",

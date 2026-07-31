@@ -1,8 +1,8 @@
 from flask import Blueprint, current_app, redirect, session, url_for
+
 from extensions import limiter
 from main import oauth as oauth  # compatibility handle for existing Authlib-focused tests
 from models.user import User
-from services.authentication import direct_remote_address_key
 from services.identity import IdentityProviderError, get_identity_provider
 
 
@@ -22,7 +22,7 @@ def _authentication_failure(status=400):
 
 
 @auth_bp.route("/login")
-@limiter.limit(lambda: current_app.config["LOGIN_RATE_LIMIT"], key_func=direct_remote_address_key)
+@limiter.limit(lambda: current_app.config["LOGIN_RATE_LIMIT"])
 def login():
     """Start the Authlib-managed OAuth flow, including state generation."""
     redirect_uri = url_for("auth.callback", _external=True)

@@ -5,20 +5,24 @@ build-backend = "hatchling.build"
 [project]
 name = "evaluar-app"
 version = "0.0.0"
-description = "Legacy Flask educational evaluation application"
-requires-python = ">=3.10,<3.14"
+description = "Django educational tutoring platform"
+requires-python = ">=3.12,<3.14"
 dependencies = [
-  "Authlib>=1.3,<2",
   "Django>=5.1,<5.3",
   "django-allauth[socialaccount]>=65.3,<66",
+  "gunicorn>=21.2,<24",
   "psycopg[binary]>=3.2,<4",
   "bleach>=6.1,<7",
+]
+
+[project.optional-dependencies]
+legacy = [
+  "Authlib>=1.3,<2",
   "firebase-admin>=6.4,<7",
   "Flask>=2.3,<4",
   "Flask-Session>=0.6,<1",
   "Flask-Limiter>=3.8,<5",
   "Flask-WTF>=1.2,<2",
-  "gunicorn>=21.2,<24",
   "Markdown>=3.4,<4",
   "openai>=1.0,<2",
   "oauthlib>=3.2,<4",
@@ -37,7 +41,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["llm", "models", "routes", "services", "src/evaluar"]
+packages = ["src/evaluar"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -46,7 +50,7 @@ django_find_project = false
 DJANGO_SETTINGS_MODULE = "evaluar.config.settings.test"
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 line-length = 100
 exclude = ["scripts"]
 
@@ -54,6 +58,6 @@ exclude = ["scripts"]
 select = ["E4", "E7", "E9", "F"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 ignore_missing_imports = true
 exclude = ["migrations"]
