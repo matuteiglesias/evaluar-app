@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block title %}Mis cursos · Evaluar{% endblock %}{% block content %}<h1>Mis cursos</h1>{% for course in courses %}<article class="card"><h2><a href="{% url 'courses:exercises' course.slug %}">{{ course.name }}</a></h2></article>{% empty %}<p>No pertenecés a ningún curso activo.</p>{% endfor %}{% endblock %}

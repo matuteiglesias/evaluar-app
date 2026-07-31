@@ -1,0 +1,26 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --all-groups
+      - run: uv run ruff check src/evaluar tests
+      - run: uv run ruff format --check src/evaluar tests/test_content_pipeline.py tests/test_django_phase2.py
+      - run: uv run mypy src/evaluar
+      - run: uv run pytest
+      - run: uv run python manage.py makemigrations --check --dry-run
+      - run: uv run python manage.py migrate --noinput
+      - run: uv run python manage.py migrate --check
+      - run: uv run python manage.py validate_content .
+      - run: docker build -t evaluar:test .
+      - name: Container smoke test
+        run: |
+          docker network create evaluar-smoke
+          docker run -d --name postgres --network evaluar-smoke -e POSTGRES_DB=evaluar -e POSTGRES_USER=evaluar -e POSTGRES_PASSWORD=evaluar postgres:16-alpine
+          until docker exec postgres pg_isready -U evaluar; do sleep 1; done
+          docker run -d --name evaluar --network evaluar-smoke -p 8000:8000 -e DATABASE_URL=postgresql://evaluar:evaluar@postgres:5432/evaluar -e DJANGO_SECRET_KEY=ci-secret-key-long-enough -e DJANGO_ALLOWED_HOSTS=localhost -e GOOGLE_CLIENT_ID=ci-placeholder -e GOOGLE_CLIENT_SECRET=ci-placeholder evaluar:test
+          until curl --fail -H "X-Forwarded-Proto: https" http://localhost:8000/health/live; do sleep 1; done
+          curl --fail -H "X-Forwarded-Proto: https" http://localhost:8000/health/ready
