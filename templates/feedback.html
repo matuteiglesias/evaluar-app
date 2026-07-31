@@ -7,9 +7,6 @@
     <title>Retroalimentación del Ejercicio</title>
     <!-- Incluye Bootstrap para estilizar -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
 
@@ -47,32 +44,6 @@
                 <button type="submit" class="btn btn-primary mt-2">Enviar Feedback</button>
             </form>
         </div>
-
-
-        <script>
-            // JavaScript for form submission handling
-            $(document).ready(function() {
-                $('#feedbackForm').on('submit', function(e) {
-                    e.preventDefault(); // Prevent the form from submitting through the browser
-                    var form = $(this);
-                    $.ajax({
-                        type: form.attr('method'),
-                        url: form.attr('action'),
-                        data: form.serialize(),
-                        success: function(response) {
-                            // Modifica esta línea para mostrar el mensaje deseado.
-                            alert("Feedback enviado. ¡Muchas gracias!"); // Mensaje personalizado
-                            // Limpia los campos del formulario después del envío
-                            $('#feedback').val('');
-                        },
-                        error: function(xhr, status, error) {
-                            // Puedes agregar manejo de errores aquí, por ejemplo:
-                            alert("Hubo un problema al enviar tu feedback. Por favor, intenta nuevamente o reporta el problema a los docentes.");
-                        }
-                    });
-                });
-            });
-        </script>
 
 
         <!-- Inside the body, after the current form -->

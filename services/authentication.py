@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import redirect, request, session, url_for
+from flask import current_app, redirect, request, session, url_for
 
 
 def login_required(view):
@@ -15,7 +15,19 @@ def login_required(view):
     return wrapped
 
 
+def _rate_limit_namespace():
+    return current_app.config.get("RATELIMIT_KEY_PREFIX", "app")
+
+
+def direct_remote_address_key():
+    """Use the direct peer address without trusting forwarding headers."""
+    return f"{_rate_limit_namespace()}:ip:{request.remote_addr or 'unknown'}"
+
+
 def rate_limit_key():
     """Prefer the authenticated stable ID, otherwise use the direct peer address."""
     user = session.get("user") or {}
-    return f"user:{user['id_']}" if user.get("id_") else f"ip:{request.remote_addr or 'unknown'}"
+    identity = (
+        f"user:{user['id_']}" if user.get("id_") else f"ip:{request.remote_addr or 'unknown'}"
+    )
+    return f"{_rate_limit_namespace()}:{identity}"

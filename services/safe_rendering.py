@@ -38,7 +38,7 @@ def render_exercise(raw_latex, exercise_id):
         compatible_html,
         tags=EXERCISE_TAGS,
         attributes=_exercise_attribute,
-        protocols=set(),
+        protocols={"http", "https"},
         strip=True,
         strip_comments=True,
     )
