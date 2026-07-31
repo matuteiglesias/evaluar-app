@@ -175,6 +175,15 @@ def test_input_limits_accept_boundary_and_reject_overlong(
     login(client)
     token = csrf_token(client)
     data = {"csrf_token": token, "exercise_id": "101", "course": "tda", field: "12345"}
+    if path == "/submit-feedback":
+        data["response_id"] = "response-boundary"
+        with client.session_transaction() as state:
+            state["current_ai_response"] = {
+                "response_id": "response-boundary",
+                "course": "tda",
+                "exercise_id": "101",
+                "evaluated_response": "fixed guidance",
+            }
     monkeypatch.setattr("routes.teachers.get_teacher_loads", lambda: ({"teacher": 0}, 0))
     monkeypatch.setattr("routes.teachers.find_eligible_teacher", lambda *args: "teacher")
     assert client.post(path, data=data).status_code in {200, 302}
@@ -248,6 +257,15 @@ def test_other_authenticated_rate_limits_are_enforced(
         "course": "tda",
         field: "valid input",
     }
+    if path == "/submit-feedback":
+        data["response_id"] = "response-rate"
+        with client.session_transaction() as state:
+            state["current_ai_response"] = {
+                "response_id": "response-rate",
+                "course": "tda",
+                "exercise_id": "101",
+                "evaluated_response": "fixed guidance",
+            }
     assert client.post(path, data=data).status_code in {200, 302}
     assert client.post(path, data=data).status_code == 429
 
@@ -458,7 +476,7 @@ def test_oauth_callback_uses_timeouts_and_handles_malformed_json(app, client, mo
     monkeypatch.setattr("routes.auth.oauth.google.authorize_access_token", token)
     monkeypatch.setattr("routes.auth.oauth.google.get", userinfo)
     response = client.get("/login/callback?code=test&state=test")
-    assert response.status_code == 400
+    assert response.status_code == 502
     assert observed == {"token_timeout": (3.05, 10.0), "userinfo_timeout": (3.05, 10.0)}
 
     monkeypatch.setattr(

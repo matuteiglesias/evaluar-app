@@ -29,4 +29,5 @@ spreadsheetapp
 .env
 # Y cualquier otro patrón de archivo que desees ignorar
 data/
+var/legacy/firestore/
 deploy/app.yaml

@@ -2,7 +2,6 @@
 
 from flask import Blueprint, request, session, render_template, jsonify, current_app, abort
 import os
-from google.api_core.exceptions import GoogleAPICallError
 
 from llm.evaluator import Evaluator
 from services.safe_rendering import render_exercise, render_feedback
@@ -19,7 +18,8 @@ from extensions import limiter
 # # Firestore DB client (assumes firebase_admin.initialize_app() already called)
 # db = firestore.client()
 
-from services.firebase import get_db
+from services.persistence import get_persistence
+from services.runtime_boundaries import new_id, now
 
 
 # Blueprint definition
@@ -155,84 +155,77 @@ def submit_answer():
 
     model = os.getenv("EVALUATOR_MODEL", "gpt-4o-mini")
 
+    tutor = current_app.extensions.get("tutor")
     evaluator = current_app.extensions.get("evaluator") or Evaluator()
     current_app.logger.info("Using evaluator model: %s", model)
-    evaluated_response = evaluator.evaluate(exercise_content, response)
+    try:
+        evaluated_response = (
+            tutor.guide(course, exercise_id, exercise_content, response)
+            if tutor
+            else evaluator.evaluate(exercise_content, response)
+        )
+    except Exception:
+        current_app.logger.exception("Tutoring guidance failed")
+        return "Tutoring guidance is temporarily unavailable", 502
     current_app.logger.info("Received evaluated response.")
 
-    # Store raw and render HTML version
-    session["evaluated_response"] = evaluated_response
+    response_id = new_id("response", f"{course}:{exercise_id}")
+    response_state = {
+        "response_id": response_id,
+        "course": course,
+        "exercise_id": exercise_id,
+        "evaluated_response": evaluated_response,
+    }
+    session["current_ai_response"] = response_state
     evaluated_response_html = render_feedback(evaluated_response)
 
     try:
-        record_interaction(user, exercise_id, response, evaluated_response)
+        record_interaction(response_id, user, course, exercise_id, response, evaluated_response)
         current_app.logger.info("Interaction recorded successfully.")
-    except GoogleAPICallError as error:
-        current_app.logger.warning("Could not record interaction: %s", error)
+    except Exception:
+        session.pop("current_ai_response", None)
+        current_app.logger.exception("Could not record interaction")
+        return "Guidance was generated but could not be recorded; please retry", 503
 
     return render_template(
         "feedback.html",
         evaluated_response=evaluated_response_html,
         exercise_id=exercise_id,
         course=course,
+        response_id=response_id,
     )
 
 
-def record_interaction(user_details, exercise_id, user_query, ai_response):
-    """Record user interactions with the AI in Firestore."""
-    interaction_ref = get_db().collection("interaction_records").document()
-    interaction_ref.set(
+def record_interaction(response_id, user_details, course, exercise_id, user_query, ai_response):
+    """Record one course-scoped tutoring interaction through the persistence boundary."""
+    get_persistence().save_interaction(
+        response_id,
         {
+            "responseId": response_id,
+            "course": course,
             "exerciseId": exercise_id,
             "userId": user_details["id_"],
             "userName": user_details["name"],
             "userQuery": user_query,
             "aiResponse": ai_response,
-            # "timestamp": firestore.SERVER_TIMESTAMP  # Use server timestamp for consistency
-        }
+            "timestamp": now(),
+        },
     )
-    print("Interaction recorded with Firestore.")
 
 
 @exercises_bp.route("/submit-feedback", methods=["POST"])
 @login_required
 @limiter.limit(lambda: current_app.config["FEEDBACK_RATE_LIMIT"])
 def submit_feedback():
-    """
-    Handles the submission of user feedback for an exercise.
-
-    This function retrieves the feedback and exercise ID from the form data,
-    validates the input, and stores the feedback in a Firestore database. It
-    also logs relevant events and handles errors during the process.
-
-    Returns:
-        Response: A JSON response with a success message and HTTP status 200
-                  if the feedback is successfully saved.
-                  A JSON response with an error message and HTTP status 401
-                  if the user is not authenticated.
-                  A JSON response with an error message and HTTP status 400
-                  if feedback or exercise ID is missing.
-                  A JSON response with an error message and HTTP status 500
-                  if there is an error saving the feedback.
-
-    Raises:
-        Exception: If there is an issue connecting to or interacting with the
-                   Firestore database.
-
-    Side Effects:
-        - Logs warnings or errors for missing data, unauthenticated access,
-          or database issues.
-        - Stores feedback data in the Firestore database.
-        - Removes the 'evaluated_response' key from the session after successful
-          feedback submission.
-    """
+    """Persist feedback only when it matches the exact current AI response."""
     user = session["user"]
     feedback = (request.form.get("feedback") or "").strip()
     exercise_id = request.form.get("exercise_id")
     course = request.form.get("course", "tda")
-    evaluated_response = session.get("evaluated_response", "No Response")
+    response_id = request.form.get("response_id")
+    response_state = session.get("current_ai_response")
 
-    if not feedback or not exercise_id:
+    if not feedback or not exercise_id or not response_id:
         current_app.logger.warning("Missing feedback or exercise_id in form submission.")
         return jsonify({"error": "Missing feedback or exercise ID"}), 400
     if len(feedback) > current_app.config["MAX_FEEDBACK_LENGTH"]:
@@ -241,26 +234,36 @@ def submit_feedback():
         read_exercise(course, exercise_id=exercise_id)
     except ExerciseNotFound:
         abort(404)
+    if not response_state:
+        return jsonify({"error": "AI response is stale or already rated"}), 409
+    expected = (
+        response_state["response_id"],
+        response_state["course"],
+        response_state["exercise_id"],
+    )
+    if expected != (response_id, course, exercise_id):
+        return jsonify({"error": "Feedback does not match the current AI response"}), 409
 
     try:
-        # db = firestore.client()
-        doc_ref = get_db().collection("user_feedback").document()
-        doc_ref.set(
+        feedback_id = new_id("feedback", response_id)
+        get_persistence().save_feedback(
+            feedback_id,
             {
+                "feedbackId": feedback_id,
+                "responseId": response_id,
+                "course": course,
                 "feedback": feedback,
                 "exerciseId": exercise_id,
                 "studentId": user.get("id_"),
                 "studentName": user.get("name"),
-                "evaluated_response": evaluated_response,
-                # "timestamp": firestore.SERVER_TIMESTAMP
-            }
+                "evaluated_response": response_state["evaluated_response"],
+                "timestamp": now(),
+            },
         )
-        current_app.logger.info(
-            f"Feedback submitted by user {user['email']} on exercise {exercise_id}"
-        )
-    except GoogleAPICallError as error:
-        current_app.logger.error("Error saving feedback: %s", error)
+        current_app.logger.info("Feedback recorded for %s:%s", course, exercise_id)
+    except Exception:
+        current_app.logger.exception("Error saving feedback")
         return jsonify({"error": "Failed to save feedback"}), 500
 
-    session.pop("evaluated_response", None)
+    session.pop("current_ai_response", None)
     return jsonify({"message": "Feedback submitted successfully!"}), 200
