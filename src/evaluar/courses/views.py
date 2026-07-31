@@ -3,7 +3,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, render
 from .models import ContentPublication, Course, Exercise, ExerciseVersion
-from .policies import accessible_courses, can_view_course, can_view_exercise
+from .policies import accessible_courses, can_view_course, can_view_exercise, is_course_admin
+from evaluar.tutoring.forms import AnswerSubmissionForm
 
 
 @login_required
@@ -34,7 +35,12 @@ def exercise_list(request, course_slug):
     return render(
         request,
         "courses/exercise_list.html",
-        {"course": course, "exercises": exercises, "publication": publication},
+        {
+            "course": course,
+            "exercises": exercises,
+            "publication": publication,
+            "is_course_admin": is_course_admin(request.user, course),
+        },
     )
 
 
@@ -51,5 +57,9 @@ def exercise_version(request, course_slug, exercise_slug, version_number):
     return render(
         request,
         "courses/exercise_version.html",
-        {"course": version.exercise.course, "version": version},
+        {
+            "course": version.exercise.course,
+            "version": version,
+            "answer_form": AnswerSubmissionForm.fresh(),
+        },
     )

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Estado de la tutoría · Evaluar{% endblock %}
+{% block content %}
+<p><a href="{% url 'courses:version' submission.exercise_version.exercise.course.slug submission.exercise_version.exercise.slug submission.exercise_version.version_number %}">← Volver al ejercicio</a></p>
+<h1>Orientación sobre tu respuesta</h1>
+<p class="status" id="submission-status">{{ submission.get_status_display }}</p>
+
+{% if submission.status == 'accepted' or submission.status == 'queued' %}
+<div class="card" id="pending"><h2>Tu respuesta está en cola</h2><p>La recibimos correctamente. Empezaremos a revisarla en cuanto haya capacidad.</p><p class="muted">Si ocurre un problema temporal, el sistema volverá a intentarlo automáticamente.</p></div>
+{% elif submission.status == 'running' %}
+<div class="card" id="pending"><h2>Estamos revisando tu respuesta</h2><p>La tutoría está preparando una orientación. Esta página se actualizará cuando termine.</p><p class="muted">Los fallos temporales se reintentan de forma automática.</p></div>
+{% elif submission.status == 'failed' %}
+<div class="alert error"><h2>No pudimos generar la orientación</h2><p>No se descontará otra solicitud por los reintentos internos. Puedes volver al ejercicio e intentarlo de nuevo más tarde.</p></div>
+{% elif submission.status == 'cancelled' %}
+<div class="alert"><h2>La solicitud fue cancelada</h2><p>Vuelve al ejercicio para enviar un nuevo intento.</p></div>
+{% elif response %}
+<article class="card content">{{ response.rendered_html|safe }}</article>
+<section class="card feedback" aria-labelledby="feedback-heading">
+  <h2 id="feedback-heading">Valora esta respuesta</h2>
+  {% if feedback %}<p class="muted">Ya valoraste esta respuesta. Puedes actualizar tu valoración.</p>{% endif %}
+  <form method="post" action="{% url 'tutoring:feedback' response.id %}">
+    {% csrf_token %}{{ feedback_form.helpful.errors }}{{ feedback_form.helpful }}
+    {{ feedback_form.comment.label_tag }}{{ feedback_form.comment.errors }}{{ feedback_form.comment }}
+    <button type="submit">Guardar valoración</button>
+  </form>
+</section>
+{% endif %}
+
+{% if submission.status == 'accepted' or submission.status == 'queued' or submission.status == 'running' %}
+<script>
+(() => {
+  const statusUrl = "{% url 'tutoring:status' submission.id %}";
+  const poll = async () => {
+    try {
+      const response = await fetch(statusUrl, {headers: {"Accept": "application/json"}});
+      if (!response.ok) return;
+      const data = await response.json();
+      if (data.terminal) window.location.replace(data.url);
+      else window.setTimeout(poll, 2500);
+    } catch (_) { window.setTimeout(poll, 5000); }
+  };
+  window.setTimeout(poll, 1500);
+})();
+</script>
+{% endif %}
+{% endblock %}

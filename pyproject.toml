@@ -24,11 +24,21 @@ legacy = [
   "Flask-Limiter>=3.8,<5",
   "Flask-WTF>=1.2,<2",
   "Markdown>=3.4,<4",
-  "openai>=1.0,<2",
+  "openai>=1.0,<3",
   "oauthlib>=3.2,<4",
   "pandas>=2.0,<3",
   "python-dotenv>=1.0,<2",
   "requests>=2.31,<3",
+]
+
+ai = [
+  "agent-framework-core==1.13.0",
+  "agent-framework-openai==1.12.0",
+]
+
+queue = [
+  "google-auth>=2.40,<3",
+  "google-cloud-tasks>=2.19,<3",
 ]
 
 [dependency-groups]
@@ -48,6 +58,9 @@ testpaths = ["tests"]
 pythonpath = [".", "src"]
 django_find_project = false
 DJANGO_SETTINGS_MODULE = "evaluar.config.settings.test"
+markers = [
+  "live: requires explicit staging provider credentials and performs billable network calls",
+]
 
 [tool.ruff]
 target-version = "py312"

@@ -40,3 +40,8 @@ def can_manage_course(user, course):
         CourseMembership.Role.TEACHER,
         CourseMembership.Role.COURSE_ADMIN,
     }
+
+
+def is_course_admin(user, course):
+    membership = _active_membership(user, course)
+    return membership is not None and membership.role == CourseMembership.Role.COURSE_ADMIN
