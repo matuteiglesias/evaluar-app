@@ -1,25 +1,28 @@
 from flask import Blueprint, render_template, session, jsonify, redirect, url_for
+from services.authentication import login_required
 
-core_bp = Blueprint('core', __name__)
+core_bp = Blueprint("core", __name__)
 
 
-@core_bp.route('/logout')
+@core_bp.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for('core.index'))
+    return redirect(url_for("core.index"))
 
-@core_bp.route('/health')
+
+@core_bp.route("/health")
 def health():
     return jsonify({"status": "up"}), 200
 
-@core_bp.route('/')
+
+@core_bp.route("/")
 def index():
-    if 'user' in session:
-        return render_template('home.html', user=session['user'])
-    return render_template('login.html')
+    if "user" in session:
+        return render_template("home.html", user=session["user"])
+    return render_template("login.html")
 
 
-@core_bp.route('/course')
+@core_bp.route("/course")
+@login_required
 def course_index():
-    return render_template('index.html')
-
+    return render_template("index.html")

@@ -1,8 +1,9 @@
 from flask import Blueprint, send_from_directory
 
-static_bp = Blueprint('static_routes', __name__)
+static_bp = Blueprint("static_routes", __name__)
 
-@static_bp.route('/tikzpics/<filename>')
+
+@static_bp.route("/tikzpics/<filename>")
 def tikzpics(filename):
     """
     Serve a file from the 'tikzpics' directory.
@@ -19,6 +20,4 @@ def tikzpics(filename):
     Raises:
         werkzeug.exceptions.NotFound: If the file does not exist in the 'tikzpics' directory.
     """
-    return send_from_directory('tikzpics', filename)
-
-
+    return send_from_directory("tikzpics", filename)

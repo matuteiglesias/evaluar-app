@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 load_dotenv()
 logger = logging.getLogger(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 class Evaluator:
     """
@@ -25,8 +25,10 @@ class Evaluator:
             Evaluates the student's response to the exercise using the language model.
             Returns the evaluation result or an error message if the evaluation fails.
     """
+
     def __init__(self, model_name="gpt-4o"):
         self.model_name = model_name
+        openai.api_key = os.getenv("OPENAI_API_KEY")
         self.env = Environment(loader=FileSystemLoader("llm/prompts"))
 
     def construct_prompt(self, exercise_content: str, student_response: str) -> str:
@@ -49,8 +51,7 @@ class Evaluator:
         try:
             template = self.env.get_template("prompt_template.j2")
             return template.render(
-                exercise_content=exercise_content.strip(),
-                student_response=student_response.strip()
+                exercise_content=exercise_content.strip(), student_response=student_response.strip()
             )
         except TemplateNotFound:
             logger.warning("Prompt template not found. Falling back to inline format.")
@@ -65,7 +66,7 @@ class Evaluator:
             student_response (str): The student's response to the exercise.
 
         Returns:
-            str: The evaluation result as a string. If an error occurs during the 
+            str: The evaluation result as a string. If an error occurs during the
             evaluation process, returns an error message.
         """
         logger.info("Running LLM evaluation")
@@ -75,7 +76,7 @@ class Evaluator:
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
-                max_tokens=550
+                max_tokens=550,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:

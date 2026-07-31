@@ -1,24 +1,25 @@
 # routes/teachers.py
 
 from flask import Blueprint, request, session, redirect, url_for, render_template, current_app
-
-
-from services.teachers import (
-    get_teacher_loads,
-    find_eligible_teacher,
-    _generate_custom_ticket_id
-)
-
-teachers_bp = Blueprint('teachers', __name__)
-
+from firebase_admin import firestore
+from google.api_core.exceptions import GoogleAPICallError
 from services.firebase import get_db
-db = get_db()
+from services.authentication import login_required
+from services.exercise_repository import ExerciseNotFound, read_exercise
+from extensions import limiter
+
+
+from services.teachers import get_teacher_loads, find_eligible_teacher, _generate_custom_ticket_id
+
+teachers_bp = Blueprint("teachers", __name__)
 
 # from firebase_admin import firestore
 # db = firestore.client()
 
 
-@teachers_bp.route('/request-teacher-time', methods=['POST'])
+@teachers_bp.route("/request-teacher-time", methods=["POST"])
+@login_required
+@limiter.limit(lambda: current_app.config["TEACHER_HELP_RATE_LIMIT"])
 def request_teacher_time():
     """
     Handles the request for teacher assistance on a specific exercise.
@@ -54,33 +55,36 @@ def request_teacher_time():
     Side Effects:
         - Logs various events and errors for monitoring and debugging purposes.
     """
-    user = session.get('user')
-    if not user:
-        current_app.logger.warning("Unauthorized access to teacher time request")
-        return redirect(url_for('core.index'))
-
-    exercise_id = request.form.get('exercise_id')
-    question = request.form.get('question')
+    user = session["user"]
+    exercise_id = request.form.get("exercise_id")
+    course = request.form.get("course", "tda")
+    question = (request.form.get("question") or "").strip()
 
     if not exercise_id or not question:
         current_app.logger.warning("Missing exercise_id or question in form submission")
         return "Missing data", 400
+    if len(question) > current_app.config["MAX_TEACHER_QUESTION_LENGTH"]:
+        return "Question is too long", 400
+    try:
+        read_exercise(course, exercise_id=exercise_id)
+    except ExerciseNotFound:
+        return "Exercise not found", 404
 
     # Get load information
     try:
         teachers_load, avg_load = get_teacher_loads()
         teacher_id = find_eligible_teacher(exercise_id, teachers_load, avg_load)
-    except Exception as e:
-        current_app.logger.error(f"Error assigning teacher: {e}")
+    except GoogleAPICallError as error:
+        current_app.logger.error("Error assigning teacher: %s", error)
         teacher_id = None
 
     teacher_name = "No asignado"
     if teacher_id:
         try:
-            teacher_doc = db.collection('teachers').document(teacher_id).get()
-            teacher_name = teacher_doc.to_dict().get('name', teacher_name)
-        except Exception as e:
-            current_app.logger.warning(f"Failed to get teacher info for {teacher_id}: {e}")
+            teacher_doc = get_db().collection("teachers").document(teacher_id).get()
+            teacher_name = teacher_doc.to_dict().get("name", teacher_name)
+        except GoogleAPICallError as error:
+            current_app.logger.warning("Failed to get teacher info for %s: %s", teacher_id, error)
         assigned_teacher_id = teacher_id
     else:
         assigned_teacher_id = "na"
@@ -94,28 +98,29 @@ def request_teacher_time():
         "studentName": user["name"],
         "studentEmail": user["email"],
         "teacherId": assigned_teacher_id,
-        "timestamp": firestore.SERVER_TIMESTAMP
+        "timestamp": firestore.SERVER_TIMESTAMP,
     }
 
     try:
-        db.collection('tickets').document(ticket_id).set(ticket_data)
+        get_db().collection("tickets").document(ticket_id).set(ticket_data)
         current_app.logger.info(f"Ticket {ticket_id} created successfully.")
-    except Exception as e:
-        current_app.logger.error(f"Failed to create ticket {ticket_id}: {e}")
+    except GoogleAPICallError as error:
+        current_app.logger.error("Failed to create ticket %s: %s", ticket_id, error)
         return "Failed to submit request", 500
 
-    session['ticket_details'] = {
+    session["ticket_details"] = {
         "ticket_id": ticket_id,
         "exerciseId": exercise_id,
         "question": question,
         "studentName": user["name"],
         "studentEmail": user["email"],
-        "teacher_name": teacher_name
+        "teacher_name": teacher_name,
     }
 
-    return redirect(url_for('teachers.confirmation_page'))
+    return redirect(url_for("teachers.confirmation_page"))
 
 
-@teachers_bp.route('/confirmation', methods=['GET'])
+@teachers_bp.route("/confirmation", methods=["GET"])
+@login_required
 def confirmation_page():
-    return render_template('confirmation.html')
+    return render_template("confirmation.html")

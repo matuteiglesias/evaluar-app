@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evaluar-app"
+version = "0.0.0"
+description = "Legacy Flask educational evaluation application"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+  "Authlib>=1.3,<2",
+  "bleach>=6.1,<7",
+  "firebase-admin>=6.4,<7",
+  "Flask>=2.3,<4",
+  "Flask-Session>=0.6,<1",
+  "Flask-Limiter>=3.8,<5",
+  "Flask-WTF>=1.2,<2",
+  "gunicorn>=21.2,<24",
+  "Markdown>=3.4,<4",
+  "openai>=1.0,<2",
+  "oauthlib>=3.2,<4",
+  "pandas>=2.0,<3",
+  "python-dotenv>=1.0,<2",
+  "requests>=2.31,<3",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8,<9",
+  "pytest-mock>=3.12,<4",
+  "ruff>=0.12,<0.13",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["llm", "models", "routes", "services"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+exclude = ["scripts"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
