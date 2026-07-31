@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Tutorías fallidas · {{ course.name }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'courses:exercises' course.slug %}">← {{ course.name }}</a></p>
+<h1>Tutorías fallidas</h1>
+<p class="muted">Vista exclusiva para administradores del curso. PostgreSQL conserva el estado y el historial de cada intento.</p>
+{% for job in jobs %}
+<article class="card">
+  <h2>{{ job.exercise_version.title }}</h2>
+  <p><strong>Estudiante:</strong> {{ job.user.username }}</p>
+  <p><strong>Solicitud:</strong> <code>{{ job.id }}</code></p>
+  {% with attempt=job.admin_attempts.0 %}{% if attempt %}<p><strong>Último error:</strong> {{ attempt.error_category|default:"sin categoría" }}</p><p class="muted">Intento {{ attempt.number }} · {{ attempt.finished_at }}</p>{% endif %}{% endwith %}
+  <form method="post" action="{% url 'tutoring:requeue-failed-job' course.slug job.id %}">{% csrf_token %}<button type="submit">Volver a poner en cola</button></form>
+</article>
+{% empty %}<div class="card"><p>No hay tutorías fallidas en este curso.</p></div>{% endfor %}
+{% endblock %}

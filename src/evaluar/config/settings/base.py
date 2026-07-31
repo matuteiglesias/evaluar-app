@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "evaluar.identity",
     "evaluar.courses",
+    "evaluar.tutoring",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -110,6 +111,28 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+TUTORING_DAILY_QUOTA = int(os.environ.get("TUTORING_DAILY_QUOTA", "20"))
+TUTORING_COURSE_DAILY_QUOTA = int(os.environ.get("TUTORING_COURSE_DAILY_QUOTA", "2000"))
+TUTORING_ATTEMPT_LEASE_SECONDS = int(os.environ.get("TUTORING_ATTEMPT_LEASE_SECONDS", "900"))
+TUTORING_TASK_MAX_ATTEMPTS = int(os.environ.get("TUTORING_TASK_MAX_ATTEMPTS", "5"))
+TUTORING_TASK_AUDIENCE = os.environ.get("TUTORING_TASK_AUDIENCE", "")
+TUTORING_TASK_SERVICE_ACCOUNT = os.environ.get("TUTORING_TASK_SERVICE_ACCOUNT", "")
+TUTORING_TASK_QUEUE_PATH = os.environ.get("TUTORING_TASK_QUEUE_PATH", "")
+TUTORING_WORKER_URL = os.environ.get("TUTORING_WORKER_URL", "")
+TUTORING_OPENAI_API_KEY = os.environ.get("TUTORING_OPENAI_API_KEY", "")
+TUTORING_OPENAI_BASE_URL = os.environ.get("TUTORING_OPENAI_BASE_URL", "")
+TUTORING_AZURE_OPENAI_ENDPOINT = os.environ.get("TUTORING_AZURE_OPENAI_ENDPOINT", "")
+TUTORING_AZURE_OPENAI_API_KEY = os.environ.get("TUTORING_AZURE_OPENAI_API_KEY", "")
+TUTORING_AZURE_OPENAI_API_VERSION = os.environ.get(
+    "TUTORING_AZURE_OPENAI_API_VERSION", "2025-04-01-preview"
+)
+TUTORING_CAPTURE_SENSITIVE_TELEMETRY = False
+TUTORING_MODEL_FACTORY = os.environ.get(
+    "TUTORING_MODEL_FACTORY",
+    "evaluar.tutoring.infrastructure.production.ProductionTutoringModelFactory",
+)
+TUTORING_PROMPT_PUBLIC_ID = os.environ.get("TUTORING_PROMPT_PUBLIC_ID", "default")
+TUTORING_MAX_ANSWER_CHARS = int(os.environ.get("TUTORING_MAX_ANSWER_CHARS", "12000"))
 LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "courses:list"
 LOGOUT_REDIRECT_URL = "account_login"

@@ -1,1 +1,16 @@
-{% extends "base.html" %}{% block title %}{{ version.title }} · Evaluar{% endblock %}{% block content %}<p><a href="{% url 'courses:exercises' course.slug %}">← {{ course.name }}</a></p><article><p>{{ version.section }}</p><h1>{{ version.title }}</h1><div class="content">{{ version.rendered_html|safe }}</div></article>{% endblock %}
+{% extends "base.html" %}
+{% block title %}{{ version.title }} · Evaluar{% endblock %}
+{% block content %}
+<p><a href="{% url 'courses:exercises' course.slug %}">← {{ course.name }}</a></p>
+<article><p class="muted">{{ version.section }}</p><h1>{{ version.title }}</h1><div class="content">{{ version.rendered_html|safe }}</div></article>
+<section class="card" aria-labelledby="tutoring-heading">
+  <h2 id="tutoring-heading">Solicitar orientación</h2>
+  <p class="muted">Comparte tu intento. La respuesta se procesará en segundo plano; no cierres esta pestaña si quieres esperar aquí.</p>
+  <form method="post" action="{% url 'tutoring:submit' version.id %}">
+    {% csrf_token %}{{ answer_form.idempotency_key }}
+    {{ answer_form.student_answer.label_tag }}
+    {{ answer_form.student_answer.errors }}{{ answer_form.student_answer }}
+    <button type="submit">Enviar respuesta</button>
+  </form>
+</section>
+{% endblock %}
