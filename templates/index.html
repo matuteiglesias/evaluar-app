@@ -6,42 +6,6 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-        
-
-        
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-        
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbIyQUqd7WhioJexUXPO3c_LWxij5Piwo",
-            authDomain: "evaluar-app.firebaseapp.com",
-            projectId: "evaluar-app",
-            storageBucket: "evaluar-app.appspot.com",
-            messagingSenderId: "412630077125",
-            appId: "1:412630077125:web:610bd920072faa5b632aac",
-            measurementId: "G-P2VS0C5GRK"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    </script>
-
-
 </head>
 
 
@@ -82,11 +46,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const course = urlParams.get('course') || 'tda';
 
-        fetch(`/get_exercises?course=${course}`)
+        fetch(`/get_exercises?course=${encodeURIComponent(course)}`)
             .then(response => response.json())
             .then(data => {
                 const container = document.getElementById("exerciseSections");
-                const sectionMap = {};
+                const sectionMap = Object.create(null);
 
                 data.forEach(ex => {
                     const sectionLabel = ex.section || "Otros"; // fallback label
@@ -96,24 +60,33 @@
                         title.textContent = `Sección: ${sectionLabel}`;
                         const table = document.createElement('table');
                         table.classList.add('exercise-table');
-                        table.innerHTML = `
-                            <thead>
-                                <tr><th>ID</th><th>Nombre</th><th>Info</th><th>Consulta</th></tr>
-                            </thead>
-                            <tbody></tbody>
-                        `;
+                        const head = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+                        ['ID', 'Nombre', 'Info', 'Consulta'].forEach(label => {
+                            const header = document.createElement('th');
+                            header.textContent = label;
+                            headerRow.appendChild(header);
+                        });
+                        head.appendChild(headerRow);
+                        const body = document.createElement('tbody');
+                        table.append(head, body);
                         container.appendChild(title);
                         container.appendChild(table);
                         sectionMap[sectionLabel] = table.querySelector('tbody');
                     }
 
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${ex.id}</td>
-                        <td>${ex.name}</td>
-                        <td>${ex.info}</td>
-                        <td><a href="/exercises/${course}/${ex.file}">Consulta</a></td>
-                    `;
+                    [ex.id, ex.name, ex.info].forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value == null ? '' : String(value);
+                        row.appendChild(cell);
+                    });
+                    const linkCell = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.textContent = 'Consulta';
+                    link.href = `/exercises/${encodeURIComponent(course)}/${encodeURIComponent(ex.file)}`;
+                    linkCell.appendChild(link);
+                    row.appendChild(linkCell);
                     sectionMap[sectionLabel].appendChild(row);
                 });
             })

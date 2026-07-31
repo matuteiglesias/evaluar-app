@@ -1,6 +1,6 @@
-
 # A simple in-memory 'database' to store user info
 users_db = {}
+
 
 class User:
     """
@@ -28,6 +28,7 @@ class User:
                 email (str): The email address of the new user.
                 profile_pic (str): The URL of the new user's profile picture.
     """
+
     def __init__(self, id_, name, email, profile_pic):
         self.id_ = id_
         self.name = name

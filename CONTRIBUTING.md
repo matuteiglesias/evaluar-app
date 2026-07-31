@@ -30,32 +30,65 @@ git clone https://github.com/matuteiglesias/evaluar-app.git
 cd evaluar-app
 ```
 
-2. **Configurá tu entorno virtual (Python 3.10+)**
+2. **Configurá tu entorno virtual (Python 3.10–3.13)**
 
 ```bash
-python -m venv env
-source env/bin/activate  # En Windows: env\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # En Windows: .venv\Scripts\activate
 ```
 
 
 3. **Instalá las dependencias**
 
 ```bash
-pip install -r env/requirements.txt
+python -m pip install --upgrade pip
+python -m pip install uv
+uv sync --locked --group dev
 ```
 
 4. **Copiá y completá las variables de entorno**
 
 ```bash
 cp env.template .env
-# luego editá el archivo con tus claves necesarias
+# editá el archivo: para desarrollo definí APP_ENV=development y un SECRET_KEY
+# aleatorio de al menos 32 caracteres. OAuth/AI son obligatorios en producción.
 ```
 
 5. **Ejecutá la app localmente**
 
 ```bash
 export FLASK_APP=main.py
-flask run
+flask run  # debug permanece deshabilitado salvo una decisión local explícita
+```
+
+La aplicación real exige `SECRET_KEY`. Las credenciales de Firebase sólo se
+leen cuando una ruta necesita Firestore; configurá
+`GOOGLE_APPLICATION_CREDENTIALS` con una ruta externa al repositorio o usá
+Application Default Credentials/workload identity. No uses credenciales reales
+para tests.
+
+Producción debe definir `APP_ENV=production`, secretos OAuth/OpenAI, un
+`SECRET_KEY` aleatorio y `SESSION_COOKIE_SECURE=true`, y arrancar con un servidor
+WSGI, por ejemplo `uv run gunicorn 'main:create_app()'`. Una configuración
+incompleta detiene el arranque; no reemplaces ese error con valores de fallback.
+
+Los límites de ingreso y tasas tienen valores conservadores documentados en
+`env.template` y `docs/security/phase-0b-ingress-controls.md`. El almacenamiento
+de rate limits `memory://` sólo es adecuado para desarrollo local; producción
+multi-instancia necesita un backend compartido.
+
+El contenido de ejercicios y la salida del modelo atraviesan allowlists separados
+en `services/safe_rendering.py`. No agregues `|safe`, `innerHTML`, atributos de
+eventos ni HTML arbitrario para ampliar el formato; documentá y probá cualquier
+cambio deliberado al allowlist.
+
+### Comandos de calidad
+
+```bash
+uv run ruff format .             # formatear
+uv run ruff check .              # lint
+uv run pytest                    # tests
+uv lock --check                  # verificar el lock
 ```
 
 Nota:

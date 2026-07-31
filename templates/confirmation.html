@@ -48,7 +48,7 @@
             // con un objeto JSON derivado de los detalles del ticket en la sesión de Flask.
             // Nota: se agregan paréntesis alrededor de la expresión de la plantilla Flask para asegurar
             // que se interpreta correctamente como un argumento para JSON.stringify().
-            var ticketDetails = JSON.parse('{{ session["ticket_details"] | tojson | safe }}');
+            const ticketDetails = {{ session["ticket_details"] | tojson }};
             
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ticketDetails));
             var downloadAnchorNode = document.createElement('a');

@@ -8,6 +8,9 @@ __pycache__/
 env/
 venv/
 .venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
 
 # Logs and debug
 *.log
