@@ -1,0 +1,30 @@
+name: Legacy Flask Verification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "main.py"
+      - "extensions.py"
+      - "llm/**"
+      - "models/**"
+      - "routes/**"
+      - "services/**"
+      - "templates/**"
+      - "tests/test_app.py"
+      - "tests/test_user_journeys.py"
+      - ".github/workflows/legacy-flask.yml"
+
+jobs:
+  legacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install legacy dependencies
+        run: uv sync --extra legacy --group dev
+      - name: Run legacy characterization
+        run: |
+          uv run pytest -q \
+            tests/test_app.py \
+            tests/test_user_journeys.py

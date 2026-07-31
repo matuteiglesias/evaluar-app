@@ -78,3 +78,52 @@ Licencia MIT.
 ¿Tenés ideas? ¿Querés sumar tu cátedra?  
 > 📬 Contacto: 'mniglesias@dc.uba.ar'
 
+
+## Phase 2 Django application
+
+The production foundation lives in `src/evaluar`. It provides Google OpenID Connect sign-in,
+course-scoped memberships, immutable versioned exercises, and read-only access to the single
+published release for each course. It intentionally contains no AI execution or teacher workflow.
+
+```bash
+uv sync
+uv run python manage.py migrate
+DJANGO_SETTINGS_MODULE=evaluar.config.settings.local uv run python manage.py runserver
+```
+
+Set `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `GOOGLE_CLIENT_ID`, and
+`GOOGLE_CLIENT_SECRET` in production. Run with `evaluar.config.settings.production` (the WSGI/ASGI
+default); production startup rejects missing secrets and enables HTTPS cookie and HSTS settings.
+
+The framework-independent compiler is available as `evaluar.content_pipeline.compile_content(root)`. It
+returns a canonical bundle with checksums and formal validation findings; content import/publishing
+should reject bundles whose `valid` property is false.
+
+### Content release workflow
+
+Course and content records use UUID primary keys. Imported identifiers remain course-scoped external
+keys such as `tda:101`, while deterministic author-facing slugs are generated from exercise titles.
+Content is compiled outside request handling and publishing is checksum-verified and atomic:
+
+```bash
+python manage.py validate_content ./content
+python manage.py build_content_bundle ./content --output ./build/content
+python manage.py publish_content ./build/content
+```
+
+Re-publishing the same bundle is idempotent. Unchanged immutable versions may be included in a new
+complete release without being copied. HTTP views resolve only database identities and only expose
+versions included in the course's active publication.
+
+### PostgreSQL and container startup
+
+Development remains possible without Docker using the local SQLite default. To run the production
+shape with PostgreSQL, use `docker compose up --build`. The image migrates an empty database before
+starting Gunicorn and exposes `/health/live` and database-backed `/health/ready` probes.
+
+### Release boundary
+
+The default distribution, production container, and required CI job certify only the Django Phase 2
+application in `src/evaluar`. The retained Flask source is not packaged or installed in that runtime.
+Its characterization suite is preserved in the path-triggered and manually runnable **Legacy Flask
+Verification** workflow; install it locally with `uv sync --group dev --extra legacy`.

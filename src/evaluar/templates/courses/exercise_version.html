@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block title %}{{ version.title }} · Evaluar{% endblock %}{% block content %}<p><a href="{% url 'courses:exercises' course.slug %}">← {{ course.name }}</a></p><article><p>{{ version.section }}</p><h1>{{ version.title }}</h1><div class="content">{{ version.rendered_html|safe }}</div></article>{% endblock %}

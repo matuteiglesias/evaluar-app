@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: evaluar
+      POSTGRES_USER: evaluar
+      POSTGRES_PASSWORD: evaluar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evaluar"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://evaluar:evaluar@db:5432/evaluar
+      DJANGO_SECRET_KEY: local-compose-secret-change-in-production
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      GOOGLE_CLIENT_ID: local-placeholder
+      GOOGLE_CLIENT_SECRET: local-placeholder
+    ports:
+      - "8000:8000"
+volumes:
+  postgres-data:
