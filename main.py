@@ -71,7 +71,14 @@ def create_app(config_overrides=None, adapters=None):
     from extensions import csrf, limiter
 
     csrf.init_app(app)
+    # Never let tests consume or reset a developer/CI shared limiter backend.
+    # The extension is process-global, so reset its ephemeral store for every
+    # test app to avoid counters leaking between app fixtures.
+    if app.config.get("TESTING"):
+        app.config["RATELIMIT_STORAGE_URI"] = "memory://"
     limiter.init_app(app)
+    if app.config.get("TESTING"):
+        limiter.reset()
     # Initialize OAuth with Google
     oauth.init_app(app)
     oauth.register(
