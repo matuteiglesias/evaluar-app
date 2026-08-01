@@ -26,8 +26,10 @@ jobs:
 
       - name: Verify worker dependencies
         run: |
-          docker run --rm evaluar:test python -c \
-            "import agent_framework, google.cloud.tasks_v2, evaluar.tutoring"
+          docker run --rm \
+            --entrypoint python \
+            evaluar:test \
+            -c "import agent_framework; import google.cloud.tasks_v2; import evaluar.tutoring; print('Worker dependencies available')"
 
       - name: Container smoke test
         run: |
