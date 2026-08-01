@@ -8,7 +8,7 @@ from django.utils.module_loading import import_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .models import TutoringSubmission
+from .models import TutoringAttempt, TutoringSubmission
 from .services import mark_terminal_failure, run_submission
 
 logger = logging.getLogger(__name__)
@@ -71,6 +71,16 @@ def run_worker(request):
         TutoringSubmission.Status.FAILED,
         TutoringSubmission.Status.CANCELLED,
     ):
+        return HttpResponse(status=204)
+    latest_attempt = submission.attempts.order_by("-number").first()
+    if latest_attempt and latest_attempt.status == TutoringAttempt.Status.PROVIDER_SUCCEEDED:
+        logger.error(
+            "tutoring.ambiguous_attempt",
+            extra={
+                "submission_id": str(submission_id),
+                "attempt_id": str(latest_attempt.id),
+            },
+        )
         return HttpResponse(status=204)
     if retry_count + 1 >= max_attempts:
         mark_terminal_failure(submission_id)

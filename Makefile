@@ -1,7 +1,7 @@
 .PHONY: verify-phase3 verify-phase3-live
 
 verify-phase3:
-	uv run --extra ai --extra queue --group dev pytest -q -m "not live" tests/test_django_phase2.py tests/test_tutoring.py tests/test_tutoring_queue.py tests/test_agent_framework_adapter.py tests/test_agent_framework_production.py tests/test_tutoring_student_experience.py tests/test_tutoring_operations.py
+	uv run --extra ai --extra queue --group dev pytest -q -m "not live" tests/test_packaging_layout.py tests/test_content_pipeline.py tests/test_content_inventory.py tests/test_django_phase2.py tests/test_tutoring.py tests/test_tutoring_queue.py tests/test_agent_framework_adapter.py tests/test_agent_framework_production.py tests/test_tutoring_student_experience.py tests/test_tutoring_operations.py tests/test_tutoring_release.py
 	uv run --extra ai --extra queue --group dev ruff check .
 	uv run --extra ai --extra queue --group dev ruff format --check .
 	uv run --extra ai --extra queue --group dev mypy src/evaluar/tutoring src/evaluar/courses

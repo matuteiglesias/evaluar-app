@@ -25,5 +25,22 @@ services:
       GOOGLE_CLIENT_SECRET: local-placeholder
     ports:
       - "8000:8000"
+  dispatcher:
+    build: .
+    profiles: ["tutoring"]
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["python", "-m", "django", "dispatch_tutoring_outbox", "--watch", "--interval", "60"]
+    environment:
+      DATABASE_URL: postgresql://evaluar:evaluar@db:5432/evaluar
+      DJANGO_SECRET_KEY: local-compose-secret-change-in-production
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      GOOGLE_CLIENT_ID: local-placeholder
+      GOOGLE_CLIENT_SECRET: local-placeholder
+      TUTORING_TASK_QUEUE_PATH: ${TUTORING_TASK_QUEUE_PATH:-}
+      TUTORING_WORKER_URL: ${TUTORING_WORKER_URL:-}
+      TUTORING_TASK_AUDIENCE: ${TUTORING_TASK_AUDIENCE:-}
+      TUTORING_TASK_SERVICE_ACCOUNT: ${TUTORING_TASK_SERVICE_ACCOUNT:-}
 volumes:
   postgres-data:

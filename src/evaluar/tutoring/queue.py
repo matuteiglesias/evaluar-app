@@ -7,6 +7,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone as django_timezone
 
 from .models import OutboxEvent, TutoringSubmission
@@ -21,7 +22,7 @@ class CloudTasksClient(Protocol):
 
 @dataclass
 class CloudTasksDispatcher:
-    """Cloud Tasks adapter with a deterministic task name for enqueue idempotency."""
+    """Cloud Tasks adapter with a deterministic name per outbox delivery."""
 
     client: CloudTasksClient
     queue_path: str
@@ -41,8 +42,8 @@ class CloudTasksDispatcher:
             audience=settings.TUTORING_TASK_AUDIENCE,
         )
 
-    def dispatch(self, submission_id: UUID) -> str:
-        task_name = f"{self.queue_path}/tasks/tutoring-{submission_id}"
+    def dispatch(self, *, submission_id: UUID, dispatch_id: UUID) -> str:
+        task_name = f"{self.queue_path}/tasks/tutoring-{submission_id}-{dispatch_id}"
         task = {
             "name": task_name,
             "http_request": {
@@ -66,35 +67,85 @@ class CloudTasksDispatcher:
             raise
 
 
+def _claim_event(*, excluded_ids: set[UUID]) -> OutboxEvent | None:
+    now = django_timezone.now()
+    lease_seconds = getattr(settings, "TUTORING_OUTBOX_LEASE_SECONDS", 300)
+    with transaction.atomic():
+        event = (
+            OutboxEvent.objects.select_for_update(skip_locked=True)
+            .filter(dispatched_at__isnull=True)
+            .filter(
+                Q(status=OutboxEvent.Status.PENDING)
+                | Q(
+                    status=OutboxEvent.Status.DISPATCHING,
+                    claim_expires_at__lte=now,
+                )
+            )
+            .filter(
+                topic__in=(
+                    "tutoring.submission.accepted",
+                    "tutoring.submission.requeued",
+                )
+            )
+            .exclude(id__in=excluded_ids)
+            .order_by("created_at")
+            .first()
+        )
+        if event is None:
+            return None
+        event.status = OutboxEvent.Status.DISPATCHING
+        event.claimed_at = now
+        event.claim_expires_at = now + django_timezone.timedelta(seconds=lease_seconds)
+        event.dispatch_attempts += 1
+        event.save(update_fields=("status", "claimed_at", "claim_expires_at", "dispatch_attempts"))
+        return event
+
+
 def dispatch_pending(dispatcher: TaskDispatcher, *, limit: int = 100) -> int:
     dispatched = 0
+    attempted_ids: set[UUID] = set()
     for _ in range(limit):
-        with transaction.atomic():
-            event = (
-                OutboxEvent.objects.select_for_update(skip_locked=True)
-                .filter(
-                    dispatched_at__isnull=True,
-                    topic__in=(
-                        "tutoring.submission.accepted",
-                        "tutoring.submission.requeued",
-                    ),
-                )
-                .order_by("created_at")
-                .first()
+        event = _claim_event(excluded_ids=attempted_ids)
+        if event is None:
+            break
+        attempted_ids.add(event.id)
+        claimed_at = event.claimed_at
+        try:
+            task_id = dispatcher.dispatch(
+                submission_id=event.aggregate_id,
+                dispatch_id=event.id,
             )
-            if event is None:
-                break
-            event.dispatch_attempts += 1
-            try:
-                task_id = dispatcher.dispatch(event.aggregate_id)
-            except Exception as exc:
-                event.last_error = str(exc)[:2000]
-                event.save(update_fields=("dispatch_attempts", "last_error"))
-                logger.warning("tutoring.outbox_dispatch_failed", extra={"event_id": str(event.id)})
-                break
+        except Exception as exc:
+            with transaction.atomic():
+                locked = OutboxEvent.objects.select_for_update().get(pk=event.id)
+                if locked.claimed_at == claimed_at:
+                    locked.status = OutboxEvent.Status.PENDING
+                    locked.claimed_at = None
+                    locked.claim_expires_at = None
+                    locked.last_error = str(exc)[:2000]
+                    locked.save(
+                        update_fields=("status", "claimed_at", "claim_expires_at", "last_error")
+                    )
+            logger.warning("tutoring.outbox_dispatch_failed", extra={"event_id": str(event.id)})
+            continue
+        with transaction.atomic():
+            event = OutboxEvent.objects.select_for_update().get(pk=event.id)
+            if event.status != OutboxEvent.Status.DISPATCHING or event.claimed_at != claimed_at:
+                continue
+            event.status = OutboxEvent.Status.DISPATCHED
+            event.claimed_at = None
+            event.claim_expires_at = None
             event.dispatched_at = django_timezone.now()
             event.last_error = ""
-            event.save(update_fields=("dispatch_attempts", "dispatched_at", "last_error"))
+            event.save(
+                update_fields=(
+                    "status",
+                    "claimed_at",
+                    "claim_expires_at",
+                    "dispatched_at",
+                    "last_error",
+                )
+            )
             TutoringSubmission.objects.filter(
                 pk=event.aggregate_id, status=TutoringSubmission.Status.ACCEPTED
             ).update(status=TutoringSubmission.Status.QUEUED)

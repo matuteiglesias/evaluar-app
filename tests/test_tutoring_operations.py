@@ -16,11 +16,76 @@ from evaluar.tutoring.models import (
     TutoringQuotaUsage,
     TutoringSubmission,
 )
-from evaluar.tutoring.operations import activate_prompt, resolve_ambiguous_attempt
+from evaluar.tutoring.operations import (
+    activate_prompt,
+    create_prompt_draft,
+    publish_prompt,
+    resolve_ambiguous_attempt,
+)
 from evaluar.tutoring.services import QuotaExceeded, run_submission, submit_answer
 from test_tutoring import context, result
 
 pytestmark = pytest.mark.django_db
+
+
+def valid_policy():
+    return {"provider": "openai", "requested_model": "gpt-test"}
+
+
+def test_prompt_draft_publication_creates_audited_immutable_version_without_activation():
+    draft = create_prompt_draft(
+        public_id="release",
+        instructions="Guide the student.",
+        model_policy=valid_policy(),
+        actor="operator@example.com",
+    )
+    prompt = publish_prompt(
+        public_id="release",
+        version=draft.version,
+        actor="approver@example.com",
+        note="Approved after staging regression",
+    )
+    assert prompt.status == PromptVersion.Status.PUBLISHED
+    assert len(prompt.checksum) == 64
+    assert not ActivePrompt.objects.filter(public_id="release").exists()
+    assert TutoringOperationalAudit.objects.filter(action="prompt_draft_created").exists()
+    publication = TutoringOperationalAudit.objects.get(action="prompt_published")
+    assert publication.prompt_version == prompt
+    assert publication.actor_identifier == "approver@example.com"
+
+
+def test_prompt_creation_and_publication_commands(tmp_path):
+    instructions = tmp_path / "prompt.md"
+    instructions.write_text("Guide, do not reveal answers.", encoding="utf-8")
+    policy_file = tmp_path / "policy.json"
+    policy_file.write_text(json.dumps(valid_policy()), encoding="utf-8")
+    output = StringIO()
+    call_command(
+        "create_tutoring_prompt",
+        "--public-id",
+        "commands",
+        "--instructions-file",
+        str(instructions),
+        "--model-policy-file",
+        str(policy_file),
+        "--actor",
+        "operator@example.com",
+        stdout=output,
+    )
+    assert "Created prompt draft commands version 1" in output.getvalue()
+    call_command(
+        "publish_tutoring_prompt",
+        "--public-id",
+        "commands",
+        "--prompt-version",
+        "1",
+        "--actor",
+        "approver@example.com",
+        "--note",
+        "Staging approved",
+        stdout=output,
+    )
+    assert PromptVersion.objects.get(public_id="commands", version=1).status == "published"
 
 
 def test_prompt_activation_and_rollback_preserve_historical_references():
