@@ -2,6 +2,7 @@ import json
 from types import SimpleNamespace
 
 import pytest
+from django.db import connection
 from django.test import override_settings
 from django.urls import reverse
 
@@ -22,14 +23,14 @@ pytestmark = pytest.mark.django_db
 
 class FakeDispatcher:
     def __init__(self, error=None):
-        self.submission_ids = []
+        self.deliveries = []
         self.error = error
 
-    def dispatch(self, submission_id):
+    def dispatch(self, *, submission_id, dispatch_id):
         if self.error:
             raise self.error
-        self.submission_ids.append(submission_id)
-        return f"tasks/{submission_id}"
+        self.deliveries.append((submission_id, dispatch_id))
+        return f"tasks/{submission_id}-{dispatch_id}"
 
 
 class RetryableFakeModel:
@@ -55,9 +56,10 @@ def test_outbox_dispatches_only_submission_id_and_updates_authoritative_state():
     assert dispatch_pending(dispatcher) == 1
     submission.refresh_from_db()
     event = OutboxEvent.objects.get()
-    assert dispatcher.submission_ids == [submission.id]
+    assert dispatcher.deliveries == [(submission.id, event.id)]
     assert event.payload == {"submission_id": str(submission.id)}
     assert event.dispatched_at is not None
+    assert event.status == OutboxEvent.Status.DISPATCHED
     assert submission.status == TutoringSubmission.Status.QUEUED
 
 
@@ -68,8 +70,48 @@ def test_failed_dispatch_remains_in_outbox_for_repair():
     assert event.dispatched_at is None
     assert event.dispatch_attempts == 1
     assert event.last_error == "queue unavailable"
+    assert event.status == OutboxEvent.Status.PENDING
+    assert event.claimed_at is None
     submission.refresh_from_db()
     assert submission.status == TutoringSubmission.Status.ACCEPTED
+
+
+@pytest.mark.django_db(transaction=True)
+def test_dispatcher_calls_external_adapter_after_claim_transaction_commits():
+    _, submission = accepted_submission()
+
+    class TransactionCheckingDispatcher(FakeDispatcher):
+        def dispatch(self, *, submission_id, dispatch_id):
+            assert not connection.in_atomic_block
+            return super().dispatch(submission_id=submission_id, dispatch_id=dispatch_id)
+
+    assert dispatch_pending(TransactionCheckingDispatcher()) == 1
+    assert OutboxEvent.objects.get(aggregate_id=submission.id).status == "dispatched"
+
+
+def test_failed_event_does_not_block_later_outbox_events():
+    _, first = accepted_submission()
+    first_event = OutboxEvent.objects.get()
+    first_event.aggregate_id = first.id
+    first_event.save(update_fields=("aggregate_id",))
+    second_event = OutboxEvent.objects.create(
+        topic="tutoring.submission.requeued",
+        aggregate_id=first.id,
+        payload={"submission_id": str(first.id)},
+    )
+
+    class FailFirstDispatcher(FakeDispatcher):
+        def dispatch(self, *, submission_id, dispatch_id):
+            if dispatch_id == first_event.id:
+                raise RuntimeError("first unavailable")
+            return super().dispatch(submission_id=submission_id, dispatch_id=dispatch_id)
+
+    dispatcher = FailFirstDispatcher()
+    assert dispatch_pending(dispatcher) == 1
+    first_event.refresh_from_db()
+    second_event.refresh_from_db()
+    assert first_event.status == OutboxEvent.Status.PENDING
+    assert second_event.status == OutboxEvent.Status.DISPATCHED
 
 
 def test_cloud_tasks_payload_is_minimal_and_task_name_is_deterministic():
@@ -89,9 +131,11 @@ def test_cloud_tasks_payload_is_minimal_and_task_name_is_deterministic():
         service_account_email="tasks@example.iam.gserviceaccount.com",
         audience="https://worker",
     )
-    dispatcher.dispatch(submission.id)
+    event = OutboxEvent.objects.get()
+    dispatcher.dispatch(submission_id=submission.id, dispatch_id=event.id)
     assert json.loads(client.task["http_request"]["body"]) == {"submission_id": str(submission.id)}
     assert str(submission.id) in client.task["name"]
+    assert str(event.id) in client.task["name"]
 
 
 @override_settings(
@@ -205,3 +249,78 @@ def test_terminal_submission_can_be_requeued_through_a_new_outbox_event():
     repair_event = OutboxEvent.objects.get(topic="tutoring.submission.requeued")
     assert repair_event.payload == {"submission_id": str(submission.id)}
     assert repair_event.dispatched_at is None
+
+
+def test_requeue_uses_a_new_cloud_task_name_for_the_new_outbox_delivery():
+    _, submission = accepted_submission()
+    dispatcher = FakeDispatcher()
+    assert dispatch_pending(dispatcher) == 1
+    first_task = dispatcher.deliveries[0]
+
+    submission.status = TutoringSubmission.Status.FAILED
+    submission.save(update_fields=("status",))
+    requeue_submission(submission.id)
+
+    assert dispatch_pending(dispatcher) == 1
+    second_task = dispatcher.deliveries[1]
+    assert first_task[0] == second_task[0] == submission.id
+    assert first_task[1] != second_task[1]
+
+
+@override_settings(
+    TUTORING_TASK_AUDIENCE="https://worker",
+    TUTORING_TASK_SERVICE_ACCOUNT="tasks@example.iam.gserviceaccount.com",
+    TUTORING_MODEL_FACTORY="unused.factory",
+    TUTORING_TASK_MAX_ATTEMPTS=2,
+)
+def test_worker_preserves_ambiguous_provider_success_at_retry_exhaustion(
+    client, monkeypatch, caplog
+):
+    _, submission = accepted_submission()
+    attempt = TutoringAttempt.objects.create(
+        submission=submission,
+        number=1,
+        status=TutoringAttempt.Status.PROVIDER_SUCCEEDED,
+        prompt_checksum=submission.prompt_version.checksum,
+        response_schema_version="1",
+        provider="openai",
+        provider_request_id="provider-request-1",
+    )
+    submission.status = TutoringSubmission.Status.RUNNING
+    submission.save(update_fields=("status",))
+
+    calls = 0
+
+    class CountingModel:
+        async def generate(self, request):
+            nonlocal calls
+            calls += 1
+            return result()
+
+    monkeypatch.setattr(
+        "evaluar.tutoring.views._verify_oidc_token",
+        lambda token: {
+            "email": "tasks@example.iam.gserviceaccount.com",
+            "email_verified": True,
+        },
+    )
+    monkeypatch.setattr(
+        "evaluar.tutoring.views.import_string",
+        lambda path: lambda: SimpleNamespace(for_prompt=lambda prompt: CountingModel()),
+    )
+
+    response = client.post(
+        reverse("tutoring-worker:run"),
+        {"submission_id": str(submission.id)},
+        content_type="application/json",
+        HTTP_AUTHORIZATION="Bearer valid",
+        HTTP_X_CLOUDTASKS_TASKRETRYCOUNT="1",
+    )
+
+    assert response.status_code == 204
+    assert calls == 0
+    attempt.refresh_from_db()
+    submission.refresh_from_db()
+    assert attempt.status == TutoringAttempt.Status.PROVIDER_SUCCEEDED
+    assert submission.status == TutoringSubmission.Status.RUNNING
+    assert "tutoring.ambiguous_attempt" in caplog.messages

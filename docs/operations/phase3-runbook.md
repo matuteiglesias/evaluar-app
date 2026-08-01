@@ -63,8 +63,18 @@ provider call.
 
 ## Prompt and model rollback
 
-Prompt instructions and model policies are immutable `PromptVersion` data. Activate a replacement or
-restore a previous version by moving the audited pointer:
+Create and publish prompt material through the audited commands. Publication calculates the checksum
+and creates an immutable historical row; it does not activate that row:
+
+```bash
+uv run python -m django create_tutoring_prompt --public-id default \
+  --instructions-file prompt.md --model-policy-file policy.json --actor "$OPERATOR"
+uv run python -m django publish_tutoring_prompt --public-id default --prompt-version 7 \
+  --actor "$OPERATOR" --note "Approved after staging regression"
+```
+
+Activate a published replacement or restore a previous version by moving the separately audited
+pointer:
 
 ```bash
 uv run python -m django activate_tutoring_prompt --public-id default --prompt-version 7 \
@@ -75,6 +85,25 @@ uv run python -m django activate_tutoring_prompt --public-id default --prompt-ve
 
 Create a new prompt version to change model policy; never edit a historical row. Existing submissions
 retain their original prompt/model policy.
+
+## Outbox dispatcher
+
+Run exactly one or more dispatcher instances continuously. Each event is leased in PostgreSQL before
+the Cloud Tasks network call, and expired leases are reclaimable after a process crash:
+
+```bash
+python -m django dispatch_tutoring_outbox --watch --interval 60
+```
+
+The `dispatcher` Compose service provides this topology under the `tutoring` profile. In GCP, deploy
+the same image and command as a continuously running service, or invoke the command as a Cloud Run Job
+every minute with Cloud Scheduler. Multiple instances are safe because claims use locked rows.
+
+Before promotion, run the non-billable release gate in the configured production environment:
+
+```bash
+python -m django check_tutoring_release --strict
+```
 
 ## Framework rollback
 

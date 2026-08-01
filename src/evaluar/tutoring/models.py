@@ -40,6 +40,27 @@ class PromptVersion(models.Model):
         raise ValidationError("Prompt versions are immutable and cannot be deleted.")
 
 
+class PromptDraft(models.Model):
+    """Operator-authored prompt material awaiting immutable publication."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    public_id = models.SlugField(max_length=100)
+    version = models.PositiveIntegerField()
+    system_instructions = models.TextField()
+    response_schema_version = models.CharField(max_length=32, default="1")
+    model_policy = models.JSONField(default=dict)
+    temperature = models.FloatField(default=0.2)
+    max_output_tokens = models.PositiveIntegerField(default=1200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("public_id", "version"), name="unique_tutoring_prompt_draft_version"
+            )
+        ]
+
+
 class ActivePrompt(models.Model):
     """Mutable pointer used to promote or roll back immutable prompt versions."""
 
@@ -193,11 +214,19 @@ class CourseTutoringQuotaUsage(models.Model):
 
 
 class OutboxEvent(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        DISPATCHING = "dispatching", "Dispatching"
+        DISPATCHED = "dispatched", "Dispatched"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     topic = models.CharField(max_length=100)
     aggregate_id = models.UUIDField()
     payload = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    claimed_at = models.DateTimeField(null=True, blank=True)
+    claim_expires_at = models.DateTimeField(null=True, blank=True)
     dispatched_at = models.DateTimeField(null=True, blank=True)
     dispatch_attempts = models.PositiveIntegerField(default=0)
     last_error = models.TextField(blank=True)
@@ -205,6 +234,8 @@ class OutboxEvent(models.Model):
 
 class TutoringOperationalAudit(models.Model):
     class Action(models.TextChoices):
+        PROMPT_DRAFT_CREATED = "prompt_draft_created", "Prompt draft created"
+        PROMPT_PUBLISHED = "prompt_published", "Prompt published"
         PROMPT_ACTIVATED = "prompt_activated", "Prompt activated"
         AMBIGUOUS_TERMINATED = "ambiguous_terminated", "Ambiguous attempt terminated"
         AMBIGUOUS_RETRY_AUTHORIZED = "ambiguous_retry_authorized", "Ambiguous retry authorized"

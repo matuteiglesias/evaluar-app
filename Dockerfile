@@ -4,7 +4,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 WORKDIR /build
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN pip wheel --wheel-dir /wheels .
+RUN pip wheel --wheel-dir /wheels ".[ai,queue]"
 
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \

@@ -23,6 +23,30 @@ class TutoringSubmissionAdmin(admin.ModelAdmin):
     actions = (requeue_failed,)
 
 
-admin.site.register(PromptVersion)
+@admin.register(PromptVersion)
+class PromptVersionAdmin(admin.ModelAdmin):
+    list_display = ("public_id", "version", "status", "created_at", "published_at")
+    readonly_fields = (
+        "id",
+        "public_id",
+        "version",
+        "system_instructions",
+        "response_schema_version",
+        "model_policy",
+        "temperature",
+        "max_output_tokens",
+        "checksum",
+        "status",
+        "created_at",
+        "published_at",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.register(TutoringAttempt)
 admin.site.register(TutoringResponse)

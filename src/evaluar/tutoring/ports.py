@@ -35,8 +35,8 @@ class TutoringModel(Protocol):
 
 
 class TaskDispatcher(Protocol):
-    def dispatch(self, submission_id: UUID) -> str:
-        """Enqueue a submission and return the queue task identifier."""
+    def dispatch(self, *, submission_id: UUID, dispatch_id: UUID) -> str:
+        """Enqueue one outbox delivery and return the queue task identifier."""
         ...
 
 

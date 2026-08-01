@@ -29,6 +29,10 @@ class InvalidTransition(Exception):
     pass
 
 
+class AmbiguousAttemptRequiresManualResolution(Exception):
+    """An automatic action tried to overwrite an ambiguous provider success."""
+
+
 @transaction.atomic
 def submit_answer(
     *,
@@ -274,6 +278,10 @@ def mark_terminal_failure(submission_id, *, category="retries_exhausted") -> Non
         return
     active = submission.attempts.order_by("-number").first()
     if active:
+        if active.status == TutoringAttempt.Status.PROVIDER_SUCCEEDED:
+            raise AmbiguousAttemptRequiresManualResolution(
+                "Provider succeeded; an audited operator decision is required."
+            )
         active.status = TutoringAttempt.Status.TERMINAL_FAILED
         active.error_category = category
         active.finished_at = timezone.now()

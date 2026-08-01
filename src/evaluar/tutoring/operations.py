@@ -1,14 +1,89 @@
+import hashlib
+import json
+
 from django.db import transaction
+from django.db.models import Max
 from django.utils import timezone
 
+from .infrastructure.client_factory import ModelPolicy
 from .models import (
     ActivePrompt,
+    PromptDraft,
     PromptVersion,
     TutoringAttempt,
     TutoringOperationalAudit,
     TutoringSubmission,
 )
 from .services import InvalidTransition, requeue_submission
+
+
+def _prompt_checksum(draft: PromptDraft) -> str:
+    content = {
+        "system_instructions": draft.system_instructions,
+        "response_schema_version": draft.response_schema_version,
+        "model_policy": draft.model_policy,
+        "temperature": draft.temperature,
+        "max_output_tokens": draft.max_output_tokens,
+    }
+    return hashlib.sha256(
+        json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+@transaction.atomic
+def create_prompt_draft(
+    *, public_id: str, instructions: str, model_policy: dict, actor: str
+) -> PromptDraft:
+    validated_policy = ModelPolicy.model_validate(model_policy).model_dump(mode="json")
+    latest_draft = (
+        PromptDraft.objects.filter(public_id=public_id).aggregate(Max("version"))["version__max"]
+        or 0
+    )
+    latest_published = (
+        PromptVersion.objects.filter(public_id=public_id).aggregate(Max("version"))["version__max"]
+        or 0
+    )
+    draft = PromptDraft.objects.create(
+        public_id=public_id,
+        version=max(latest_draft, latest_published) + 1,
+        system_instructions=instructions,
+        model_policy=validated_policy,
+    )
+    TutoringOperationalAudit.objects.create(
+        action=TutoringOperationalAudit.Action.PROMPT_DRAFT_CREATED,
+        actor_identifier=actor,
+        note="Prompt draft created.",
+        evidence={"public_id": public_id, "version": draft.version},
+    )
+    return draft
+
+
+@transaction.atomic
+def publish_prompt(*, public_id: str, version: int, actor: str, note: str) -> PromptVersion:
+    draft = PromptDraft.objects.select_for_update().get(public_id=public_id, version=version)
+    validated_policy = ModelPolicy.model_validate(draft.model_policy).model_dump(mode="json")
+    if PromptVersion.objects.filter(public_id=public_id, version=version).exists():
+        raise InvalidTransition("This prompt version is already published.")
+    prompt = PromptVersion.objects.create(
+        public_id=draft.public_id,
+        version=draft.version,
+        system_instructions=draft.system_instructions,
+        response_schema_version=draft.response_schema_version,
+        model_policy=validated_policy,
+        temperature=draft.temperature,
+        max_output_tokens=draft.max_output_tokens,
+        checksum=_prompt_checksum(draft),
+        status=PromptVersion.Status.PUBLISHED,
+        published_at=timezone.now(),
+    )
+    TutoringOperationalAudit.objects.create(
+        action=TutoringOperationalAudit.Action.PROMPT_PUBLISHED,
+        actor_identifier=actor,
+        prompt_version=prompt,
+        note=note,
+        evidence={"version": version, "checksum": prompt.checksum},
+    )
+    return prompt
 
 
 @transaction.atomic

@@ -1,4 +1,4 @@
-name: Phase 2 CI
+name: Application CI
 
 on:
   pull_request:
@@ -6,65 +6,28 @@ on:
     branches: [main]
 
 jobs:
-  phase2:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
 
-      - name: Install Phase 2 dependencies
-        run: uv sync --group dev
+      - name: Install application
+        run: uv sync --extra ai --extra queue --group dev
 
       - name: Build distribution
         run: uv build
 
-      - name: Verify canonical package
-        run: |
-          uv run python - <<'PY'
-          import evaluar
-          print(evaluar.__file__)
-          assert evaluar.__file__
-          assert "/src/evaluar/" in evaluar.__file__.replace("\\", "/")
-          PY
-
-      - name: Lint
-        run: uv run ruff check src/evaluar tests/test_django_phase2.py tests/test_content_pipeline.py tests/test_content_inventory.py tests/test_packaging_layout.py manage.py
-
-      - name: Format
-        run: |
-          uv run ruff format --check \
-            src/evaluar \
-            tests/test_content_pipeline.py \
-            tests/test_content_inventory.py \
-            tests/test_django_phase2.py \
-            tests/test_packaging_layout.py \
-            manage.py
-
-      - name: Type check
-        run: uv run mypy src/evaluar
-
-      - name: Run Phase 2 tests
-        run: |
-          uv run pytest -q \
-            tests/test_packaging_layout.py \
-            tests/test_content_pipeline.py \
-            tests/test_content_inventory.py \
-            tests/test_django_phase2.py
-
-      - name: Check migrations
-        run: uv run python manage.py makemigrations --check --dry-run
-
-      - name: Apply migrations
-        run: uv run python manage.py migrate --noinput
-
-      - name: Verify migration state
-        run: uv run python manage.py migrate --check
-
-      - name: Validate content
-        run: uv run python manage.py validate_content .
+      - name: Verify application
+        run: make verify-phase3
 
       - name: Build production image
-        run: docker build -t evaluar:phase2 .
+        run: docker build -t evaluar:test .
+
+      - name: Verify worker dependencies
+        run: |
+          docker run --rm evaluar:test python -c \
+            "import agent_framework, google.cloud.tasks_v2, evaluar.tutoring"
 
       - name: Container smoke test
         run: |
@@ -80,7 +43,7 @@ jobs:
             -e DJANGO_ALLOWED_HOSTS=localhost \
             -e GOOGLE_CLIENT_ID=ci-placeholder \
             -e GOOGLE_CLIENT_SECRET=ci-placeholder \
-            evaluar:phase2
+            evaluar:test
           for attempt in $(seq 1 30); do
             if curl --fail -H "X-Forwarded-Proto: https" http://localhost:8000/health/live; then break; fi
             if [ "$attempt" -eq 30 ]; then docker logs evaluar; exit 1; fi
