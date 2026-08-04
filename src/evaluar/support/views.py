@@ -87,22 +87,37 @@ def _create_ticket(request, *, exercise, submission=None, response=None):
     course = exercise.exercise.course
     if not can_create_ticket(request.user, course):
         raise PermissionDenied
-    source = f"response:{response.id}" if response else (
-        f"submission:{submission.id}" if submission else f"exercise:{exercise.id}"
+    source = (
+        f"response:{response.id}"
+        if response
+        else (f"submission:{submission.id}" if submission else f"exercise:{exercise.id}")
     )
     _, idempotency_key = _stable_idempotency_key(request, source)
     form = TicketCreateForm(request.POST or None, initial={"idempotency_key": idempotency_key})
     if request.method == "POST" and form.is_valid():
         if form.cleaned_data["idempotency_key"] != idempotency_key:
             raise PermissionDenied("La clave de la solicitud no es válida.")
-        ticket, _ = create_ticket(student=request.user, course=course,
-            exercise_version=exercise, question=form.cleaned_data["question"],
-            idempotency_key=idempotency_key, priority=form.cleaned_data["priority"],
-            tutoring_submission=submission, tutoring_response=response)
+        ticket, _ = create_ticket(
+            student=request.user,
+            course=course,
+            exercise_version=exercise,
+            question=form.cleaned_data["question"],
+            idempotency_key=idempotency_key,
+            priority=form.cleaned_data["priority"],
+            tutoring_submission=submission,
+            tutoring_response=response,
+        )
         return redirect("support:detail", ticket_id=ticket.id)
-    return render(request, "support/ticket_create.html", {
-        "form": form, "exercise": exercise, "submission": submission, "response": response,
-    })
+    return render(
+        request,
+        "support/ticket_create.html",
+        {
+            "form": form,
+            "exercise": exercise,
+            "submission": submission,
+            "response": response,
+        },
+    )
 
 
 @login_required
@@ -117,7 +132,9 @@ def ticket_create(request, exercise_version_id):
 def ticket_create_from_submission(request, submission_id):
     submission = get_object_or_404(
         TutoringSubmission.objects.select_related("exercise_version__exercise__course"),
-        pk=submission_id, user=request.user, status=TutoringSubmission.Status.FAILED,
+        pk=submission_id,
+        user=request.user,
+        status=TutoringSubmission.Status.FAILED,
     )
     return _create_ticket(request, exercise=submission.exercise_version, submission=submission)
 
@@ -126,20 +143,31 @@ def ticket_create_from_submission(request, submission_id):
 def ticket_create_from_response(request, response_id):
     response = get_object_or_404(
         TutoringResponse.objects.select_related("submission__exercise_version__exercise__course"),
-        pk=response_id, submission__user=request.user,
+        pk=response_id,
+        submission__user=request.user,
         submission__status=TutoringSubmission.Status.SUCCEEDED,
         status=TutoringResponse.Status.PUBLISHED,
     )
     return _create_ticket(
-        request, exercise=response.submission.exercise_version,
-        submission=response.submission, response=response,
+        request,
+        exercise=response.submission.exercise_version,
+        submission=response.submission,
+        response=response,
     )
 
 
 def _ticket_for(user, ticket_id):
-    ticket = get_object_or_404(HumanHelpTicket.objects.select_related(
-        "course", "student", "exercise_version", "exercise_version__exercise",
-        "tutoring_submission", "tutoring_response"), pk=ticket_id)
+    ticket = get_object_or_404(
+        HumanHelpTicket.objects.select_related(
+            "course",
+            "student",
+            "exercise_version",
+            "exercise_version__exercise",
+            "tutoring_submission",
+            "tutoring_response",
+        ),
+        pk=ticket_id,
+    )
     if not can_view_ticket(user, ticket):
         raise Http404
     return ticket
@@ -150,12 +178,18 @@ def ticket_detail(request, ticket_id):
     ticket = _ticket_for(request.user, ticket_id)
     staff = can_manage_ticket(request.user, ticket)
     form = TicketMessageForm(allow_internal=staff)
-    return render(request, "support/ticket_detail.html", {
-        "ticket": ticket, "ticket_messages": visible_messages(request.user, ticket),
-        "form": form, "can_manage": staff,
-        "can_administer": can_administer_ticket(request.user, ticket),
-        "is_student_owner": request.user.id == ticket.student_id,
-    })
+    return render(
+        request,
+        "support/ticket_detail.html",
+        {
+            "ticket": ticket,
+            "ticket_messages": visible_messages(request.user, ticket),
+            "form": form,
+            "can_manage": staff,
+            "can_administer": can_administer_ticket(request.user, ticket),
+            "is_student_owner": request.user.id == ticket.student_id,
+        },
+    )
 
 
 @login_required

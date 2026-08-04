@@ -21,7 +21,9 @@ class HumanHelpTicket(models.Model):
         CANCELLED = "cancelled", "Cancelada"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    course = models.ForeignKey("courses.Course", on_delete=models.PROTECT, related_name="help_tickets")
+    course = models.ForeignKey(
+        "courses.Course", on_delete=models.PROTECT, related_name="help_tickets"
+    )
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="help_tickets"
     )
@@ -29,11 +31,17 @@ class HumanHelpTicket(models.Model):
         "courses.ExerciseVersion", on_delete=models.PROTECT, related_name="help_tickets"
     )
     tutoring_submission = models.ForeignKey(
-        "tutoring.TutoringSubmission", null=True, blank=True, on_delete=models.PROTECT,
+        "tutoring.TutoringSubmission",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
         related_name="help_tickets",
     )
     tutoring_response = models.ForeignKey(
-        "tutoring.TutoringResponse", null=True, blank=True, on_delete=models.PROTECT,
+        "tutoring.TutoringResponse",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
         related_name="help_tickets",
     )
     question = models.TextField()
@@ -45,9 +53,11 @@ class HumanHelpTicket(models.Model):
     resolved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(
-            fields=("student", "idempotency_key"), name="unique_student_help_ticket_key"
-        )]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("student", "idempotency_key"), name="unique_student_help_ticket_key"
+            )
+        ]
         ordering = ("-created_at",)
 
     def clean(self):
@@ -71,7 +81,10 @@ class HumanHelpTicket(models.Model):
                 errors["tutoring_response"] = "Response must refer to the exercise version."
             if response.submission.exercise_version.exercise.course_id != self.course_id:
                 errors["tutoring_response"] = "Response must belong to the ticket course."
-            if self.tutoring_submission_id and response.submission_id != self.tutoring_submission_id:
+            if (
+                self.tutoring_submission_id
+                and response.submission_id != self.tutoring_submission_id
+            ):
                 errors["tutoring_response"] = "Response must belong to the referenced submission."
         if errors:
             raise ValidationError(errors)
@@ -82,10 +95,19 @@ class HumanHelpTicket(models.Model):
             self.status = self.Status.OPEN
             self.resolved_at = None
         if self.pk:
-            original = type(self).objects.filter(pk=self.pk).values(
-                "course_id", "student_id", "exercise_version_id",
-                "tutoring_submission_id", "tutoring_response_id", "idempotency_key",
-            ).first()
+            original = (
+                type(self)
+                .objects.filter(pk=self.pk)
+                .values(
+                    "course_id",
+                    "student_id",
+                    "exercise_version_id",
+                    "tutoring_submission_id",
+                    "tutoring_response_id",
+                    "idempotency_key",
+                )
+                .first()
+            )
             if original and any(original[field] != getattr(self, field) for field in original):
                 raise ValidationError("Ticket identity and tutoring references are immutable.")
         self.full_clean()
@@ -98,13 +120,16 @@ class TicketAssignment(models.Model):
         RELEASED = "released", "Liberada"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ticket = models.ForeignKey(HumanHelpTicket, on_delete=models.PROTECT, related_name="assignments")
+    ticket = models.ForeignKey(
+        HumanHelpTicket, on_delete=models.PROTECT, related_name="assignments"
+    )
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="support_assignments"
     )
     assigned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
-        related_name="support_assignments_created"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="support_assignments_created",
     )
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
     assigned_at = models.DateTimeField(auto_now_add=True)
@@ -112,10 +137,13 @@ class TicketAssignment(models.Model):
     released_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(
-            fields=("ticket",), condition=models.Q(status="active"),
-            name="one_active_ticket_assignment"
-        )]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("ticket",),
+                condition=models.Q(status="active"),
+                name="one_active_ticket_assignment",
+            )
+        ]
         ordering = ("-assigned_at",)
 
 

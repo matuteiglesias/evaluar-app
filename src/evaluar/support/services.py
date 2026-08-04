@@ -52,7 +52,9 @@ def _event(ticket, event_type, actor, from_status="", to_status="", metadata=Non
 
 
 def _active_assignment(ticket):
-    return ticket.assignments.select_for_update().filter(status=TicketAssignment.Status.ACTIVE).first()
+    return (
+        ticket.assignments.select_for_update().filter(status=TicketAssignment.Status.ACTIVE).first()
+    )
 
 
 def _is_course_admin(user, ticket):
@@ -96,8 +98,14 @@ def _transition(ticket, actor, to_status, event_type, metadata=None):
 
 @transaction.atomic
 def create_ticket(
-    *, student, course, exercise_version, question, idempotency_key,
-    tutoring_submission=None, tutoring_response=None,
+    *,
+    student,
+    course,
+    exercise_version,
+    question,
+    idempotency_key,
+    tutoring_submission=None,
+    tutoring_response=None,
     priority=HumanHelpTicket.Priority.NORMAL,
 ):
     if not can_create_ticket(student, course):
@@ -108,9 +116,14 @@ def create_ticket(
     if existing:
         return existing, False
     ticket = HumanHelpTicket(
-        course=course, student=student, exercise_version=exercise_version,
-        tutoring_submission=tutoring_submission, tutoring_response=tutoring_response,
-        question=question, idempotency_key=idempotency_key, priority=priority,
+        course=course,
+        student=student,
+        exercise_version=exercise_version,
+        tutoring_submission=tutoring_submission,
+        tutoring_response=tutoring_response,
+        question=question,
+        idempotency_key=idempotency_key,
+        priority=priority,
     )
     ticket.save(force_insert=True)
     _event(ticket, "created", student, to_status=ticket.status)
@@ -130,7 +143,10 @@ def claim_ticket(*, ticket, teacher):
         ticket=ticket, teacher=teacher, assigned_by=teacher
     )
     _transition(
-        ticket, teacher, HumanHelpTicket.Status.ASSIGNED, "claimed",
+        ticket,
+        teacher,
+        HumanHelpTicket.Status.ASSIGNED,
+        "claimed",
         {"assignment_id": str(assignment.id), "teacher_id": str(teacher.id)},
     )
     return ticket
@@ -146,7 +162,10 @@ def release_ticket(*, ticket, actor):
     assignment.released_at = timezone.now()
     assignment.save(update_fields=("status", "released_at"))
     return _transition(
-        ticket, actor, HumanHelpTicket.Status.OPEN, "released",
+        ticket,
+        actor,
+        HumanHelpTicket.Status.OPEN,
+        "released",
         {"assignment_id": str(assignment.id), "teacher_id": str(assignment.teacher_id)},
     )
 
@@ -167,7 +186,11 @@ def _add_message(ticket, author, body, visibility, event_type):
         ticket=ticket, author=author, body=body, visibility=visibility
     )
     _event(
-        ticket, event_type, author, ticket.status, ticket.status,
+        ticket,
+        event_type,
+        author,
+        ticket.status,
+        ticket.status,
         {"message_id": str(message.id), "visibility": visibility},
     )
     return message
@@ -213,6 +236,8 @@ def wait_for_student(*, ticket, actor):
 @transaction.atomic
 def resume_ticket(*, ticket, actor):
     ticket = HumanHelpTicket.objects.select_for_update().get(pk=ticket.pk)
+    if ticket.status != HumanHelpTicket.Status.WAITING_FOR_STUDENT:
+        raise ValidationError("Only a ticket waiting for the student may be resumed.")
     if actor.id == ticket.student_id:
         if not can_view_ticket(actor, ticket):
             raise PermissionDenied
@@ -224,10 +249,21 @@ def resume_ticket(*, ticket, actor):
 @transaction.atomic
 def resolve_ticket(*, ticket, actor, metadata=None):
     ticket = HumanHelpTicket.objects.select_for_update().get(pk=ticket.pk)
-    _require_assignee_or_admin(actor, ticket)
-    return _transition(
-        ticket, actor, HumanHelpTicket.Status.RESOLVED, "resolved", metadata
-    )
+    assignment = _require_assignee_or_admin(actor, ticket)
+    result = _transition(ticket, actor, HumanHelpTicket.Status.RESOLVED, "resolved", metadata)
+    if assignment:
+        assignment.status = TicketAssignment.Status.RELEASED
+        assignment.released_at = timezone.now()
+        assignment.save(update_fields=("status", "released_at"))
+        _event(
+            ticket,
+            "assignment_released",
+            actor,
+            result.status,
+            result.status,
+            {"assignment_id": str(assignment.id), "reason": "ticket_resolved"},
+        )
+    return result
 
 
 @transaction.atomic
@@ -244,7 +280,11 @@ def cancel_ticket(*, ticket, actor):
         assignment.released_at = timezone.now()
         assignment.save(update_fields=("status", "released_at"))
         _event(
-            ticket, "assignment_released", actor, result.status, result.status,
+            ticket,
+            "assignment_released",
+            actor,
+            result.status,
+            result.status,
             {"assignment_id": str(assignment.id)},
         )
     return result
@@ -269,7 +309,11 @@ def admin_reassign_ticket(*, ticket, teacher, admin_user):
         ticket=ticket, teacher=teacher, assigned_by=admin_user
     )
     _event(
-        ticket, "reassigned", admin_user, ticket.status, ticket.status,
+        ticket,
+        "reassigned",
+        admin_user,
+        ticket.status,
+        ticket.status,
         {
             "from_assignment_id": str(previous.id),
             "to_assignment_id": str(assignment.id),

@@ -17,7 +17,10 @@ class TicketCreateForm(forms.Form):
 
 class TicketMessageForm(forms.Form):
     body = forms.CharField(
-        label="Mensaje", min_length=1, max_length=10000, strip=True,
+        label="Mensaje",
+        min_length=1,
+        max_length=10000,
+        strip=True,
         widget=forms.Textarea(attrs={"rows": 5}),
     )
     visibility = forms.ChoiceField(label="Visibilidad", choices=TicketMessage.Visibility.choices)

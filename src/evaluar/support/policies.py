@@ -25,7 +25,8 @@ def can_view_ticket(user, ticket):
 def can_manage_ticket(user, ticket):
     membership = _membership(user, ticket.course)
     return membership is not None and membership.role in {
-        CourseMembership.Role.TEACHER, CourseMembership.Role.COURSE_ADMIN
+        CourseMembership.Role.TEACHER,
+        CourseMembership.Role.COURSE_ADMIN,
     }
 
 
@@ -40,4 +41,6 @@ def can_administer_ticket(user, ticket):
 
 def visible_messages(user, ticket):
     messages = ticket.messages.all()
-    return messages if can_manage_ticket(user, ticket) else messages.filter(visibility="participants")
+    return (
+        messages if can_manage_ticket(user, ticket) else messages.filter(visibility="participants")
+    )

@@ -9,7 +9,14 @@ class TicketAssignmentInline(admin.TabularInline):
     model = TicketAssignment
     extra = 0
     can_delete = False
-    readonly_fields = ("teacher", "assigned_by", "status", "assigned_at", "accepted_at", "released_at")
+    readonly_fields = (
+        "teacher",
+        "assigned_by",
+        "status",
+        "assigned_at",
+        "accepted_at",
+        "released_at",
+    )
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -26,9 +33,18 @@ class TicketEventInline(admin.TabularInline):
 class HumanHelpTicketAdmin(admin.ModelAdmin):
     list_display = ("id", "course", "student", "priority", "status", "created_at")
     list_filter = ("course", "priority", "status")
-    readonly_fields = ("course", "student", "exercise_version", "tutoring_submission",
-                       "tutoring_response", "idempotency_key", "status", "created_at",
-                       "updated_at", "resolved_at")
+    readonly_fields = (
+        "course",
+        "student",
+        "exercise_version",
+        "tutoring_submission",
+        "tutoring_response",
+        "idempotency_key",
+        "status",
+        "created_at",
+        "updated_at",
+        "resolved_at",
+    )
     inlines = (TicketAssignmentInline, TicketEventInline)
     actions = ("start_selected", "wait_selected", "resolve_selected", "cancel_selected")
 
@@ -77,7 +93,15 @@ class TicketMessageAdmin(admin.ModelAdmin):
 
 @admin.register(TicketAssignment)
 class TicketAssignmentAdmin(admin.ModelAdmin):
-    readonly_fields = ("ticket", "teacher", "assigned_by", "status", "assigned_at", "accepted_at", "released_at")
+    readonly_fields = (
+        "ticket",
+        "teacher",
+        "assigned_by",
+        "status",
+        "assigned_at",
+        "accepted_at",
+        "released_at",
+    )
 
     def has_add_permission(self, request):
         return False

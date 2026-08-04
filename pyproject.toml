@@ -60,6 +60,7 @@ django_find_project = false
 DJANGO_SETTINGS_MODULE = "evaluar.config.settings.test"
 markers = [
   "live: requires explicit staging provider credentials and performs billable network calls",
+  "postgres: requires PostgreSQL and validates database-specific concurrency semantics",
 ]
 
 [tool.ruff]

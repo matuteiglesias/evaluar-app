@@ -4,7 +4,11 @@ from django.test import TestCase
 from django.urls import reverse
 
 from evaluar.courses.models import (
-    ContentPublication, Course, Exercise, ExerciseVersion, PublishedExerciseVersion,
+    ContentPublication,
+    Course,
+    Exercise,
+    ExerciseVersion,
+    PublishedExerciseVersion,
 )
 from evaluar.identity.models import CourseMembership, User
 from evaluar.support.models import HumanHelpTicket, TicketAssignment
@@ -24,7 +28,11 @@ from evaluar.support.services import (
     wait_for_student,
 )
 from evaluar.tutoring.models import (
-    OutboxEvent, PromptVersion, TutoringAttempt, TutoringResponse, TutoringSubmission,
+    OutboxEvent,
+    PromptVersion,
+    TutoringAttempt,
+    TutoringResponse,
+    TutoringSubmission,
 )
 
 
@@ -36,8 +44,13 @@ class SupportWorkflowTests(TestCase):
         )
         exercise = Exercise.objects.create(course=self.course, slug="one", external_key="one")
         self.version = ExerciseVersion.objects.create(
-            exercise=exercise, version_number=1, source_checksum="c", title="One",
-            source_format="text", source_text="Question", rendered_html="Question",
+            exercise=exercise,
+            version_number=1,
+            source_checksum="c",
+            title="One",
+            source_format="text",
+            source_text="Question",
+            rendered_html="Question",
             publication=publication,
         )
         PublishedExerciseVersion.objects.create(publication=publication, version=self.version)
@@ -47,16 +60,19 @@ class SupportWorkflowTests(TestCase):
         self.course_admin = User.objects.create_user(username="course-admin")
         CourseMembership.objects.create(user=self.student, course=self.course, role="student")
         CourseMembership.objects.create(user=self.teacher, course=self.course, role="teacher")
-        CourseMembership.objects.create(
-            user=self.other_teacher, course=self.course, role="teacher"
-        )
+        CourseMembership.objects.create(user=self.other_teacher, course=self.course, role="teacher")
         CourseMembership.objects.create(
             user=self.course_admin, course=self.course, role="course_admin"
         )
 
     def create(self, key="request-1"):
-        return create_ticket(student=self.student, course=self.course,
-            exercise_version=self.version, question="Please help", idempotency_key=key)
+        return create_ticket(
+            student=self.student,
+            course=self.course,
+            exercise_version=self.version,
+            question="Please help",
+            idempotency_key=key,
+        )
 
     def test_idempotent_creation_and_transactional_event(self):
         ticket, created = self.create()
@@ -83,7 +99,7 @@ class SupportWorkflowTests(TestCase):
         self.assertIsNotNone(ticket.resolved_at)
         self.assertEqual(
             list(ticket.events.values_list("event_type", flat=True)),
-            ["created", "claimed", "started", "resolved"],
+            ["created", "claimed", "started", "resolved", "assignment_released"],
         )
 
     def test_internal_notes_are_never_in_student_query(self):
@@ -91,8 +107,9 @@ class SupportWorkflowTests(TestCase):
         claim_ticket(ticket=ticket, teacher=self.teacher)
         add_internal_note(ticket=ticket, teacher=self.teacher, body="private")
         add_teacher_message(ticket=ticket, teacher=self.teacher, body="public")
-        self.assertEqual(list(visible_messages(self.student, ticket).values_list("body", flat=True)),
-                         ["public"])
+        self.assertEqual(
+            list(visible_messages(self.student, ticket).values_list("body", flat=True)), ["public"]
+        )
         with self.assertRaises(PermissionDenied):
             add_internal_note(ticket=ticket, teacher=self.student, body="hidden")
 
@@ -196,19 +213,26 @@ class SupportWorkflowTests(TestCase):
         self.assertEqual(
             self.client.session[f"support:create:exercise:{self.version.id}"], first_key
         )
-        response = self.client.post(url, {
-            "question": "Necesito ayuda con este ejercicio.",
-            "priority": "normal",
-            "idempotency_key": first_key,
-        })
+        response = self.client.post(
+            url,
+            {
+                "question": "Necesito ayuda con este ejercicio.",
+                "priority": "normal",
+                "idempotency_key": first_key,
+            },
+        )
         self.assertEqual(response.status_code, 302)
         ticket = HumanHelpTicket.objects.get(student=self.student, idempotency_key=first_key)
         self.assertEqual(ticket.exercise_version, self.version)
         self.assertIsNone(ticket.tutoring_submission)
-        self.client.post(url, {
-            "question": "Este reintento no debe duplicar la solicitud.",
-            "priority": "high", "idempotency_key": first_key,
-        })
+        self.client.post(
+            url,
+            {
+                "question": "Este reintento no debe duplicar la solicitud.",
+                "priority": "high",
+                "idempotency_key": first_key,
+            },
+        )
         self.assertEqual(
             HumanHelpTicket.objects.filter(student=self.student, idempotency_key=first_key).count(),
             1,
@@ -216,22 +240,32 @@ class SupportWorkflowTests(TestCase):
 
     def test_failed_submission_escalation_is_owned_and_source_bound(self):
         prompt = PromptVersion.objects.create(
-            public_id="support-test", version=1, system_instructions="test",
-            checksum="prompt", status="published",
+            public_id="support-test",
+            version=1,
+            system_instructions="test",
+            checksum="prompt",
+            status="published",
         )
         submission = TutoringSubmission.objects.create(
-            user=self.student, exercise_version=self.version, prompt_version=prompt,
-            student_answer="Mi intento", idempotency_key="tutoring-failed", status="failed",
+            user=self.student,
+            exercise_version=self.version,
+            prompt_version=prompt,
+            student_answer="Mi intento",
+            idempotency_key="tutoring-failed",
+            status="failed",
         )
         self.client.force_login(self.student)
         url = reverse("support:create-from-submission", args=(submission.id,))
         self.assertEqual(self.client.get(url).status_code, 200)
         key = self.client.session[f"support:create:submission:{submission.id}"]
-        response = self.client.post(url, {
-            "question": "La tutoría falló y necesito ayuda.",
-            "priority": "high",
-            "idempotency_key": key,
-        })
+        response = self.client.post(
+            url,
+            {
+                "question": "La tutoría falló y necesito ayuda.",
+                "priority": "high",
+                "idempotency_key": key,
+            },
+        )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(
             HumanHelpTicket.objects.get(idempotency_key=key).tutoring_submission,
@@ -243,8 +277,13 @@ class SupportWorkflowTests(TestCase):
     def test_my_requests_never_includes_another_students_ticket(self):
         other_student = User.objects.create_user(username="other-student")
         CourseMembership.objects.create(user=other_student, course=self.course, role="student")
-        create_ticket(student=other_student, course=self.course, exercise_version=self.version,
-                      question="Otra consulta", idempotency_key="other-ticket")
+        create_ticket(
+            student=other_student,
+            course=self.course,
+            exercise_version=self.version,
+            question="Otra consulta",
+            idempotency_key="other-ticket",
+        )
         own, _ = self.create("own-ticket")
         self.client.force_login(self.student)
         response = self.client.get(reverse("support:list"))
@@ -252,30 +291,147 @@ class SupportWorkflowTests(TestCase):
 
     def test_completed_response_escalation_keeps_exact_response(self):
         prompt = PromptVersion.objects.create(
-            public_id="response-test", version=1, system_instructions="test",
-            checksum="response-prompt", status="published",
+            public_id="response-test",
+            version=1,
+            system_instructions="test",
+            checksum="response-prompt",
+            status="published",
         )
         submission = TutoringSubmission.objects.create(
-            user=self.student, exercise_version=self.version, prompt_version=prompt,
-            student_answer="Mi intento", idempotency_key="tutoring-complete",
+            user=self.student,
+            exercise_version=self.version,
+            prompt_version=prompt,
+            student_answer="Mi intento",
+            idempotency_key="tutoring-complete",
             status=TutoringSubmission.Status.SUCCEEDED,
         )
         attempt = TutoringAttempt.objects.create(
-            submission=submission, number=1, status=TutoringAttempt.Status.PERSISTED,
-            prompt_checksum=prompt.checksum, response_schema_version="1",
+            submission=submission,
+            number=1,
+            status=TutoringAttempt.Status.PERSISTED,
+            prompt_checksum=prompt.checksum,
+            response_schema_version="1",
         )
         tutoring_response = TutoringResponse.objects.create(
-            submission=submission, attempt=attempt, status=TutoringResponse.Status.PUBLISHED,
-            structured_content={"summary": "Ayuda"}, rendered_html="<p>Ayuda</p>",
+            submission=submission,
+            attempt=attempt,
+            status=TutoringResponse.Status.PUBLISHED,
+            structured_content={"summary": "Ayuda"},
+            rendered_html="<p>Ayuda</p>",
         )
         self.client.force_login(self.student)
         url = reverse("support:create-from-response", args=(tutoring_response.id,))
         self.assertEqual(self.client.get(url).status_code, 200)
         key = self.client.session[f"support:create:response:{tutoring_response.id}"]
-        self.client.post(url, {
-            "question": "Quiero consultar esta respuesta exacta.",
-            "priority": "normal", "idempotency_key": key,
-        })
+        self.client.post(
+            url,
+            {
+                "question": "Quiero consultar esta respuesta exacta.",
+                "priority": "normal",
+                "idempotency_key": key,
+            },
+        )
         ticket = HumanHelpTicket.objects.get(idempotency_key=key)
         self.assertEqual(ticket.tutoring_submission, submission)
         self.assertEqual(ticket.tutoring_response, tutoring_response)
+
+    def test_rejects_tutoring_references_with_wrong_owner_or_course(self):
+        outsider = User.objects.create_user(username="outsider")
+        prompt = PromptVersion.objects.create(
+            public_id="invalid-reference",
+            version=1,
+            system_instructions="test",
+            checksum="invalid-reference",
+            status="published",
+        )
+        wrong_owner = TutoringSubmission.objects.create(
+            user=outsider,
+            exercise_version=self.version,
+            prompt_version=prompt,
+            student_answer="answer",
+            idempotency_key="wrong-owner",
+            status="failed",
+        )
+        with self.assertRaises(ValidationError):
+            create_ticket(
+                student=self.student,
+                course=self.course,
+                exercise_version=self.version,
+                tutoring_submission=wrong_owner,
+                question="Wrong owner",
+                idempotency_key="invalid-owner",
+            )
+
+        other_course = Course.objects.create(slug="physics", name="Physics")
+        publication = ContentPublication.objects.create(
+            course=other_course, source_commit="p", manifest_checksum="p", status="published"
+        )
+        exercise = Exercise.objects.create(
+            course=other_course, slug="physics-one", external_key="physics-one"
+        )
+        other_version = ExerciseVersion.objects.create(
+            exercise=exercise,
+            version_number=1,
+            source_checksum="physics",
+            title="Physics",
+            source_format="text",
+            source_text="Question",
+            rendered_html="Question",
+            publication=publication,
+        )
+        wrong_course = TutoringSubmission.objects.create(
+            user=self.student,
+            exercise_version=other_version,
+            prompt_version=prompt,
+            student_answer="answer",
+            idempotency_key="wrong-course",
+            status="failed",
+        )
+        with self.assertRaises(ValidationError):
+            create_ticket(
+                student=self.student,
+                course=self.course,
+                exercise_version=self.version,
+                tutoring_submission=wrong_course,
+                question="Wrong course",
+                idempotency_key="invalid-course",
+            )
+
+    def test_student_and_teacher_memberships_are_enforced(self):
+        nonmember = User.objects.create_user(username="nonmember")
+        with self.assertRaises(PermissionDenied):
+            create_ticket(
+                student=nonmember,
+                course=self.course,
+                exercise_version=self.version,
+                question="No membership",
+                idempotency_key="no-membership",
+            )
+        ticket, _ = self.create("membership-ticket")
+        membership = CourseMembership.objects.get(user=self.teacher, course=self.course)
+        membership.status = CourseMembership.Status.SUSPENDED
+        membership.save(update_fields=("status",))
+        with self.assertRaises(PermissionDenied):
+            claim_ticket(ticket=ticket, teacher=self.teacher)
+
+    def test_message_author_must_own_ticket_or_active_assignment(self):
+        ticket, _ = self.create("message-owner")
+        other_student = User.objects.create_user(username="message-outsider")
+        CourseMembership.objects.create(user=other_student, course=self.course, role="student")
+        with self.assertRaises(PermissionDenied):
+            add_student_message(ticket=ticket, student=other_student, body="Not mine")
+        with self.assertRaises(PermissionDenied):
+            add_teacher_message(ticket=ticket, teacher=self.other_teacher, body="Unclaimed")
+        claim_ticket(ticket=ticket, teacher=self.teacher)
+        with self.assertRaises(PermissionDenied):
+            add_teacher_message(ticket=ticket, teacher=self.other_teacher, body="Not assigned")
+
+    def test_ticket_events_are_append_only(self):
+        ticket, _ = self.create("append-only")
+        event = ticket.events.get()
+        event.event_type = "tampered"
+        with self.assertRaises(ValidationError):
+            event.save()
+        with self.assertRaises(ValidationError):
+            event.delete()
+        self.assertEqual(ticket.events.get().event_type, "created")
