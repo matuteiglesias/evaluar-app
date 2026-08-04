@@ -11,10 +11,12 @@
 <div class="card" id="pending"><h2>Estamos revisando tu respuesta</h2><p>La tutoría está preparando una orientación. Esta página se actualizará cuando termine.</p><p class="muted">Los fallos temporales se reintentan de forma automática.</p></div>
 {% elif submission.status == 'failed' %}
 <div class="alert error"><h2>No pudimos generar la orientación</h2><p>No se descontará otra solicitud por los reintentos internos. Puedes volver al ejercicio e intentarlo de nuevo más tarde.</p></div>
+{% if can_request_help %}<p><a class="button" href="{% url 'support:create-from-submission' submission.id %}">Pedir ayuda a un docente sobre este intento</a></p>{% endif %}
 {% elif submission.status == 'cancelled' %}
 <div class="alert"><h2>La solicitud fue cancelada</h2><p>Vuelve al ejercicio para enviar un nuevo intento.</p></div>
 {% elif response %}
 <article class="card content">{{ response.rendered_html|safe }}</article>
+{% if can_request_help %}<p><a class="button" href="{% url 'support:create-from-response' response.id %}">Consultar esta respuesta con un docente</a></p>{% endif %}
 <section class="card feedback" aria-labelledby="feedback-heading">
   <h2 id="feedback-heading">Valora esta respuesta</h2>
   {% if feedback %}<p class="muted">Ya valoraste esta respuesta. Puedes actualizar tu valoración.</p>{% endif %}

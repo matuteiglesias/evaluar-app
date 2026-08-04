@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Pedir ayuda · Evaluar{% endblock %}
+{% block content %}
+<p><a href="{% url 'courses:version' exercise.exercise.course.slug exercise.exercise.slug exercise.version_number %}">← Volver al ejercicio</a></p>
+<h1>Pedir ayuda a un docente</h1>
+<p>Tu consulta quedará vinculada a <strong>{{ exercise.title }}</strong> y a esta versión exacta del ejercicio.</p>
+{% if submission %}<p class="muted">También se incluirá tu intento de tutoría {{ submission.id }}.</p>{% endif %}
+{% if response %}<p class="muted">También se incluirá la respuesta de tutoría exacta que estás consultando.</p>{% endif %}
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}{{ form.idempotency_key }}
+  <p>{{ form.question.label_tag }}{{ form.question.errors }}{{ form.question }}</p>
+  <p>{{ form.priority.label_tag }}{{ form.priority.errors }}{{ form.priority }}</p>
+  <button type="submit">Enviar solicitud</button>
+</form>
+{% endblock %}

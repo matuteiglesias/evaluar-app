@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "evaluar.identity",
     "evaluar.courses",
     "evaluar.tutoring",
+    "evaluar.support",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -49,6 +50,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "evaluar.support.context_processors.support_navigation",
             ]
         },
     }

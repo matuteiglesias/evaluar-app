@@ -1,0 +1,6 @@
+<ul class="card">
+{% for ticket in tickets %}
+  <li><a href="{% url 'support:detail' ticket.id %}">{{ ticket.exercise_version.title }}</a> · {{ ticket.course.name }} · {{ ticket.student }} · <strong>{{ ticket.get_status_display }}</strong>
+  {% if show_claim %}<form method="post" action="{% url 'support:claim' ticket.id %}" style="display:inline">{% csrf_token %}<button type="submit">Tomar solicitud</button></form>{% endif %}</li>
+{% empty %}<li>{{ empty_message }}</li>{% endfor %}
+</ul>

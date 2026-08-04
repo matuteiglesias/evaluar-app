@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Mis solicitudes de ayuda · Evaluar{% endblock %}
+{% block content %}
+<h1>Mis solicitudes de ayuda</h1>
+<p class="muted">Aquí puedes consultar el estado y los mensajes de tus solicitudes.</p>
+<ul>{% for ticket in tickets %}<li><a href="{% url 'support:detail' ticket.id %}">{{ ticket.exercise_version.title }}</a> — <strong>{{ ticket.get_status_display }}</strong> — {{ ticket.created_at }}</li>{% empty %}<li>Todavía no has enviado ninguna solicitud de ayuda.</li>{% endfor %}</ul>
+{% endblock %}

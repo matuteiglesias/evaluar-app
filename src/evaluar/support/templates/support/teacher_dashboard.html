@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Panel de acompañamiento · Evaluar{% endblock %}
+{% block content %}
+<h1>Panel de acompañamiento</h1>
+<p class="muted">Consulta la actividad de ayuda en tus cursos y toma una solicitud cuando puedas intervenir. Este panel no mide ni compara la participación docente.</p>
+
+<section aria-labelledby="open-heading"><h2 id="open-heading">Solicitudes abiertas en mis cursos</h2>
+{% include "support/_teacher_ticket_list.html" with tickets=open_tickets empty_message="No hay solicitudes abiertas." show_claim=True %}</section>
+
+<section aria-labelledby="active-heading"><h2 id="active-heading">Mis solicitudes activas</h2>
+{% include "support/_teacher_ticket_list.html" with tickets=my_active_tickets empty_message="No tienes solicitudes activas." %}</section>
+
+<section aria-labelledby="waiting-heading"><h2 id="waiting-heading">Esperando al estudiante</h2>
+{% include "support/_teacher_ticket_list.html" with tickets=waiting_tickets empty_message="No hay solicitudes tuyas esperando respuesta." %}</section>
+
+<section aria-labelledby="resolved-heading"><h2 id="resolved-heading">Resueltas recientemente</h2>
+<p class="muted">Actividad de los últimos 30 días en tus cursos.</p>
+{% include "support/_teacher_ticket_list.html" with tickets=recently_resolved empty_message="No hay solicitudes resueltas recientemente." %}</section>
+{% endblock %}
