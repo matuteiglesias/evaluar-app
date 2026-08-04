@@ -19,7 +19,7 @@ jobs:
         run: uv build
 
       - name: Verify application
-        run: make verify-phase3
+        run: make verify-sprint
 
       - name: Build production image
         run: docker build -t evaluar:test .
