@@ -20,6 +20,14 @@ class CloudTasksClient(Protocol):
     def create_task(self, *, parent: str, task: dict): ...
 
 
+def _cloud_tasks_already_exists_type() -> type[BaseException]:
+    """Resolve the provider exception only when the Cloud Tasks adapter is used."""
+
+    from google.api_core.exceptions import AlreadyExists
+
+    return AlreadyExists
+
+
 @dataclass
 class CloudTasksDispatcher:
     """Cloud Tasks adapter with a deterministic name per outbox delivery."""
@@ -60,11 +68,9 @@ class CloudTasksDispatcher:
         try:
             created = self.client.create_task(parent=self.queue_path, task=task)
             return created.name
-        except Exception as exc:
-            # A deterministic name turns ALREADY_EXISTS into a successful replay.
-            if exc.__class__.__name__ == "AlreadyExists":
-                return task_name
-            raise
+        except _cloud_tasks_already_exists_type():
+            # A deterministic name turns the provider's ALREADY_EXISTS into replay success.
+            return task_name
 
 
 def _claim_event(*, excluded_ids: set[UUID]) -> OutboxEvent | None:
