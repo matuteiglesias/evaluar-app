@@ -11,6 +11,7 @@ from django.views.decorators.cache import never_cache
 
 from evaluar.courses.models import Course, ExerciseVersion
 from evaluar.courses.policies import can_view_exercise, is_course_admin
+from evaluar.support.policies import can_create_ticket
 
 from .forms import AnswerSubmissionForm, ResponseFeedbackForm
 from .models import ActivePrompt, TutoringAttempt, TutoringResponse, TutoringSubmission
@@ -100,6 +101,9 @@ def submission(request, submission_id):
                 initial={"helpful": str(existing_feedback.helpful).lower()}
                 if existing_feedback
                 else None
+            ),
+            "can_request_help": can_create_ticket(
+                request.user, job.exercise_version.exercise.course
             ),
         },
     )

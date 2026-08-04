@@ -13,4 +13,11 @@
     <button type="submit">Enviar respuesta</button>
   </form>
 </section>
+{% if can_request_help %}
+<section class="card" aria-labelledby="human-help-heading">
+  <h2 id="human-help-heading">¿Necesitas ayuda de una persona?</h2>
+  <p class="muted">Envía una consulta sobre esta versión exacta del ejercicio a un docente del curso.</p>
+  <a class="button" href="{% url 'support:create' version.id %}">Pedir ayuda a un docente</a>
+</section>
+{% endif %}
 {% endblock %}

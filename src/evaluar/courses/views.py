@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from .models import ContentPublication, Course, Exercise, ExerciseVersion
 from .policies import accessible_courses, can_view_course, can_view_exercise, is_course_admin
 from evaluar.tutoring.forms import AnswerSubmissionForm
+from evaluar.support.policies import can_create_ticket
 
 
 @login_required
@@ -61,5 +62,6 @@ def exercise_version(request, course_slug, exercise_slug, version_number):
             "course": version.exercise.course,
             "version": version,
             "answer_form": AnswerSubmissionForm.fresh(),
+            "can_request_help": can_create_ticket(request.user, version.exercise.course),
         },
     )

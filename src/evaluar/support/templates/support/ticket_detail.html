@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Solicitud de ayuda · Evaluar{% endblock %}
+{% block content %}
+{% if can_manage %}<p><a href="{% url 'support:teacher-dashboard' %}">← Panel de acompañamiento</a></p>{% else %}<p><a href="{% url 'support:list' %}">← Mis solicitudes de ayuda</a></p>{% endif %}
+<h1>{{ ticket.exercise_version.title }}</h1>
+<section class="card"><h2>Estado actual</h2><p class="status"><strong>{{ ticket.get_status_display }}</strong></p><p><strong>Tu consulta:</strong> {{ ticket.question }}</p></section>
+{% if ticket.tutoring_response %}<p>Respuesta de tutoría referenciada: {{ ticket.tutoring_response.id }}</p>{% endif %}
+<h2>Mensajes</h2>
+{% for message in ticket_messages %}<article><strong>{{ message.author }}</strong> <small>{{ message.created_at }}</small><p>{{ message.body }}</p>{% if message.visibility == 'internal' %}<em>Nota interna</em>{% endif %}</article>{% empty %}<p>Sin mensajes.</p>{% endfor %}
+{% if ticket.status != 'resolved' and ticket.status != 'cancelled' %}<form method="post" action="{% url 'support:message-create' ticket.id %}">{% csrf_token %}{{ form.as_p }}<button type="submit">Enviar mensaje</button></form>{% endif %}
+{% if can_manage and ticket.status == 'open' %}<form method="post" action="{% url 'support:claim' ticket.id %}">{% csrf_token %}<button type="submit">Tomar solicitud</button></form>{% endif %}
+{% if can_manage and ticket.status == 'assigned' %}<form method="post" action="{% url 'support:action' ticket.id %}">{% csrf_token %}<button name="action" value="start">Comenzar</button></form>{% endif %}
+{% if can_manage and ticket.status == 'in_progress' %}<form method="post" action="{% url 'support:action' ticket.id %}">{% csrf_token %}<button name="action" value="wait_for_student">Esperar al estudiante</button><button name="action" value="resolve">Resolver</button></form>{% endif %}
+{% if ticket.status == 'waiting_for_student' %}<form method="post" action="{% url 'support:action' ticket.id %}">{% csrf_token %}<button name="action" value="resume">Reanudar</button></form>{% endif %}
+{% if is_student_owner or can_administer %}{% if ticket.status == 'open' or ticket.status == 'assigned' %}<form method="post" action="{% url 'support:action' ticket.id %}">{% csrf_token %}<button name="action" value="cancel">Cancelar</button></form>{% endif %}{% endif %}
+{% endblock %}
