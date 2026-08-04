@@ -31,6 +31,7 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "evaluar.common.middleware.FeatureSafetyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -137,6 +138,10 @@ TUTORING_MODEL_FACTORY = os.environ.get(
 )
 TUTORING_PROMPT_PUBLIC_ID = os.environ.get("TUTORING_PROMPT_PUBLIC_ID", "default")
 TUTORING_MAX_ANSWER_CHARS = int(os.environ.get("TUTORING_MAX_ANSWER_CHARS", "12000"))
+TUTORING_ENABLED = os.environ.get("TUTORING_ENABLED", "0") == "1"
+SUPPORT_ENABLED = os.environ.get("SUPPORT_ENABLED", "0") == "1"
+SUPPORT_NOTIFICATIONS_ENABLED = os.environ.get("SUPPORT_NOTIFICATIONS_ENABLED", "0") == "1"
+REQUIRE_PUBLISHED_COURSE = os.environ.get("REQUIRE_PUBLISHED_COURSE", "0") == "1"
 LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "courses:list"
 LOGOUT_REDIRECT_URL = "account_login"

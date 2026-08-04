@@ -108,6 +108,9 @@ def _claim_event(*, excluded_ids: set[UUID]) -> OutboxEvent | None:
 
 
 def dispatch_pending(dispatcher: TaskDispatcher, *, limit: int = 100) -> int:
+    if not settings.TUTORING_ENABLED:
+        logger.warning("tutoring.dispatch_disabled")
+        return 0
     dispatched = 0
     attempted_ids: set[UUID] = set()
     for _ in range(limit):

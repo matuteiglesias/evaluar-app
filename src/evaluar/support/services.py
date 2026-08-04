@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
@@ -29,7 +30,13 @@ VALID_TRANSITIONS = {
 }
 
 
+def _require_support_enabled():
+    if not settings.SUPPORT_ENABLED:
+        raise PermissionDenied("Support tickets are disabled.")
+
+
 def _event(ticket, event_type, actor, from_status="", to_status="", metadata=None):
+    _require_support_enabled()
     event = TicketEvent.objects.create(
         ticket=ticket,
         event_type=event_type,
@@ -86,6 +93,7 @@ def _require_assignee_or_admin(actor, ticket):
 
 
 def _transition(ticket, actor, to_status, event_type, metadata=None):
+    _require_support_enabled()
     old_status = ticket.status
     if to_status not in VALID_TRANSITIONS[old_status]:
         raise ValidationError(f"Invalid transition from {old_status} to {to_status}.")
@@ -108,6 +116,7 @@ def create_ticket(
     tutoring_response=None,
     priority=HumanHelpTicket.Priority.NORMAL,
 ):
+    _require_support_enabled()
     if not can_create_ticket(student, course):
         raise PermissionDenied("An active student membership is required.")
     existing = HumanHelpTicket.objects.filter(

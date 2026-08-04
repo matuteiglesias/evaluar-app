@@ -38,12 +38,34 @@ class CourseMembership(models.Model):
         ordering = ("course_id", "user_id")
 
 
+class PendingCourseEnrollment(models.Model):
+    """A course-scoped grant waiting for a real identity to sign in."""
+
+    identity = models.EmailField()
+    course = models.ForeignKey(
+        "courses.Course", on_delete=models.CASCADE, related_name="pending_enrollments"
+    )
+    role = models.CharField(max_length=20, choices=CourseMembership.Role.choices)
+    status = models.CharField(max_length=20, choices=CourseMembership.Status.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("course", "identity"), name="unique_pending_course_identity"
+            )
+        ]
+
+
 class AuditEvent(models.Model):
     class Event(models.TextChoices):
         SIGN_IN = "sign_in", "Sign in"
         MEMBERSHIP_CREATED = "membership_created", "Membership created"
         MEMBERSHIP_CHANGED = "membership_changed", "Membership changed"
         MEMBERSHIP_DELETED = "membership_deleted", "Membership deleted"
+        ENROLLMENT_PENDING = "enrollment_pending", "Enrollment pending"
+        ENROLLMENT_CHANGED = "enrollment_changed", "Enrollment changed"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor = models.ForeignKey(

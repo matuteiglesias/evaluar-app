@@ -38,6 +38,8 @@ def _authorized(request) -> bool:
 @csrf_exempt
 @require_POST
 def run_worker(request):
+    if not settings.TUTORING_ENABLED:
+        return JsonResponse({"error": "not_found"}, status=404)
     if not _authorized(request):
         return JsonResponse({"error": "unauthorized"}, status=401)
     try:

@@ -1,5 +1,5 @@
 .PHONY: verify-phase3 verify-phase3-live verify-sprint verify-sprint-local \
-	verify-sprint-postgres verify-sprint-image verify-sprint-smoke
+	verify-sprint-postgres verify-sprint-image verify-sprint-smoke migrate check-schema
 
 verify-phase3:
 	uv run --extra ai --extra queue --group dev pytest -q -m "not live" tests/test_packaging_layout.py tests/test_content_pipeline.py tests/test_content_inventory.py tests/test_django_phase2.py tests/test_tutoring.py tests/test_tutoring_queue.py tests/test_agent_framework_adapter.py tests/test_agent_framework_production.py tests/test_tutoring_student_experience.py tests/test_tutoring_operations.py tests/test_tutoring_release.py
@@ -19,6 +19,12 @@ SPRINT_TESTS = tests/test_packaging_layout.py tests/test_content_pipeline.py \
 	tests/test_tutoring_operations.py tests/test_tutoring_release.py tests/test_support.py \
 	tests/test_support_notifications.py tests/test_sprint_acceptance.py
 
+# This test is intentionally part of the gate: it prevents CI from regressing to
+# the narrower phase-3 target.
+SPRINT_TESTS += tests/test_release_engineering.py tests/test_production_readiness.py
+SPRINT_TESTS += tests/test_feature_safety.py
+SPRINT_TESTS += tests/test_batch_enrollment.py tests/test_multi_course_acceptance.py
+
 verify-sprint: verify-sprint-local verify-sprint-postgres verify-sprint-image verify-sprint-smoke
 	@mkdir -p artifacts
 	@{ echo "verified_commit=$$(git rev-parse HEAD)"; \
@@ -35,8 +41,10 @@ verify-sprint-local:
 	uv run --extra ai --extra queue --group dev python -m django makemigrations --check --dry-run --settings=evaluar.config.settings.test
 
 verify-sprint-postgres:
-	docker compose up -d --wait db
-	DATABASE_URL=postgresql://evaluar:evaluar@localhost:5432/evaluar \
+	@set -eu; trap 'docker compose down --volumes --remove-orphans' EXIT; \
+		docker compose down --remove-orphans; \
+		docker compose up -d --wait db; \
+		DATABASE_URL=postgresql://evaluar:evaluar@localhost:5432/evaluar \
 		DJANGO_SETTINGS_MODULE=evaluar.config.settings.postgres_test \
 		uv run --extra ai --extra queue --group dev pytest -q -m postgres tests/test_support_postgres.py
 
@@ -47,10 +55,17 @@ verify-sprint-image:
 		"import django, gunicorn, agent_framework; from google.cloud import tasks_v2; import evaluar.config.wsgi"
 
 verify-sprint-smoke:
-	docker compose up -d --wait db
-	docker compose run --rm app python manage.py migrate --noinput
-	docker compose up -d --wait app
-	@for attempt in $$(seq 1 20); do \
-		curl -fsS -H 'X-Forwarded-Proto: https' http://localhost:8000/health/ready && exit 0; \
-		sleep 2; \
-	done; docker compose logs app; exit 1
+	@set -eu; trap 'docker compose down --volumes --remove-orphans' EXIT; \
+		docker compose up -d --wait db; \
+		docker compose run --rm migrate; \
+		docker compose up -d --wait app; \
+		for attempt in $$(seq 1 20); do \
+			curl -fsS -H 'X-Forwarded-Proto: https' http://localhost:8000/health/ready && exit 0; \
+			sleep 2; \
+		done; docker compose logs app; exit 1
+
+migrate:
+	uv run python manage.py migrate --noinput
+
+check-schema:
+	uv run python manage.py migrate --check

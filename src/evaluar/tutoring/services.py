@@ -4,6 +4,7 @@ from dataclasses import asdict
 import bleach  # type: ignore[import-untyped]
 from asgiref.sync import async_to_sync
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError, transaction
 from django.db.models import F, Max
 from django.utils import timezone
@@ -43,6 +44,8 @@ def submit_answer(
     idempotency_key: str,
     response_language: str = "es",
 ) -> TutoringSubmission:
+    if not settings.TUTORING_ENABLED:
+        raise PermissionDenied("Tutoring is disabled.")
     existing = TutoringSubmission.objects.filter(user=user, idempotency_key=idempotency_key).first()
     if existing:
         return existing

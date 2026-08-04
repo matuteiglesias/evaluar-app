@@ -1,5 +1,10 @@
 # Phase 3 tutoring operations runbook
 
+> **Historical document.** Its phase-specific verification and deployment commands are retained as
+> implementation history and are not current release instructions. Use the canonical command table
+> in `docs/operations/pre-scenario-production-hardening.md` for every current operation. Where this
+> file conflicts with that runbook, the canonical runbook wins.
+
 All commands run from the repository root. Set `DJANGO_SETTINGS_MODULE=evaluar.config.settings.production`
 and the documented production environment variables before operational commands.
 

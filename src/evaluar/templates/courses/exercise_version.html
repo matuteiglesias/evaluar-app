@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'courses:exercises' course.slug %}">← {{ course.name }}</a></p>
 <article><p class="muted">{{ version.section }}</p><h1>{{ version.title }}</h1><div class="content">{{ version.rendered_html|safe }}</div></article>
-<section class="card" aria-labelledby="tutoring-heading">
+{% if tutoring_enabled %}<section class="card" aria-labelledby="tutoring-heading">
   <h2 id="tutoring-heading">Solicitar orientación</h2>
   <p class="muted">Comparte tu intento. La respuesta se procesará en segundo plano; no cierres esta pestaña si quieres esperar aquí.</p>
   <form method="post" action="{% url 'tutoring:submit' version.id %}">
@@ -13,6 +13,7 @@
     <button type="submit">Enviar respuesta</button>
   </form>
 </section>
+{% endif %}
 {% if can_request_help %}
 <section class="card" aria-labelledby="human-help-heading">
   <h2 id="human-help-heading">¿Necesitas ayuda de una persona?</h2>
