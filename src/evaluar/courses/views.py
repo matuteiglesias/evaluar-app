@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, render
@@ -41,6 +42,7 @@ def exercise_list(request, course_slug):
             "exercises": exercises,
             "publication": publication,
             "is_course_admin": is_course_admin(request.user, course),
+            "tutoring_enabled": settings.TUTORING_ENABLED,
         },
     )
 
@@ -62,6 +64,8 @@ def exercise_version(request, course_slug, exercise_slug, version_number):
             "course": version.exercise.course,
             "version": version,
             "answer_form": AnswerSubmissionForm.fresh(),
-            "can_request_help": can_create_ticket(request.user, version.exercise.course),
+            "tutoring_enabled": settings.TUTORING_ENABLED,
+            "can_request_help": settings.SUPPORT_ENABLED
+            and can_create_ticket(request.user, version.exercise.course),
         },
     )

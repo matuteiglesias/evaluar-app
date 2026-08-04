@@ -51,3 +51,40 @@ def test_formal_duplicate_latex_reference_and_asset_validation(tmp_path):
         "unknown_asset",
     } <= codes
     assert not bundle.valid
+
+
+def test_database_theory_rendering_integrity_and_table_rejection(tmp_path):
+    long_spanish = "Descripción en español: relación Alumno(id, nombre). " * 100
+    first = write_course(
+        tmp_path,
+        "db-one",
+        [
+            {"id": "101", "section": "SQL", "file": "101.tex", "name": "Consulta"},
+            {"id": "102", "section": "Álgebra", "file": "102.tex", "name": "Relaciones"},
+        ],
+    )
+    second = write_course(
+        tmp_path,
+        "db-two",
+        [{"id": "101", "section": "Otra", "file": "101.tex", "name": "Reutilizado"}],
+    )
+    sql = r"SELECT alumno_id, COUNT(*) FROM Inscripcion GROUP BY alumno_id; $R \bowtie S$"
+    (first / "101.tex").write_text(sql, encoding="utf-8")
+    (first / "102.tex").write_text(long_spanish, encoding="utf-8")
+    (second / "101.tex").write_text("Clave foránea y teoría de dependencias.", encoding="utf-8")
+    bundle = compile_content(tmp_path)
+
+    assert bundle.valid
+    rendered = {item.external_key: item.rendered_html for item in bundle.exercises}
+    assert "SELECT alumno_id, COUNT(*)" in rendered["db-one:101"]
+    assert "$R \\bowtie S$" in rendered["db-one:101"]
+    assert "Descripción en español" in rendered["db-one:102"]
+    assert len(rendered["db-one:102"]) > 4_000
+    assert {item.external_key for item in bundle.exercises} >= {"db-one:101", "db-two:101"}
+    assert {item.section for item in bundle.exercises} >= {"SQL", "Álgebra", "Otra"}
+
+    (first / "101.tex").write_text("<table><tr><td>silenciosa</td></tr></table>", encoding="utf-8")
+    rejected = compile_content(tmp_path)
+    issue = next(item for item in rejected.issues if item.code == "unsupported_authored_html_table")
+    assert issue.severity == "error"
+    assert not rejected.valid

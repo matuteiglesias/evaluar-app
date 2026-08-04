@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import html
+import re
 from pathlib import Path
 from .discovery import discover
 from .latex import render_latex, validate_latex
@@ -19,6 +20,14 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
     for source in sorted(
         sources, key=lambda item: (item.course_slug, item.exercise_id, item.source_path)
     ):
+        if re.search(r"<\s*/?\s*table\b", source.source_text, re.IGNORECASE):
+            issues.append(
+                ValidationIssue(
+                    "unsupported_authored_html_table",
+                    source.source_path,
+                    "authored HTML tables are rejected; use textual/LaTeX table notation",
+                )
+            )
         if source.source_format == "latex":
             unsupported, missing_refs, references = validate_latex(source.source_text)
             for construct in unsupported:

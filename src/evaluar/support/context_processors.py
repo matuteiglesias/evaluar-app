@@ -1,8 +1,10 @@
+from django.conf import settings
+
 from evaluar.identity.models import CourseMembership
 
 
 def support_navigation(request):
-    if not request.user.is_authenticated:
+    if not settings.SUPPORT_ENABLED or not request.user.is_authenticated:
         return {"show_student_support_nav": False, "show_teacher_support_nav": False}
     memberships = CourseMembership.objects.filter(user=request.user, status="active")
     return {

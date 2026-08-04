@@ -50,6 +50,9 @@ def _claim_notification(*, excluded_ids: set[UUID]) -> OutboxEvent | None:
 
 def dispatch_support_notifications(sender: NotificationSender, *, limit: int = 100) -> int:
     """Deliver support outbox records after domain commits; failures remain retryable."""
+    if not settings.SUPPORT_ENABLED or not settings.SUPPORT_NOTIFICATIONS_ENABLED:
+        logger.warning("support.notification_not_configured")
+        return 0
     delivered = 0
     attempted: set[UUID] = set()
     for _ in range(limit):

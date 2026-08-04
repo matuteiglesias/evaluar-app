@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Identify tested commit
+        run: echo "Verifying $GITHUB_SHA" && test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - uses: astral-sh/setup-uv@v6
 
       - name: Install application
@@ -34,11 +36,19 @@ jobs:
       - name: Container smoke test
         run: |
           set -eu
+          cleanup() { docker rm -f evaluar postgres >/dev/null 2>&1 || true; docker network rm evaluar-smoke >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
           docker network create evaluar-smoke
           docker run -d --name postgres --network evaluar-smoke \
             -e POSTGRES_DB=evaluar -e POSTGRES_USER=evaluar -e POSTGRES_PASSWORD=evaluar \
             postgres:16-alpine
           until docker exec postgres pg_isready -U evaluar; do sleep 1; done
+          docker run --rm --network evaluar-smoke \
+            -e DATABASE_URL=postgresql://evaluar:evaluar@postgres:5432/evaluar \
+            -e DJANGO_SECRET_KEY=ci-secret-key-long-enough-for-phase-two \
+            -e DJANGO_ALLOWED_HOSTS=localhost \
+            -e GOOGLE_CLIENT_ID=ci-placeholder -e GOOGLE_CLIENT_SECRET=ci-placeholder \
+            evaluar:test python manage.py migrate --noinput
           docker run -d --name evaluar --network evaluar-smoke -p 8000:8000 \
             -e DATABASE_URL=postgresql://evaluar:evaluar@postgres:5432/evaluar \
             -e DJANGO_SECRET_KEY=ci-secret-key-long-enough-for-phase-two \
@@ -52,3 +62,7 @@ jobs:
             sleep 1
           done
           curl --fail -H "X-Forwarded-Proto: https" http://localhost:8000/health/ready
+
+      - name: Cleanup Compose resources
+        if: always()
+        run: docker compose down --volumes --remove-orphans || true
