@@ -103,6 +103,28 @@ PYTHONPATH=. python3 -m pdoc ./main.py ./routes ./services ./llm ./models --outp
 
 ---
 
+## 🧭 Alta guiada de colecciones de ejercicios
+
+Para una materia nueva, preferí el flujo guiado con manifiesto en `collections/<materia>/` antes de editar `index.csv` manualmente:
+
+```bash
+uv run python manage.py scaffold_course bases-de-datos-2c2026 \
+  --subject bases-de-datos \
+  --name "Bases de Datos — 2C 2026" \
+  --language es-AR
+uv run python manage.py add_collection_exercise bases-de-datos-2c2026 \
+  --stable-id bd.sql.001 \
+  --title "Selección y proyección" \
+  --section pilot
+uv run python manage.py validate_course_collection bases-de-datos-2c2026 --write-index
+uv run python manage.py validate_course_collection bases-de-datos-2c2026 --check
+uv run python manage.py validate_course_collection bases-de-datos-2c2026 --json
+uv run python manage.py build_course_review bases-de-datos-2c2026 \
+  --output build/reviews/bases-de-datos-2c2026
+```
+
+El índice generado queda en `collections/<materia>/generated/index.csv`; `--check` detecta ediciones manuales o desactualización. Después de la revisión docente y de renderizado, `build_course_bundle` genera el bundle determinístico que consume `publish_content`. El contrato completo está en [`docs/collections/adding-a-course.md`](docs/collections/adding-a-course.md).
+
 ## 📂 Estructura para agregar una nueva materia
 
 Para agregar una nueva materia, seguí este esquema:

@@ -1,0 +1,5 @@
+id,section,file,name,info,stable_id,version,statement_path,statement_format,generated_by,source_manifest
+fixture.db.001.v1,intro,fixture.db.001.v1.tex,Synthetic prose and inline math,Synthetic fixture objective for Spanish prose and inline mathematics.,fixture.db.001,1,exercises/001-prose-math.tex,latex,evaluar-collection-manifest-v1,collection.yaml
+fixture.db.003.v1,intro,fixture.db.003.v1.tex,Synthetic textual table,Synthetic fixture objective for a non-HTML table representation.,fixture.db.003,1,exercises/003-table.tex,latex,evaluar-collection-manifest-v1,collection.yaml
+fixture.db.004.v1,intro,fixture.db.004.v1.tex,Synthetic long Spanish statement,Synthetic fixture objective for long Spanish prose rendering.,fixture.db.004,1,exercises/004-long.tex,latex,evaluar-collection-manifest-v1,collection.yaml
+fixture.db.002.v1,sql,fixture.db.002.v1.tex,Synthetic SQL and schema notation,Synthetic fixture objective for SQL-like source text and relational schema notation.,fixture.db.002,1,exercises/002-sql-schema.tex,latex,evaluar-collection-manifest-v1,collection.yaml
