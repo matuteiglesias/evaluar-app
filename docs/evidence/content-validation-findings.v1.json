@@ -1,0 +1,168 @@
+{
+  "issues": [
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ejercicioSumaDeSubconjuntos'",
+      "path": "exercises/tda/105.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'sumaDeSubconjuntosAlgoBT'",
+      "path": "exercises/tda/105.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'sumaDeSubconjuntosFormRecBT'",
+      "path": "exercises/tda/105.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:subset sum dp'",
+      "path": "exercises/tda/120.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:subset sum dp:recursion'",
+      "path": "exercises/tda/120.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:ind set'",
+      "path": "exercises/tda/121.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:ind set:dp'",
+      "path": "exercises/tda/121.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:grafo orientado'",
+      "path": "exercises/tda/303.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:diamante-y-garra'",
+      "path": "exercises/tda/313.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:diamante-y-garra'",
+      "path": "exercises/tda/315.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:grafos-rho'",
+      "path": "exercises/tda/318.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:puentes'",
+      "path": "exercises/tda/403.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:puentes:arista-no-dfs'",
+      "path": "exercises/tda/403.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:orientacion-dfs'",
+      "path": "exercises/tda/403.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:ancho-banda'",
+      "path": "exercises/tda/411.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:ancho-banda'",
+      "path": "exercises/tda/412.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:toposort'",
+      "path": "exercises/tda/417.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:SRD'",
+      "path": "exercises/tda/512.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:segundo-camino'",
+      "path": "exercises/tda/514.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:segundo-camino:eficiencia'",
+      "path": "exercises/tda/514.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'fig:viajes'",
+      "path": "exercises/tda/520.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:fmcm'",
+      "path": "exercises/tda/613.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_reference",
+      "detail": "unknown label 'ej:matching'",
+      "path": "exercises/tda/614.tex",
+      "severity": "warning"
+    },
+    {
+      "code": "unsupported_authored_html_table",
+      "detail": "authored HTML tables are rejected; use textual/LaTeX table notation",
+      "path": "exercises/demo_course/102.tex",
+      "severity": "error"
+    },
+    {
+      "code": "unsupported_authored_html_table",
+      "detail": "authored HTML tables are rejected; use textual/LaTeX table notation",
+      "path": "exercises/tda/102.tex",
+      "severity": "error"
+    },
+    {
+      "code": "unsupported_authored_html_table",
+      "detail": "authored HTML tables are rejected; use textual/LaTeX table notation",
+      "path": "exercises/tda/408.tex",
+      "severity": "error"
+    },
+    {
+      "code": "unsupported_authored_html_table",
+      "detail": "authored HTML tables are rejected; use textual/LaTeX table notation",
+      "path": "exercises/tda/415.tex",
+      "severity": "error"
+    }
+  ],
+  "source_commit": "a0d8727f8eac5172ef7340e84f766f638cfac80b",
+  "valid": false
+}

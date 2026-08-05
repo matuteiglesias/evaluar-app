@@ -1,0 +1,154 @@
+schema: evaluar-collection-manifest-v1
+
+collection:
+  id: synthetic-db-fixture/practical-guide
+  release: fixture-v0.1
+
+subject:
+  id: synthetic-db-fixture
+
+course:
+  slug: synthetic-db-fixture
+  name: Synthetic Database Fixture
+  offering: synthetic
+  language: es-AR
+
+governance:
+  owners:
+    - id: synthetic-fixture
+      name: Synthetic Fixture
+  reviewers:
+    - id: synthetic-reviewer
+      name: Synthetic Reviewer
+
+sections:
+  - id: intro
+    title: Synthetic introductory constructs
+    order: 10
+  - id: sql
+    title: Synthetic SQL constructs
+    order: 20
+
+exercises:
+  - stable_id: fixture.db.001
+    version: 1
+    title: Synthetic prose and inline math
+    section: intro
+    order: 10
+    statement:
+      path: exercises/001-prose-math.tex
+      format: latex
+    learning_objective: Synthetic fixture objective for Spanish prose and inline mathematics.
+    prerequisites: []
+    difficulty: introductory
+    estimated_time_minutes: 5
+    tags: [synthetic, prose, inline-math]
+    provenance:
+      status: synthetic-fixture
+      author: Codex synthetic fixture
+      source: null
+      license_or_permission: synthetic-fixture-only
+    review:
+      status: approved
+      reviewer: synthetic-reviewer
+      reviewed_at: '2026-08-04'
+      rendering_status: approved
+    rendering:
+      requirements: [prose, inline-math]
+    tutoring:
+      eligible: false
+      policy_review_status: not_required
+  - stable_id: fixture.db.002
+    version: 1
+    title: Synthetic SQL and schema notation
+    section: sql
+    order: 10
+    statement:
+      path: exercises/002-sql-schema.tex
+      format: latex
+    learning_objective: Synthetic fixture objective for SQL-like source text and relational schema notation.
+    prerequisites: [relación, atributo]
+    difficulty: introductory
+    estimated_time_minutes: 10
+    tags: [synthetic, sql, schema]
+    provenance:
+      status: synthetic-fixture
+      author: Codex synthetic fixture
+      source: null
+      license_or_permission: synthetic-fixture-only
+    review:
+      status: approved
+      reviewer: synthetic-reviewer
+      reviewed_at: '2026-08-04'
+      rendering_status: approved
+    rendering:
+      requirements: [prose, sql, relational-schema]
+    tutoring:
+      eligible: false
+      policy_review_status: not_required
+  - stable_id: fixture.db.003
+    version: 1
+    title: Synthetic textual table
+    section: intro
+    order: 20
+    statement:
+      path: exercises/003-table.tex
+      format: latex
+    learning_objective: Synthetic fixture objective for a non-HTML table representation.
+    prerequisites: []
+    difficulty: introductory
+    estimated_time_minutes: 5
+    tags: [synthetic, table]
+    provenance:
+      status: synthetic-fixture
+      author: Codex synthetic fixture
+      source: null
+      license_or_permission: synthetic-fixture-only
+    review:
+      status: approved
+      reviewer: synthetic-reviewer
+      reviewed_at: '2026-08-04'
+      rendering_status: approved
+    rendering:
+      requirements: [prose, table]
+    tutoring:
+      eligible: false
+      policy_review_status: not_required
+  - stable_id: fixture.db.004
+    version: 1
+    title: Synthetic long Spanish statement
+    section: intro
+    order: 30
+    statement:
+      path: exercises/004-long.tex
+      format: latex
+    learning_objective: Synthetic fixture objective for long Spanish prose rendering.
+    prerequisites: []
+    difficulty: introductory
+    estimated_time_minutes: 5
+    tags: [synthetic, long-statement]
+    provenance:
+      status: synthetic-fixture
+      author: Codex synthetic fixture
+      source: null
+      license_or_permission: synthetic-fixture-only
+    review:
+      status: approved
+      reviewer: synthetic-reviewer
+      reviewed_at: '2026-08-04'
+      rendering_status: approved
+    rendering:
+      requirements: [prose]
+    tutoring:
+      eligible: false
+      policy_review_status: not_required
+
+assets: []
+
+release:
+  notes:
+    - Synthetic technical fixture; not authoritative course content.
+  publication_eligibility:
+    technical_validation: required
+    instructor_review: required
+    rendering_review: required

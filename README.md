@@ -99,6 +99,10 @@ The framework-independent compiler is available as `evaluar.content_pipeline.com
 returns a canonical bundle with checksums and formal validation findings; content import/publishing
 should reject bundles whose `valid` property is false.
 
+### Course collection onboarding
+
+A small authoring toolkit is available for instructors adding a reviewed course collection without touching Django models or database state. Start with `uv run python manage.py scaffold_course <course-slug> --subject <subject> --name "<display name>"`, maintain public/private material under `collections/<course-slug>/`, validate and regenerate the deterministic compatibility index with `validate_course_collection --write-index --check`, generate a browser-openable static instructor review packet with `build_course_review`, and add draft exercises with `add_collection_exercise`, and build the existing deterministic bundle with `build_course_bundle` after review gates pass. See [`docs/collections/adding-a-course.md`](docs/collections/adding-a-course.md).
+
 ### Content release workflow
 
 Course and content records use UUID primary keys. Imported identifiers remain course-scoped external
