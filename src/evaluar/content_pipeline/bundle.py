@@ -1,6 +1,7 @@
 """Public deterministic compiler entry point."""
 
 from __future__ import annotations
+import base64
 import html
 import re
 from pathlib import Path
@@ -10,6 +11,77 @@ from .manifest import canonical_json, checksum
 from .sanitization import sanitize_html
 from .schema import BUNDLE_SCHEMA_VERSION, Bundle, CompiledExercise, ValidationIssue
 from .validation import validate
+
+ASSET_ROOTS = ("assets", "tikzpics", "images", "img")
+IMAGE_MIME_TYPES = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".webp": "image/webp",
+}
+
+
+def _resolve_asset_reference(reference: str, known_assets: set[str]) -> str | None:
+    candidates = [reference, *(f"{root}/{reference}" for root in ASSET_ROOTS)]
+    for candidate in candidates:
+        if candidate in known_assets:
+            return candidate
+    suffix = f"/{reference}"
+    matches = sorted(asset for asset in known_assets if asset.endswith(suffix))
+    return matches[0] if len(matches) == 1 else None
+
+
+def _asset_data_uri(root: Path, asset_path: str) -> str:
+    mime = IMAGE_MIME_TYPES[Path(asset_path).suffix.lower()]
+    encoded = base64.b64encode((root / asset_path).read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
+def _checksum_payload(
+    *,
+    schema_version: int,
+    source_commit: str,
+    courses,
+    exercises,
+    assets,
+    issues,
+) -> str:
+    payload = {
+        "schema_version": schema_version,
+        "source_commit": source_commit,
+        "courses": courses,
+        "exercises": [item.__dict__ for item in exercises],
+        "assets": assets,
+        "issues": [item.__dict__ for item in issues],
+    }
+    return checksum(canonical_json(payload))
+
+
+def with_course_names(bundle: Bundle, course_names: dict[str, str]) -> Bundle:
+    """Return an equivalent bundle with authoritative display names and a fresh checksum."""
+    courses = tuple(
+        {**course, "name": course_names.get(course["slug"], course["name"])}
+        for course in bundle.courses
+    )
+    manifest_checksum = _checksum_payload(
+        schema_version=bundle.schema_version,
+        source_commit=bundle.source_commit,
+        courses=courses,
+        exercises=bundle.exercises,
+        assets=bundle.assets,
+        issues=bundle.issues,
+    )
+    return Bundle(
+        bundle.schema_version,
+        bundle.source_commit,
+        courses,
+        bundle.exercises,
+        bundle.assets,
+        bundle.issues,
+        manifest_checksum,
+    )
 
 
 def compile_content(content_root: str | Path, *, source_commit: str = "unknown") -> Bundle:
@@ -47,16 +119,18 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
                         severity="warning",
                     )
                 )
-            for asset in sorted(references):
-                candidates = {asset, f"assets/{asset}", f"tikzpics/{asset}"}
-                matches = candidates & known_assets
-                if not matches:
+            asset_sources: dict[str, str] = {}
+            for reference in sorted(references):
+                matched = _resolve_asset_reference(reference, known_assets)
+                if matched is None:
                     issues.append(
                         ValidationIssue(
-                            "unknown_asset", source.source_path, f"unknown asset {asset!r}"
+                            "unknown_asset", source.source_path, f"unknown asset {reference!r}"
                         )
                     )
-                used_assets.update(matches)
+                    continue
+                used_assets.add(matched)
+                asset_sources[reference] = _asset_data_uri(root, matched)
             if "% FIGURA" in source.source_text:
                 figure = f"tikzpics/{source.exercise_id}.png"
                 if figure not in known_assets:
@@ -69,7 +143,7 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
                     )
                 else:
                     used_assets.add(figure)
-            rendered = render_latex(source.source_text)
+            rendered = render_latex(source.source_text, asset_sources)
         else:
             # Markdown is deliberately not interpreted as HTML in this production slice.
             rendered = "<p>" + html.escape(source.source_text).replace("\n", "<br>\n") + "</p>"
@@ -97,14 +171,14 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
         for asset in sorted(known_assets)
     )
     course_records = tuple(sorted(courses, key=lambda item: item["slug"]))
-    payload = {
-        "schema_version": BUNDLE_SCHEMA_VERSION,
-        "source_commit": source_commit,
-        "courses": course_records,
-        "exercises": [item.__dict__ for item in compiled],
-        "assets": assets,
-        "issues": [item.__dict__ for item in issues],
-    }
+    manifest_checksum = _checksum_payload(
+        schema_version=BUNDLE_SCHEMA_VERSION,
+        source_commit=source_commit,
+        courses=course_records,
+        exercises=compiled,
+        assets=assets,
+        issues=issues,
+    )
     return Bundle(
         BUNDLE_SCHEMA_VERSION,
         source_commit,
@@ -112,7 +186,7 @@ def compile_content(content_root: str | Path, *, source_commit: str = "unknown")
         tuple(compiled),
         assets,
         tuple(issues),
-        checksum(canonical_json(payload)),
+        manifest_checksum,
     )
 
 
