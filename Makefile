@@ -24,6 +24,7 @@ SPRINT_TESTS = tests/test_packaging_layout.py tests/test_content_pipeline.py \
 SPRINT_TESTS += tests/test_release_engineering.py tests/test_production_readiness.py
 SPRINT_TESTS += tests/test_feature_safety.py
 SPRINT_TESTS += tests/test_batch_enrollment.py tests/test_multi_course_acceptance.py
+SPRINT_TESTS += tests/test_course_collection_onboarding.py tests/test_collection_publication_contracts.py
 
 verify-sprint: verify-sprint-local verify-sprint-postgres verify-sprint-image verify-sprint-smoke
 	@mkdir -p artifacts
