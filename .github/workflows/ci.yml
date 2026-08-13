@@ -22,7 +22,3 @@ jobs:
 
       - name: Verify application
         run: make verify-sprint
-
-      - name: Cleanup Compose resources
-        if: always()
-        run: docker compose down --volumes --remove-orphans || true

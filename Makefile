@@ -44,10 +44,12 @@ verify-sprint-local:
 	uv run --extra ai --extra queue --group dev python -m django makemigrations --check --dry-run --settings=evaluar.config.settings.test
 
 verify-sprint-postgres:
-	@set -eu; trap 'docker compose down --volumes --remove-orphans' EXIT; \
-		docker compose down --remove-orphans; \
+	@set -eu; \
+		export COMPOSE_PROJECT_NAME="evaluar-verify-$$$$"; \
+		export POSTGRES_PORT="$$(python -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')"; \
+		trap 'docker compose down --volumes --remove-orphans' EXIT; \
 		docker compose up -d --wait db; \
-		DATABASE_URL=postgresql://evaluar:evaluar@localhost:5432/evaluar \
+		DATABASE_URL="postgresql://evaluar:evaluar@localhost:$${POSTGRES_PORT}/evaluar" \
 		DJANGO_SETTINGS_MODULE=evaluar.config.settings.postgres_test \
 		uv run --extra ai --extra queue --group dev pytest -q -m postgres tests/test_support_postgres.py
 
