@@ -1,13 +1,15 @@
 import subprocess
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
+from evaluar.content_pipeline.bundle import with_course_names
 from evaluar.content_pipeline.collection import (
+    compile_manifest_course,
     load_manifest,
     manifest_is_publication_eligible,
     manifest_path,
     validate_manifest,
-    write_manifest_bundle,
 )
+from evaluar.content_pipeline.io import write_bundle
 
 
 class Command(BaseCommand):
@@ -41,8 +43,14 @@ class Command(BaseCommand):
             ).stdout.strip()
             or "unknown"
         )
-        try:
-            output = write_manifest_bundle(manifest, options["output"], source_commit=commit)
-        except ValueError as error:
-            raise CommandError(str(error)) from error
+        bundle = compile_manifest_course(manifest, source_commit=commit)
+        if not bundle.valid:
+            details = "; ".join(
+                f"{item.code}: {item.path}: {item.detail}"
+                for item in bundle.issues
+                if item.severity == "error"
+            )
+            raise CommandError(f"Content validation failed; bundle was not written. {details}")
+        bundle = with_course_names(bundle, {manifest.course_slug: manifest.course_name})
+        output = write_bundle(bundle, options["output"])
         self.stdout.write(self.style.SUCCESS(f"Wrote {output}"))
