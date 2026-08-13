@@ -1,6 +1,4 @@
-import json
 import logging
-from uuid import UUID
 
 from django.conf import settings
 from django.contrib import messages
