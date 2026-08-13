@@ -1,0 +1,37 @@
+# Applying this Blueprint can create billable Render resources. This file only defines them.
+services:
+  - type: web
+    name: evaluar-web
+    runtime: docker
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health/ready
+    preDeployCommand: python manage.py migrate --noinput
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: evaluar-db
+          property: connectionString
+      - key: DJANGO_SETTINGS_MODULE
+        value: evaluar.config.settings.production
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: TUTORING_OPENAI_API_KEY
+        sync: false
+      - key: TUTORING_ENABLED
+        value: "1"
+      - key: TUTORING_EXECUTION_MODE
+        value: inline
+      - key: SUPPORT_ENABLED
+        value: "1"
+      - key: SUPPORT_NOTIFICATIONS_ENABLED
+        value: "0"
+
+databases:
+  - name: evaluar-db
+    databaseName: evaluar
+    user: evaluar

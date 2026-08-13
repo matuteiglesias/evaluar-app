@@ -15,10 +15,17 @@ COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/* \
     && rm -rf /wheels
 COPY manage.py docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh \
+COPY gunicorn.conf.py ./
+RUN DJANGO_SETTINGS_MODULE=evaluar.config.settings.static_build \
+        python manage.py collectstatic --noinput \
+    && test -f "$(DJANGO_SETTINGS_MODULE=evaluar.config.settings.static_build python -c \
+        'from django.conf import settings; print(settings.STATIC_ROOT)')/admin/css/base.css" \
+    && test -f "$(DJANGO_SETTINGS_MODULE=evaluar.config.settings.static_build python -c \
+        'from django.conf import settings; print(settings.STATIC_ROOT)')/staticfiles.json" \
+    && chmod +x docker-entrypoint.sh \
     && useradd --create-home evaluar \
     && chown -R evaluar:evaluar /app
 USER evaluar
 EXPOSE 8000
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["gunicorn", "evaluar.config.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "evaluar.config.wsgi:application", "--config", "gunicorn.conf.py"]
