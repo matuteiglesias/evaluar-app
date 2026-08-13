@@ -5,8 +5,14 @@ from django.urls import reverse
 
 from evaluar.courses.models import PublishedExerciseVersion
 from evaluar.identity.models import CourseMembership, User
+from evaluar.tutoring import student_views
 from evaluar.tutoring.fakes import FakeTutoringModel
-from evaluar.tutoring.models import ActivePrompt, StudentFeedback, TutoringSubmission
+from evaluar.tutoring.models import (
+    ActivePrompt,
+    OutboxEvent,
+    StudentFeedback,
+    TutoringSubmission,
+)
 from evaluar.tutoring.services import run_submission, submit_answer
 from test_tutoring import context, result
 
@@ -33,7 +39,8 @@ def create_submission(user, version, prompt, *, key="student-view"):
     )
 
 
-def test_exercise_page_submits_answer_and_redirects_to_queued_status(client):
+def test_exercise_page_submits_answer_and_redirects_to_queued_status(client, settings):
+    settings.TUTORING_EXECUTION_MODE = "queued"
     user, version, _ = student_context()
     client.force_login(user)
     exercise_url = reverse(
@@ -51,10 +58,43 @@ def test_exercise_page_submits_answer_and_redirects_to_queued_status(client):
     submission = TutoringSubmission.objects.get()
     assert response.status_code == 302
     assert response.url == reverse("tutoring:submission", args=(submission.id,))
+    assert OutboxEvent.objects.filter(aggregate_id=submission.id).count() == 1
     queued = client.get(response.url)
     assert "Tu respuesta está en cola" in queued.content.decode()
     assert "volverá a intentarlo automáticamente" in queued.content.decode()
     assert "EventSource" not in queued.content.decode()
+
+
+def test_inline_submission_returns_completed_guidance_without_queue(client, settings, monkeypatch):
+    settings.TUTORING_EXECUTION_MODE = "inline"
+    user, version, _ = student_context()
+    client.force_login(user)
+    model = FakeTutoringModel(result())
+
+    class Factory:
+        def for_prompt(self, prompt):
+            return model
+
+    monkeypatch.setattr(student_views, "import_string", lambda _path: lambda: Factory())
+
+    response = client.post(
+        reverse("tutoring:submit", args=(version.id,)),
+        {"student_answer": "Mi intento", "idempotency_key": str(uuid.uuid4())},
+    )
+
+    submission = TutoringSubmission.objects.get()
+    submission.refresh_from_db()
+    assert response.status_code == 302
+    assert response.url == reverse("tutoring:submission", args=(submission.id,))
+    assert submission.status == TutoringSubmission.Status.SUCCEEDED
+    assert OutboxEvent.objects.count() == 0
+    assert len(model.requests) == 1
+
+    completed = client.get(response.url)
+    body = completed.content.decode()
+    assert "Review the accumulator" in body
+    assert "Valora esta respuesta" in body
+    assert "Tu respuesta está en cola" not in body
 
 
 def test_status_polling_is_owner_only_and_reports_terminal_state(client):
