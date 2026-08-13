@@ -119,5 +119,8 @@ def test_collection_assets_are_inlined_into_publishable_bundle(tmp_path):
     bundle = load_bundle(bundle_dir)
 
     assert bundle.valid
-    assert '<img class="exercise-figure" src="data:image/png;base64,' in bundle.exercises[0].rendered_html
+    assert (
+        '<img class="exercise-figure" src="data:image/png;base64,'
+        in bundle.exercises[0].rendered_html
+    )
     assert "\\includegraphics" not in bundle.exercises[0].rendered_html
