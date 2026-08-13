@@ -4,7 +4,19 @@ from html import escape
 from html.parser import HTMLParser
 import re
 
-ALLOWED_TAGS = {"p", "br", "strong", "em", "code", "pre", "ul", "ol", "li", "span", "img"}
+ALLOWED_TAGS = {
+    "p",
+    "br",
+    "strong",
+    "em",
+    "code",
+    "pre",
+    "ul",
+    "ol",
+    "li",
+    "span",
+    "img",
+}
 ALLOWED_ATTRIBUTES = {"span": {"class"}, "img": {"class", "src", "alt"}}
 VOID_TAGS = {"br", "img"}
 SAFE_IMAGE_SRC = re.compile(
@@ -27,7 +39,8 @@ class _Sanitizer(HTMLParser):
         rendered = "".join(
             f' {name}="{escape(value or "", quote=True)}"'
             for name, value in attrs
-            if name in allowed and not (tag == "img" and name == "class" and value != "exercise-figure")
+            if name in allowed
+            and not (tag == "img" and name == "class" and value != "exercise-figure")
         )
         self.parts.append(f"<{tag}{rendered}>")
 
