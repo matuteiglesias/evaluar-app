@@ -113,8 +113,8 @@ def test_scaffold_validate_review_index_and_bundle_course_collection(tmp_path):
     )
     bundle = load_bundle(bundle_dir)
     assert bundle.valid
-    assert bundle.courses == ({"name": "bases-de-datos-2c2026", "slug": "bases-de-datos-2c2026"},)
-    assert bundle.exercises[0].external_key == "bases-de-datos-2c2026:bases-de-datos.pilot.001.v1"
+    assert bundle.courses == ({"name": "Bases de Datos — 2C 2026", "slug": "bases-de-datos-2c2026"},)
+    assert bundle.exercises[0].external_key == "bases-de-datos-2c2026:bases-de-datos.pilot.001"
     assert "private" not in bundle.exercises[0].source_text
 
 
