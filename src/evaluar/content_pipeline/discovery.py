@@ -109,6 +109,7 @@ def discover(
                         )
                         continue
                     identifier = (row.get("id") or "").strip()
+                    stable_identifier = (row.get("stable_id") or identifier).strip()
                     title = row.get("name", "").strip()
                     slug = stable_slug(title, f"exercise-{identifier}")
                     if slug in seen_slugs:
@@ -118,7 +119,7 @@ def discover(
                         ExerciseSource(
                             directory.name,
                             identifier,
-                            f"{directory.name}:{identifier}",
+                            f"{directory.name}:{stable_identifier}",
                             slug,
                             title,
                             row.get("section", "").strip(),
