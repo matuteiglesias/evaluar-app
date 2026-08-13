@@ -12,7 +12,7 @@ from evaluar.tutoring.models import (
     TutoringQuotaUsage,
     TutoringSubmission,
 )
-from evaluar.tutoring.ports import TutoringModelResult
+from evaluar.tutoring.ports import RetryableModelError, TutoringModelResult
 from evaluar.tutoring.services import QuotaExceeded, run_submission, submit_answer
 
 pytestmark = pytest.mark.django_db
@@ -86,6 +86,20 @@ def test_submission_is_idempotent_and_reserves_quota_with_outbox():
     assert OutboxEvent.objects.get().payload == {"submission_id": str(first.id)}
 
 
+def test_inline_submission_skips_queue_outbox():
+    user, version, prompt = context()
+    submission = submit_answer(
+        user=user,
+        exercise_version=version,
+        prompt_version=prompt,
+        student_answer="My answer",
+        idempotency_key="inline-request-1",
+        enqueue=False,
+    )
+    assert submission.status == TutoringSubmission.Status.ACCEPTED
+    assert OutboxEvent.objects.count() == 0
+
+
 @override_settings(TUTORING_DAILY_QUOTA=1)
 def test_quota_is_enforced_before_a_second_submission():
     user, version, prompt = context()
@@ -130,6 +144,30 @@ def test_worker_persists_structured_safe_response_and_duplicate_is_noop():
     assert attempt.status == TutoringAttempt.Status.PERSISTED
     assert attempt.prompt_checksum == prompt.checksum
     assert attempt.provider_request_id == "req-1"
+
+
+def test_inline_retryable_failure_is_terminal_and_preserves_error_category():
+    class RetryableFake:
+        async def generate(self, request):
+            raise RetryableModelError("temporary provider failure")
+
+    user, version, prompt = context()
+    submission = submit_answer(
+        user=user,
+        exercise_version=version,
+        prompt_version=prompt,
+        student_answer="answer",
+        idempotency_key="inline-retryable",
+        enqueue=False,
+    )
+
+    assert run_submission(submission.id, RetryableFake(), terminal_on_retryable=True) is None
+
+    submission.refresh_from_db()
+    attempt = submission.attempts.get()
+    assert submission.status == TutoringSubmission.Status.FAILED
+    assert attempt.status == TutoringAttempt.Status.RETRYABLE_FAILED
+    assert attempt.error_category == "provider_retryable"
 
 
 def test_invalid_structured_result_is_failed_and_auditable():

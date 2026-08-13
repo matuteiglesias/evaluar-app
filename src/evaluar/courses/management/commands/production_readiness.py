@@ -136,24 +136,40 @@ class Command(BaseCommand):
                 add("tutoring_prompt", "error", "The active prompt model policy is invalid.")
         else:
             add("tutoring_prompt", "error", "No active published prompt is available.")
-        queue = {
-            name: getattr(settings, name)
-            for name in (
-                "TUTORING_TASK_QUEUE_PATH",
-                "TUTORING_WORKER_URL",
-                "TUTORING_TASK_AUDIENCE",
-                "TUTORING_TASK_SERVICE_ACCOUNT",
-            )
-        }
-        missing = [name for name, value in queue.items() if not value]
-        consistent = not missing and queue["TUTORING_WORKER_URL"] == queue["TUTORING_TASK_AUDIENCE"]
+        execution_mode = settings.TUTORING_EXECUTION_MODE
         add(
-            "queue",
-            "healthy" if consistent else "error",
-            "Queue path is eligible."
-            if consistent
-            else f"Queue configuration is incomplete or inconsistent: {', '.join(missing)}.",
+            "tutoring_execution",
+            "healthy",
+            f"Tutoring execution mode is {execution_mode}.",
+            mode=execution_mode,
         )
+        if execution_mode == "queued":
+            queue = {
+                name: getattr(settings, name)
+                for name in (
+                    "TUTORING_TASK_QUEUE_PATH",
+                    "TUTORING_WORKER_URL",
+                    "TUTORING_TASK_AUDIENCE",
+                    "TUTORING_TASK_SERVICE_ACCOUNT",
+                )
+            }
+            missing = [name for name, value in queue.items() if not value]
+            consistent = (
+                not missing and queue["TUTORING_WORKER_URL"] == queue["TUTORING_TASK_AUDIENCE"]
+            )
+            add(
+                "queue",
+                "healthy" if consistent else "error",
+                "Queue path is eligible."
+                if consistent
+                else f"Queue configuration is incomplete or inconsistent: {', '.join(missing)}.",
+            )
+        else:
+            add(
+                "queue",
+                "not_required",
+                "Inline execution is selected; Cloud Tasks configuration is not required.",
+            )
         provider_ok = bool(policy) and (
             (policy.provider == "openai" and settings.TUTORING_OPENAI_API_KEY)
             or (

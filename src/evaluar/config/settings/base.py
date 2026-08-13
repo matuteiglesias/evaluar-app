@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Any
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = Path(__file__).resolve().parents[2]
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or os.environ.get(
     "SECRET_KEY", "unsafe-local-only-change-me"
@@ -138,6 +140,9 @@ TUTORING_MODEL_FACTORY = os.environ.get(
 )
 TUTORING_PROMPT_PUBLIC_ID = os.environ.get("TUTORING_PROMPT_PUBLIC_ID", "default")
 TUTORING_MAX_ANSWER_CHARS = int(os.environ.get("TUTORING_MAX_ANSWER_CHARS", "12000"))
+TUTORING_EXECUTION_MODE = os.environ.get("TUTORING_EXECUTION_MODE", "queued")
+if TUTORING_EXECUTION_MODE not in {"inline", "queued"}:
+    raise ImproperlyConfigured("TUTORING_EXECUTION_MODE must be either 'inline' or 'queued'.")
 TUTORING_ENABLED = os.environ.get("TUTORING_ENABLED", "0") == "1"
 SUPPORT_ENABLED = os.environ.get("SUPPORT_ENABLED", "0") == "1"
 SUPPORT_NOTIFICATIONS_ENABLED = os.environ.get("SUPPORT_NOTIFICATIONS_ENABLED", "0") == "1"
