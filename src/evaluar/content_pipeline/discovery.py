@@ -10,6 +10,7 @@ from .schema import ExerciseSource, ValidationIssue
 REQUIRED_COLUMNS = {"id", "section", "file", "name"}
 SOURCE_SUFFIXES = {".tex": "latex", ".md": "markdown", ".txt": "text"}
 ASSET_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
+VERSIONED_COMPILER_ID = re.compile(r"^(?P<stable>.+)\.v[1-9]\d*$")
 
 
 def stable_slug(value: str, fallback: str) -> str:
@@ -109,7 +110,10 @@ def discover(
                         )
                         continue
                     identifier = (row.get("id") or "").strip()
-                    stable_identifier = (row.get("stable_id") or identifier).strip()
+                    stable_identifier = (row.get("stable_id") or "").strip()
+                    if not stable_identifier:
+                        generated = VERSIONED_COMPILER_ID.fullmatch(identifier)
+                        stable_identifier = generated.group("stable") if generated else identifier
                     title = row.get("name", "").strip()
                     slug = stable_slug(title, f"exercise-{identifier}")
                     if slug in seen_slugs:
