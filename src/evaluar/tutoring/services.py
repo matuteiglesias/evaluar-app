@@ -43,6 +43,7 @@ def submit_answer(
     student_answer: str,
     idempotency_key: str,
     response_language: str = "es",
+    enqueue: bool = True,
 ) -> TutoringSubmission:
     if not settings.TUTORING_ENABLED:
         raise PermissionDenied("Tutoring is disabled.")
@@ -91,11 +92,12 @@ def submit_answer(
     course_usage.reserved_count = F("reserved_count") + 1
     course_usage.save(update_fields=("reserved_count",))
 
-    OutboxEvent.objects.create(
-        topic="tutoring.submission.accepted",
-        aggregate_id=submission.id,
-        payload={"submission_id": str(submission.id)},
-    )
+    if enqueue:
+        OutboxEvent.objects.create(
+            topic="tutoring.submission.accepted",
+            aggregate_id=submission.id,
+            payload={"submission_id": str(submission.id)},
+        )
     return submission
 
 
@@ -166,7 +168,12 @@ def _render(result) -> str:
     return bleach.clean("".join(sections), tags={"p", "h3", "ul", "li"}, strip=True)
 
 
-def run_submission(submission_id, model: TutoringModel) -> TutoringResponse | None:
+def run_submission(
+    submission_id,
+    model: TutoringModel,
+    *,
+    terminal_on_retryable: bool = False,
+) -> TutoringResponse | None:
     attempt = claim_submission(submission_id)
     if attempt is None:
         submission = TutoringSubmission.objects.get(pk=submission_id)
@@ -183,7 +190,13 @@ def run_submission(submission_id, model: TutoringModel) -> TutoringResponse | No
         result = async_to_sync(model.generate)(request)
         _validate_result(result)
     except RetryableModelError as exc:
-        _record_failure(attempt.id, TutoringAttempt.Status.RETRYABLE_FAILED, exc.category, exc)
+        _record_failure(
+            attempt.id,
+            TutoringAttempt.Status.RETRYABLE_FAILED,
+            exc.category,
+            exc,
+            fail_submission=terminal_on_retryable,
+        )
         return None
     except (TerminalModelError, ValueError) as exc:
         category = "validation" if isinstance(exc, ValueError) else exc.category
@@ -195,7 +208,13 @@ def run_submission(submission_id, model: TutoringModel) -> TutoringResponse | No
         _record_failure(attempt.id, status, category, exc, fail_submission=True)
         return None
     except Exception as exc:
-        _record_failure(attempt.id, TutoringAttempt.Status.RETRYABLE_FAILED, "unexpected", exc)
+        _record_failure(
+            attempt.id,
+            TutoringAttempt.Status.RETRYABLE_FAILED,
+            "unexpected",
+            exc,
+            fail_submission=terminal_on_retryable,
+        )
         return None
 
     TutoringAttempt.objects.filter(pk=attempt.id).update(
