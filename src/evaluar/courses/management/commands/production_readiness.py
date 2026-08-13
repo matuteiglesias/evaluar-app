@@ -155,8 +155,7 @@ class Command(BaseCommand):
             }
             missing = [name for name, value in queue.items() if not value]
             consistent = (
-                not missing
-                and queue["TUTORING_WORKER_URL"] == queue["TUTORING_TASK_AUDIENCE"]
+                not missing and queue["TUTORING_WORKER_URL"] == queue["TUTORING_TASK_AUDIENCE"]
             )
             add(
                 "queue",
