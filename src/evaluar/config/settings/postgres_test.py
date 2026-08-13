@@ -5,3 +5,4 @@ from .base import *  # noqa: F403
 SECRET_KEY = "postgres-test-secret-key"
 ALLOWED_HOSTS = ["testserver", "localhost"]
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+SUPPORT_ENABLED = True
