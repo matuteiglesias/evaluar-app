@@ -1,13 +1,18 @@
+import json
+import logging
+from uuid import UUID
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
 from django.db.models import Prefetch
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_GET, require_POST
+from django.utils.module_loading import import_string
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET, require_POST
 
 from evaluar.courses.models import Course, ExerciseVersion
 from evaluar.courses.policies import can_view_exercise, is_course_admin
@@ -18,10 +23,14 @@ from .models import ActivePrompt, TutoringAttempt, TutoringResponse, TutoringSub
 from .services import (
     InvalidTransition,
     QuotaExceeded,
+    mark_terminal_failure,
     requeue_submission,
+    run_submission,
     submit_answer,
     submit_feedback,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _owned_submission(user, submission_id):
@@ -32,6 +41,20 @@ def _owned_submission(user, submission_id):
         pk=submission_id,
         user=user,
     )
+
+
+def _execute_inline(submission: TutoringSubmission) -> None:
+    try:
+        factory = import_string(settings.TUTORING_MODEL_FACTORY)()
+        model = factory.for_prompt(submission.prompt_version)
+    except Exception:
+        logger.exception(
+            "tutoring.inline_model_configuration_failed",
+            extra={"submission_id": str(submission.id)},
+        )
+        mark_terminal_failure(submission.id, category="inline_model_configuration")
+        return
+    run_submission(submission.id, model, terminal_on_retryable=True)
 
 
 @login_required
@@ -64,6 +87,7 @@ def submit(request, version_id):
             exercise_slug=version.exercise.slug,
             version_number=version.version_number,
         )
+    execution_mode = settings.TUTORING_EXECUTION_MODE
     try:
         created = submit_answer(
             user=request.user,
@@ -71,6 +95,7 @@ def submit(request, version_id):
             prompt_version=prompt,
             student_answer=form.cleaned_data["student_answer"],
             idempotency_key=str(form.cleaned_data["idempotency_key"]),
+            enqueue=execution_mode == "queued",
         )
     except QuotaExceeded:
         messages.error(request, "Alcanzaste el límite diario de solicitudes de tutoría.")
@@ -80,6 +105,8 @@ def submit(request, version_id):
             exercise_slug=version.exercise.slug,
             version_number=version.version_number,
         )
+    if execution_mode == "inline":
+        _execute_inline(created)
     return redirect("tutoring:submission", submission_id=created.id)
 
 
