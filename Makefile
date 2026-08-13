@@ -1,5 +1,6 @@
 .PHONY: verify-phase3 verify-phase3-live verify-sprint verify-sprint-local \
-	verify-sprint-postgres verify-sprint-image verify-sprint-smoke migrate check-schema
+	verify-sprint-postgres verify-sprint-image verify-sprint-smoke migrate check-schema \
+	verify-production-runtime
 
 verify-phase3:
 	uv run --extra ai --extra queue --group dev pytest -q -m "not live" tests/test_packaging_layout.py tests/test_content_pipeline.py tests/test_content_inventory.py tests/test_django_phase2.py tests/test_tutoring.py tests/test_tutoring_queue.py tests/test_agent_framework_adapter.py tests/test_agent_framework_production.py tests/test_tutoring_student_experience.py tests/test_tutoring_operations.py tests/test_tutoring_release.py
@@ -25,6 +26,7 @@ SPRINT_TESTS += tests/test_release_engineering.py tests/test_production_readines
 SPRINT_TESTS += tests/test_feature_safety.py
 SPRINT_TESTS += tests/test_batch_enrollment.py tests/test_multi_course_acceptance.py
 SPRINT_TESTS += tests/test_course_collection_onboarding.py tests/test_collection_publication_contracts.py
+SPRINT_TESTS += tests/test_runtime_deployment.py
 
 verify-sprint: verify-sprint-local verify-sprint-postgres verify-sprint-image verify-sprint-smoke
 	@mkdir -p artifacts
@@ -58,14 +60,10 @@ verify-sprint-image:
 		"import django, gunicorn, agent_framework; from google.cloud import tasks_v2; import evaluar.config.wsgi"
 
 verify-sprint-smoke:
-	@set -eu; trap 'docker compose down --volumes --remove-orphans' EXIT; \
-		docker compose up -d --wait db; \
-		docker compose run --rm migrate; \
-		docker compose up -d --wait app; \
-		for attempt in $$(seq 1 20); do \
-			curl -fsS -H 'X-Forwarded-Proto: https' http://localhost:8000/health/ready && exit 0; \
-			sleep 2; \
-		done; docker compose logs app; exit 1
+	IMAGE=evaluar-app:sprint SKIP_BUILD=1 ./scripts/verify-production-runtime.sh
+
+verify-production-runtime:
+	./scripts/verify-production-runtime.sh
 
 migrate:
 	uv run python manage.py migrate --noinput
