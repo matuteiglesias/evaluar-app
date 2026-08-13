@@ -2,6 +2,7 @@ import csv
 import json
 from pathlib import Path
 from evaluar.content_pipeline import bundle_bytes, compile_content
+from evaluar.content_pipeline.sanitization import sanitize_html
 
 
 def write_course(root: Path, course: str, rows):
@@ -88,3 +89,27 @@ def test_database_theory_rendering_integrity_and_table_rejection(tmp_path):
     issue = next(item for item in rejected.issues if item.code == "unsupported_authored_html_table")
     assert issue.severity == "error"
     assert not rejected.valid
+
+
+def test_latex_images_are_inlined_from_validated_assets(tmp_path):
+    directory = write_course(
+        tmp_path,
+        "db-images",
+        [{"id": "201", "section": "DER", "file": "201.tex", "name": "Diagrama"}],
+    )
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    (assets / "diagram.png").write_bytes(b"\x89PNG\r\n\x1a\nfixture")
+    (directory / "201.tex").write_text(
+        "Observe el siguiente DER.\n\n\\includegraphics{diagram.png}\n\nExplique el modelo.",
+        encoding="utf-8",
+    )
+
+    bundle = compile_content(tmp_path)
+
+    assert bundle.valid
+    rendered = bundle.exercises[0].rendered_html
+    assert '<img class="exercise-figure" src="data:image/png;base64,' in rendered
+    assert "\\includegraphics" not in rendered
+    assert not [issue for issue in bundle.issues if issue.code == "orphaned_asset"]
+    assert "<img" not in sanitize_html('<img src="https://example.invalid/tracker.png" alt="x">')
