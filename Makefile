@@ -52,7 +52,9 @@ verify-sprint-postgres:
 verify-sprint-image:
 	@mkdir -p artifacts
 	docker build --iidfile artifacts/evaluar-app.iid -t evaluar-app:sprint .
-	docker run --rm --entrypoint python evaluar-app:sprint -c \
+	docker run --rm --entrypoint python \
+		-e DJANGO_SETTINGS_MODULE=evaluar.config.settings.test \
+		evaluar-app:sprint -c \
 		"import django, gunicorn, agent_framework; from google.cloud import tasks_v2; import evaluar.config.wsgi"
 
 verify-sprint-smoke:
